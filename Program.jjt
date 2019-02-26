@@ -25,6 +25,6 @@ SKIP:
 TOKEN:
 {
     <INTEGER: (["0"-"9"])+>
-    <LETTER: ([a-zA-Z])+>
+|   <LETTER: (["a"-"z","A"-"Z"])+>
 |   <LF: "\n">
 }
