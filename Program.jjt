@@ -1,0 +1,30 @@
+options {
+ 
+    LOOKAHEAD=1;
+
+}
+
+PARSER_BEGIN(Program)
+
+public class Program
+{
+    public static void main(String args[]) throws ParserException {
+        Program myProg = new Program(System.in);
+        SimpleNode root = myProg.Expression(); // devolve referencia para o nó da raiz da árvore
+        root.dump("");
+    }
+}
+
+PARSER_END(Program)
+
+SKIP: 
+{
+    " " | "\r" | "\t"
+}
+
+TOKEN:
+{
+    <INTEGER: (["0"-"9"])+>
+    <LETTER: ([a-zA-Z])+>
+|   <LF: "\n">
+}
