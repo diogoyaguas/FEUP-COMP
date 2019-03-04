@@ -1,6 +1,8 @@
 options {
  
     LOOKAHEAD=1;
+    MULTI = true;
+    TRACK_TOKENS = true; 
 
 }
 
@@ -19,12 +21,61 @@ PARSER_END(Program)
 
 SKIP: 
 {
-    " " | "\r" | "\t"
+    " " 
+| "\r"
+| "\t"
+| "\n"
+| <"//" (~["\n","\r"])* ("\n" | "\r" | "\r\n")>
+| <"/*" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">
 }
 
 TOKEN:
 {
-    <INTEGER: (["0"-"9"])+>
-|   <LETTER: (["a"-"z","A"-"Z"])+>
-|   <LF: "\n">
+    <ID: <LETTER> (<LETTER> | <DIGIT>)* > 
+|   <DIGIT: (["0"-"9"]) >
+|   <INTEGER: (<DIGIT>)+ >
+|   <LETTER: (["a"-"z","A"-"Z", "_"])+ >
+}
+
+TOKEN:
+{
+    <SEMI_COLON: ";" >
+|   <COMMA: "," >
+|   <PERIOD: "." >
+|   <L_PARENTHESIS: "(" >
+|   <R_PARENTHESIS: ")" >
+|   <L_CBRACKET: "{" >
+|   <R_CBRACKET: "}" >
+|   <L_BRACKET: "[" >
+|   <R_BRACKET: "]" >
+|   <EXCLM_MARK: "!" >
+
+|   <NEW: "new" >
+|   <THIS: "this" >
+|   <TRUE: "true" >
+|   <FALSE: "false" >
+|   <LENGTH: "length" >
+
+|   <ADD_SUB: "+" | "-" >
+|   <BINARY_OP: "&&" | "<" >
+|   <ARITHM_OP: "*" | "/" >
+
+|   <EQUAL: "=" >
+|   <IF: "if" >
+|   <ELSE: "else" >
+|   <WHILE: "while" >
+
+|   <INT: "int" >
+|   <BOOLEAN: "boolean" >
+|   <STRING: "String" >
+
+|   <TYPE: <INT>(<L_BRACKET> <R_BRACKET>)? | <BOOLEAN> >
+
+|   <RETURN: "return" >
+|   <PUBLIC: "public" >
+|   <STATIC: "static" >
+|   <VOID: "void" >
+|   <MAIN: "main" >
+|   <EXTENDS: "extends" >
+|   <CLASS: "class" >
 }
