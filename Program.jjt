@@ -62,7 +62,6 @@ TOKEN:
 |   <INT: "int" >
 |   <STRING: "String" >
 |   <BOOLEAN: "boolean" >
-|   <TYPE: <BOOLEAN> | <INT>(<L_BRACKET> <R_BRACKET>)?>
 
 |   <RETURN: "return" >
 |   <PUBLIC: "public" >
@@ -88,5 +87,11 @@ SimpleNode Program() : {}  {
 void ClassDecl() : {} {
 
     <CLASS> <ID> <L_CBRACKET> <R_CBRACKET>
+
+}
+
+void Type() : {} {
+
+    <BOOLEAN> | <INT>(<L_BRACKET> <R_BRACKET>)?
 
 }
