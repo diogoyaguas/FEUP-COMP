@@ -16,6 +16,7 @@ import java.io.IOException;
 public class Program
 {
     private static Program myProg;
+    private static final String FILENAME = "test-file.txt";
 
     public static void main(String args[]) throws ParseException {
 
@@ -27,7 +28,6 @@ public class Program
         root.dump("");
     }
 
-	private static final String FILENAME = "test-file.txt";
 
 	public static boolean createInputStream() {
         File file = new File(FILENAME);
@@ -46,7 +46,7 @@ public class Program
 
         return true;
 
-    }
+    } 
 }
 
 PARSER_END(Program)
@@ -113,7 +113,7 @@ TOKEN:
 }
 
 SimpleNode Program() : {}  {
-    (ClassDecl())* <EOF>
+    (ClassDecl())*
 }
 
 void ClassDecl() : {} {
@@ -121,6 +121,29 @@ void ClassDecl() : {} {
     <CLASS> <ID> <L_CBRACKET> <R_CBRACKET>
 
 }
+
+void VarDecl() : {} {
+    
+    Type() <ID> <SEMI_COLON>
+
+}
+
+void MainDecl() : {} {
+
+    <PUBLIC> <STATIC> <VOID> <MAIN> <L_PARENTHESIS> <STRING> <L_BRACKET> <R_BRACKET> <ID> <R_PARENTHESIS> <L_CBRACKET> (VarDecl())* (Statement())* <R_CBRACKET>
+}
+
+void MethodDecl() : {} {
+
+    <PUBLIC> (Type())* <ID> 
+        <L_PARENTHESIS> 
+            (Type() <ID> (<COMMA> Type() <ID>)*)? 
+        <R_PARENTHESIS> 
+
+    <L_CBRACKET> 
+        (VarDecl())* (Statement())* <RETURN> Expression() <SEMI_COLON>
+    <R_CBRACKET>
+} 
 
 void Type() : {} {
 
