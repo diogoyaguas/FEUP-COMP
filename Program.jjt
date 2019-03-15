@@ -150,3 +150,14 @@ void Type() : {} {
     <BOOLEAN> | <INT>(<L_BRACKET> <R_BRACKET>)?
 
 }
+
+void Statement() : {} {
+
+    <L_CBRACKET> (Statement())* <R_CBRACKET> | <IF> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() <ELSE> Statement() | <WHILE> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() | Expression() <SEMI_COLON> | <ID> StatementAuxiliar()
+
+}
+
+void StatementAuxiliar() : {} {
+
+    <EQUAL> Expression() <SEMI_COLON> | <L_BRACKET> Expression() <R_BRACKET> <EQUAL> Expression() <SEMI_COLON>
+}
