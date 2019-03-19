@@ -20,10 +20,10 @@ public class Program
 
     public static void main(String args[]) throws ParseException {
 
-        //if(createInputStream() == false)
-            //return;
+        if(createInputStream() == false)
+            return;
 
-        myProg = new Program(System.in);
+        //myProg = new Program(System.in);
         SimpleNode root = myProg.Program(); // devolve referencia para o nó da raiz da árvore
         root.dump("");
     }
@@ -113,7 +113,10 @@ TOKEN:
 }
 
 SimpleNode Program() : {}  {
-    (ClassDecl())*
+    ClassDecl() <EOF> 
+    {
+        return jjtThis;
+    }
 }
 
 void ClassDecl() : {} {
@@ -160,4 +163,10 @@ void Statement() : {} {
 void StatementAuxiliar() : {} {
 
     <EQUAL> Expression() <SEMI_COLON> | <L_BRACKET> Expression() <R_BRACKET> <EQUAL> Expression() <SEMI_COLON>
+}
+
+void Expression() : {} {
+
+   <INTEGER>
+
 }
