@@ -168,13 +168,41 @@ void StatementAuxiliar() : {} {
     <EQUAL> Expression() <SEMI_COLON> | <L_BRACKET> Expression() <R_BRACKET> <EQUAL> Expression() <SEMI_COLON>
 }
 
+void Expression() : {} {
+
+    IntegerLiteral() 
+   | <TRUE>
+   | <FALSE>
+   | <ID> 
+   | <THIS> 
+   | <EXCLM_MARK> Expression()
+   | <L_PARENTHESIS> Expression() <R_PARENTHESIS>
+   | Expression() Expression_Aux()
+   | <NEW> New_Aux()
+
+}
+
+void Expression_Aux() {} : {
+
+    (<ARITHM_OP | <BINARY_OP> | <ADD_SUB>) Expression()
+    | <L_BRACKET> Expression() <R_BRACKET>
+    | <PERIOD> Period_Aux()
+
+}
+
+void Period_Aux() {} : {
+
+    <LENGTH>
+    | <ID> <L_PARENTHESIS> (Expression() (<COMMA> Expression())*)? <R_PARENTHESIS>
+}
+
+void New_Aux() : {} {
+
+    <INT> <L_BRACKET> Expression() <R_BRACKET>
+    | <ID> <L_PARENTHESIS> <R_PARENTHESIS>
+}
+
 void IntegerLiteral() : {} {
 
     <INTEGER> | <OCTAL> | <HEXA> | <BINARY>      
-}
-
-void Expression() : {} {
-
-   <INTEGER>
-
 }
