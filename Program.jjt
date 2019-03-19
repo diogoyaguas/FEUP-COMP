@@ -110,6 +110,9 @@ TOKEN:
 |   <DIGIT: (["0"-"9"]) >
 |   <INTEGER: (<DIGIT>)+ >
 |   <LETTER: (["a"-"z","A"-"Z", "_"])+ >
+|   <OCTAL : 0["0"-"7"]+ >
+|   <HEXA : 0["x""X"]["0"-"9""a"-"f""A"-"F"]+ >
+|   <BINARY : 0["b""B"]["0"-"1"]+ >
 }
 
 SimpleNode Program() : {}  {
@@ -152,8 +155,8 @@ void Type() : {} {
 
     <BOOLEAN> | <INT>(<L_BRACKET> <R_BRACKET>)?
 
-}
 
+}
 void Statement() : {} {
 
     <L_CBRACKET> (Statement())* <R_CBRACKET> | <IF> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() <ELSE> Statement() | <WHILE> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() | Expression() <SEMI_COLON> | <ID> StatementAuxiliar()
@@ -163,6 +166,11 @@ void Statement() : {} {
 void StatementAuxiliar() : {} {
 
     <EQUAL> Expression() <SEMI_COLON> | <L_BRACKET> Expression() <R_BRACKET> <EQUAL> Expression() <SEMI_COLON>
+}
+
+void IntegerLiteral() : {} {
+
+    <INTEGER> | <OCTAL> | <HEXA> | <BINARY>      
 }
 
 void Expression() : {} {
