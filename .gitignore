@@ -80,3 +80,11 @@ Token\.java
 TokenMgrError\.class
 
 TokenMgrError\.java
+
+ASTExpression_Aux\.java
+
+ASTIntegerLiteral\.java
+
+ASTNew_Aux\.java
+
+ASTPeriod_Aux\.java

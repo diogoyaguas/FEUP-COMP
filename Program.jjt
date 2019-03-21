@@ -110,9 +110,9 @@ TOKEN:
 |   <DIGIT: (["0"-"9"]) >
 |   <INTEGER: (<DIGIT>)+ >
 |   <LETTER: (["a"-"z","A"-"Z", "_"])+ >
-|   <OCTAL : 0["0"-"7"]+ >
-|   <HEXA : 0["x""X"]["0"-"9""a"-"f""A"-"F"]+ >
-|   <BINARY : 0["b""B"]["0"-"1"]+ >
+|   <OCTAL : "0"(["0"-"7"])+ >
+|   <HEXA : "0"["x","X"](["0"-"9","a"-"f","A"-"F"])+ >
+|   <BINARY : "0"["b","B"](["0"-"1"])+ >
 }
 
 SimpleNode Program() : {}  {
@@ -159,38 +159,42 @@ void Type() : {} {
 }
 void Statement() : {} {
 
-    <L_CBRACKET> (Statement())* <R_CBRACKET> | <IF> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() <ELSE> Statement() | <WHILE> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() | Expression() <SEMI_COLON> | <ID> StatementAuxiliar()
+    <L_CBRACKET> (Statement())* <R_CBRACKET> 
+    | <IF> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() <ELSE> Statement() 
+    | <WHILE> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() 
+    | Expression() <SEMI_COLON> 
+    | <ID> StatementAuxiliar()
 
 }
 
 void StatementAuxiliar() : {} {
 
-    <EQUAL> Expression() <SEMI_COLON> | <L_BRACKET> Expression() <R_BRACKET> <EQUAL> Expression() <SEMI_COLON>
+    <EQUAL> Expression() <SEMI_COLON> 
+    | <L_BRACKET> Expression() <R_BRACKET> <EQUAL> Expression() <SEMI_COLON>
 }
 
 void Expression() : {} {
 
-    IntegerLiteral() 
+    ( IntegerLiteral() 
    | <TRUE>
    | <FALSE>
    | <ID> 
    | <THIS> 
    | <EXCLM_MARK> Expression()
    | <L_PARENTHESIS> Expression() <R_PARENTHESIS>
-   | Expression() Expression_Aux()
-   | <NEW> New_Aux()
+   | <NEW> New_Aux() ) Expression_Aux()
 
 }
 
-void Expression_Aux() {} : {
+void Expression_Aux() : {} {
 
-    (<ARITHM_OP | <BINARY_OP> | <ADD_SUB>) Expression()
+    (<ARITHM_OP> | <BINARY_OP> | <ADD_SUB>) Expression()
     | <L_BRACKET> Expression() <R_BRACKET>
     | <PERIOD> Period_Aux()
 
 }
 
-void Period_Aux() {} : {
+void Period_Aux() : {} {
 
     <LENGTH>
     | <ID> <L_PARENTHESIS> (Expression() (<COMMA> Expression())*)? <R_PARENTHESIS>
