@@ -82,9 +82,11 @@ TOKEN:
 |   <FALSE: "false" >
 |   <LENGTH: "length" >
 
-|   <ADD_SUB: "+" | "-" >
+|   <ADD>: "+" >
+|   <SUB> "-" >
 |   <BINARY_OP: "&&" | "<" >
-|   <ARITHM_OP: "*" | "/" >
+|   <MUL: "*" >
+|   <DIV:  "/" >
 
 |   <EQUAL: "=" >
 |   <IF: "if" >
@@ -122,28 +124,29 @@ SimpleNode Program() : {}  {
     }
 }
 
-void ClassDecl() : {} {
+void ClassDecl() #Class : {Token n;} {
 
-    <CLASS> <ID> <L_CBRACKET> <R_CBRACKET>
+    <CLASS> n = <ID> {jjtThis.name = n.image;} [<EXTENDS> <ID>]
+    <L_CBRACKET> (VarDecl())* (<PUBLIC> (MainDecl() | MethodDecl()))* <R_CBRACKET>
 
 }
 
-void VarDecl() : {} {
+void VarDecl() #Var: {Token n1;} {
     
-    Type() <ID> <SEMI_COLON>
+    Type() n1=<ID> {jjtThis.name = n1.image;} <SEMI_COLON>
 
 }
 
-void MainDecl() : {} {
+void MainDecl() #Main: {Token n2;} {
 
-    <PUBLIC> <STATIC> <VOID> <MAIN> <L_PARENTHESIS> <STRING> <L_BRACKET> <R_BRACKET> <ID> <R_PARENTHESIS> <L_CBRACKET> (VarDecl())* (Statement())* <R_CBRACKET>
+    <STATIC> <VOID> <MAIN> <L_PARENTHESIS> <STRING> <L_BRACKET> <R_BRACKET> n2=<ID>{jjtThis.name = n2.image;} <R_PARENTHESIS> <L_CBRACKET> (VarDecl())* (Statement())* <R_CBRACKET>
 }
 
-void MethodDecl() : {} {
+void MethodDecl() #Method: {Token n3, n4;} {
 
-    <PUBLIC> (Type())* <ID> 
+    (Type())* n3=<ID> {jjtThis.name = n3.image;}     
         <L_PARENTHESIS> 
-            (Type() <ID> (<COMMA> Type() <ID>)*)? 
+            (Type() n4=<ID> {jjtThis.name = n4.image;}<ID> (<COMMA> Type() n4=<ID> {jjtThis.name = n4.image;})*)? 
         <R_PARENTHESIS> 
 
     <L_CBRACKET> 
@@ -151,9 +154,9 @@ void MethodDecl() : {} {
     <R_CBRACKET>
 } 
 
-void Type() : {} {
+void Type() #Type: {Token t1;} {
 
-    <BOOLEAN> | <INT>(<L_BRACKET> <R_BRACKET>)?
+    t1=<BOOLEAN>{jjtThis.type = t1.image;} | t1=<INT>{jjtThis.type = t1.image;}(<L_BRACKET> <R_BRACKET>)?
 
 
 }
@@ -178,7 +181,7 @@ void Expression() : {} {
     ( IntegerLiteral() 
    | <TRUE>
    | <FALSE>
-   | <ID> 
+   | <ID>
    | <THIS> 
    | <EXCLM_MARK> Expression()
    | <L_PARENTHESIS> Expression() <R_PARENTHESIS>
@@ -188,7 +191,7 @@ void Expression() : {} {
 
 void Expression_Aux() : {} {
 
-    (<ARITHM_OP> | <BINARY_OP> | <ADD_SUB>) Expression()
+    ((<MUL> #MUL(2) | <DIV>#DIV(2)) | <BINARY_OP> | (<ADD> #ADD(2) | <SUB>#SUB(2))) Expression()
     | <L_BRACKET> Expression() <R_BRACKET>
     | <PERIOD> Period_Aux()
 
