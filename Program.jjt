@@ -54,7 +54,7 @@ PARSER_END(Program)
 JAVACODE
 void skip_to(int token_kind){
     ParseException exception = generateParseException();
-    System.out.println(e.toString());
+    System.out.println(exception.toString());
 
     Token t;
     do{
@@ -182,7 +182,7 @@ void MainDecl() #Main: {Token n2;} {
 
 void MethodDecl() #Method: {Token n3, n4;} {
     try{
-        (Type())* n3=<ID> {jjtThis.name = n3.image;}     
+        Type() n3=<ID> {jjtThis.name = n3.image;}     
         <L_PARENTHESIS> 
             (Type() n4=<ID> {jjtThis.name = n4.image;}<ID> (<COMMA> Type() n4=<ID> {jjtThis.name = n4.image;})*)? 
         <R_PARENTHESIS> 
@@ -212,7 +212,7 @@ void Statement() : {} {
         <L_CBRACKET> (Statement())* <R_CBRACKET> 
         | <IF> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() <ELSE> Statement() 
         | <WHILE> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() 
-        | Expression() <SEMI_COLON> 
+        | LOOKAHEAD(<ID> "[") Expression() <SEMI_COLON> 
         | <ID> StatementAuxiliar()
     }catch(ParseException e) {
         System.out.println("CAUGHT STATEMENT DECLARATION");
@@ -229,7 +229,7 @@ void StatementAuxiliar() : {} {
         skip_to(SEMI_COLON);
     }
     
-    |
+   |
     
     try{ <L_BRACKET> Expression() <R_BRACKET> <EQUAL> Expression() <SEMI_COLON>
     }catch(ParseException e) {
