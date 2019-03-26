@@ -67,7 +67,16 @@ class SimpleNode implements Node {
      you need to do. */
 
   public String toString() {
-    return ProgramTreeConstants.jjtNodeName[id];
+    switch(ProgramTreeConstants.jjtNodeName[id]) {
+      case "Program":
+        return ProgramTreeConstants.jjtNodeName[id];
+      case "Class": case "Method": case "Var": case "Main":
+        return ProgramTreeConstants.jjtNodeName[id] + " (name: " + this.name + " )";
+      case "Type":
+        return ProgramTreeConstants.jjtNodeName[id] + " (type: " + this.type + " )";
+      default:
+        return ProgramTreeConstants.jjtNodeName[id];
+    }
   }
   public String toString(String prefix) { return prefix + toString(); }
 
