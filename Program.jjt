@@ -253,15 +253,15 @@ void Expression() : {} {
    | <THIS> 
    | <EXCLM_MARK> Expression()
    | <L_PARENTHESIS> Expression() <R_PARENTHESIS>
-   | <NEW> New_Aux() ) Expression_Aux()
+   | <NEW> New_Aux() ) (LOOKAHEAD(2) Expression_Aux())?
 
 }
 
 void Expression_Aux() : {} {
 
-    ((<MUL> #MUL(2) | <DIV>#DIV(2)) | <BINARY_OP> | (<ADD> #ADD(2) | <SUB>#SUB(2))) Expression()
+    (((<MUL> #MUL(2) | <DIV>#DIV(2)) | <BINARY_OP> | (<ADD> #ADD(2) | <SUB>#SUB(2))) Expression()
     | <L_BRACKET> Expression() <R_BRACKET>
-    | <PERIOD> Period_Aux()
+    | <PERIOD> Period_Aux() ) Expression_Aux()
 
 }
 
