@@ -88,3 +88,13 @@ ASTIntegerLiteral\.java
 ASTNew_Aux\.java
 
 ASTPeriod_Aux\.java
+
+ASTADD\.java
+
+ASTDIV\.java
+
+ASTMUL\.java
+
+ASTskip_to\.java
+
+ASTSUB\.java

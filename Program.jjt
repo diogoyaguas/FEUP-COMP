@@ -94,8 +94,8 @@ TOKEN:
 |   <FALSE: "false" >
 |   <LENGTH: "length" >
 
-|   <ADD>: "+" >
-|   <SUB> "-" >
+|   <ADD: "+" >
+|   <SUB: "-" >
 |   <BINARY_OP: "&&" | "<" >
 |   <MUL: "*" >
 |   <DIV:  "/" >
