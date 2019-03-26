@@ -139,7 +139,7 @@ SimpleNode Program() : {}  {
 void ClassDecl() #Class : {Token n;} {
 
     try{
-    <CLASS> n = <ID> {jjtThis.name = n.image;} [<EXTENDS> <ID>]
+    <CLASS> n = <ID> {jjtThis.name = n.image;} (ExtendClass())?
     <L_CBRACKET>
     }catch(ParseException e){
         System.out.println("CAUGHT CLASS INITIALIZATION DECLARATION");
@@ -152,6 +152,12 @@ void ClassDecl() #Class : {Token n;} {
         System.out.println("CAUGHT CLASS BLOCK DECLARATION");
         skip_to(R_CBRACKET);
     }
+
+}
+
+void ExtendClass() #Extension : {Token n;} {
+
+    <EXTENDS> n = <ID> {jjtThis.name = n.image;}
 
 }
 
