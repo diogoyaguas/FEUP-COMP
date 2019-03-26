@@ -51,6 +51,18 @@ public class Program
 
 PARSER_END(Program)
 
+JAVACODE
+void skip_to(int token_kind){
+    ParseException exception = generateParseException();
+    System.out.println(e.toString());
+
+    Token t;
+    do{
+        t = getNextToken();
+    }while(t.kind != token_kind);
+
+}
+
 SKIP: 
 {
     " " 
@@ -126,32 +138,67 @@ SimpleNode Program() : {}  {
 
 void ClassDecl() #Class : {Token n;} {
 
+    try{
     <CLASS> n = <ID> {jjtThis.name = n.image;} [<EXTENDS> <ID>]
-    <L_CBRACKET> (VarDecl())* (<PUBLIC> (MainDecl() | MethodDecl()))* <R_CBRACKET>
+    <L_CBRACKET>
+    }catch(ParseException e){
+        System.out.println("CAUGHT CLASS INITIALIZATION DECLARATION");
+        skip_to(L_CBRACKET);
+    }
+    try {
+        (VarDecl())* (<PUBLIC> (MainDecl() | MethodDecl()))* <R_CBRACKET>
+
+    }catch(ParseException e){
+        System.out.println("CAUGHT CLASS BLOCK DECLARATION");
+        skip_to(R_CBRACKET);
+    }
 
 }
 
 void VarDecl() #Var: {Token n1;} {
-    
-    Type() n1=<ID> {jjtThis.name = n1.image;} <SEMI_COLON>
+    try{
+        Type() n1=<ID> {jjtThis.name = n1.image;} <SEMI_COLON>
+    }catch(ParseException e){
+        System.out.println("CAUGHT VAR DECLARATION");
+        skip_to(SEMI_COLON);
+    }
 
 }
 
 void MainDecl() #Main: {Token n2;} {
-
-    <STATIC> <VOID> <MAIN> <L_PARENTHESIS> <STRING> <L_BRACKET> <R_BRACKET> n2=<ID>{jjtThis.name = n2.image;} <R_PARENTHESIS> <L_CBRACKET> (VarDecl())* (Statement())* <R_CBRACKET>
+    try{
+        <STATIC> <VOID> <MAIN> <L_PARENTHESIS> <STRING> <L_BRACKET> <R_BRACKET> n2=<ID>{jjtThis.name = n2.image;} <R_PARENTHESIS> <L_CBRACKET>
+    }catch(ParseException e){
+        System.out.println("CAUGHT MAIN INITIALIZATION DECLARATION");
+        skip_to(L_CBRACKET);
+    }
+    try{
+        (VarDecl())* (Statement())* <R_CBRACKET>
+    }catch(ParseException e){
+        System.out.println("CAUGHT MAIN BLOCK DECLARATION");
+        skip_to(R_CBRACKET);
+    }
 }
 
 void MethodDecl() #Method: {Token n3, n4;} {
-
-    (Type())* n3=<ID> {jjtThis.name = n3.image;}     
+    try{
+        (Type())* n3=<ID> {jjtThis.name = n3.image;}     
         <L_PARENTHESIS> 
             (Type() n4=<ID> {jjtThis.name = n4.image;}<ID> (<COMMA> Type() n4=<ID> {jjtThis.name = n4.image;})*)? 
         <R_PARENTHESIS> 
+    }catch(ParseException e){
+        System.out.println("CAUGHT METHOD DECLARATION");
+        skip_to(R_PARENTHESIS);
+    }
+    try{
+        <L_CBRACKET> 
+            (VarDecl())* (Statement())* <RETURN> Expression() <SEMI_COLON>
+        <R_CBRACKET>
+    }catch(ParseException e){
+        System.out.println("CAUGHT METHOD BLOCK DECLARATION");
+        skip_to(R_CBRACKET);
+    }
 
-    <L_CBRACKET> 
-        (VarDecl())* (Statement())* <RETURN> Expression() <SEMI_COLON>
-    <R_CBRACKET>
 } 
 
 void Type() #Type: {Token t1;} {
@@ -161,19 +208,34 @@ void Type() #Type: {Token t1;} {
 
 }
 void Statement() : {} {
-
-    <L_CBRACKET> (Statement())* <R_CBRACKET> 
-    | <IF> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() <ELSE> Statement() 
-    | <WHILE> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() 
-    | Expression() <SEMI_COLON> 
-    | <ID> StatementAuxiliar()
+    try{
+        <L_CBRACKET> (Statement())* <R_CBRACKET> 
+        | <IF> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() <ELSE> Statement() 
+        | <WHILE> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() 
+        | Expression() <SEMI_COLON> 
+        | <ID> StatementAuxiliar()
+    }catch(ParseException e) {
+        System.out.println("CAUGHT STATEMENT DECLARATION");
+        skip_to(SEMI_COLON);
+    }
 
 }
 
 void StatementAuxiliar() : {} {
-
-    <EQUAL> Expression() <SEMI_COLON> 
-    | <L_BRACKET> Expression() <R_BRACKET> <EQUAL> Expression() <SEMI_COLON>
+    try{
+        <EQUAL> Expression() <SEMI_COLON> 
+    }catch(ParseException e) {
+        System.out.println("CAUGHT STATEMENT_AUXILIAR DECLARATION");
+        skip_to(SEMI_COLON);
+    }
+    
+    |
+    
+    try{ <L_BRACKET> Expression() <R_BRACKET> <EQUAL> Expression() <SEMI_COLON>
+    }catch(ParseException e) {
+        System.out.println("CAUGHT STATEMENT_AUXILIAR DECLARATION");
+        skip_to(SEMI_COLON);
+    }
 }
 
 void Expression() : {} {

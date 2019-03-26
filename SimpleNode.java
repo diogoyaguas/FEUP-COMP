@@ -14,6 +14,7 @@ class SimpleNode implements Node {
   protected String name;
   protected String type;
   protected String return_type;
+  
   public SimpleNode(int i) {
     id = i;
   }
