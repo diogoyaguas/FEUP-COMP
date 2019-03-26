@@ -121,9 +121,9 @@ TOKEN:
 TOKEN:
 {
     <ID: <LETTER> (<LETTER> | <DIGIT>)* > 
-|   <DIGIT: (["0"-"9"]) >
+|   <#DIGIT: (["0"-"9"]) >
 |   <INTEGER: ((<DIGIT>)+) >
-|   <LETTER: (["a"-"z","A"-"Z", "_"])+ >
+|   <#LETTER: (["a"-"z","A"-"Z", "_"])+ >
 |   <OCTAL : "0"(["0"-"7"])+ >
 |   <HEXA : "0"["x","X"](["0"-"9","a"-"f","A"-"F"])+ >
 |   <BINARY : "0"["b","B"](["0"-"1"])+ >
@@ -146,7 +146,7 @@ void ClassDecl() #Class : {Token n;} {
         skip_to(L_CBRACKET);
     }
     try {
-        (VarDecl())* <PUBLIC> MainDecl() /* (<PUBLIC> (MainDecl() | MethodDecl()))* */ <R_CBRACKET>
+        (VarDecl())* (<PUBLIC> (/* MainDecl() | */ MethodDecl()))* <R_CBRACKET>
 
     }catch(ParseException e){
         System.out.println("CAUGHT CLASS BLOCK DECLARATION");
@@ -190,7 +190,7 @@ void MethodDecl() #Method: {Token n3, n4;} {
     try{
         Type() n3=<ID> {jjtThis.name = n3.image;}     
         <L_PARENTHESIS> 
-            (Type() n4=<ID> {jjtThis.name = n4.image;}<ID> (<COMMA> Type() n4=<ID> {jjtThis.name = n4.image;})*)? 
+            (Type() n4=<ID> {jjtThis.name = n4.image;} (<COMMA> Type() n4=<ID> {jjtThis.name = n4.image;})*)?
         <R_PARENTHESIS> 
     }catch(ParseException e){
         System.out.println("CAUGHT METHOD DECLARATION");
@@ -213,6 +213,7 @@ void Type() #Type: {Token t1;} {
 
 
 }
+
 void Statement() : {} {
     try{
         <L_CBRACKET> (Statement())* <R_CBRACKET> 
