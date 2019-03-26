@@ -2,4 +2,9 @@ class Fac {
 
     int x;
 
-}1
+    public static void main (String[] args) {
+        int abc;
+        12+2;
+    }
+
+}

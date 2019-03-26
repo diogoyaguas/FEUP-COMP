@@ -16,7 +16,7 @@ import java.io.IOException;
 public class Program
 {
     private static Program myProg;
-    private static final String FILENAME = "test-file.txt";
+    private static final String FILENAME = "test-file-inc.txt";
 
     public static void main(String args[]) throws ParseException {
 
@@ -121,8 +121,8 @@ TOKEN:
 TOKEN:
 {
     <ID: <LETTER> (<LETTER> | <DIGIT>)* > 
-|   <INTEGER: ((<DIGIT>)+) >
 |   <DIGIT: (["0"-"9"]) >
+|   <INTEGER: ((<DIGIT>)+) >
 |   <LETTER: (["a"-"z","A"-"Z", "_"])+ >
 |   <OCTAL : "0"(["0"-"7"])+ >
 |   <HEXA : "0"["x","X"](["0"-"9","a"-"f","A"-"F"])+ >
@@ -146,7 +146,7 @@ void ClassDecl() #Class : {Token n;} {
         skip_to(L_CBRACKET);
     }
     try {
-        (VarDecl())* (<PUBLIC> (MainDecl() | MethodDecl()))* <R_CBRACKET>
+        (VarDecl())* <PUBLIC> MainDecl() /* (<PUBLIC> (MainDecl() | MethodDecl()))* */ <R_CBRACKET>
 
     }catch(ParseException e){
         System.out.println("CAUGHT CLASS BLOCK DECLARATION");
@@ -229,7 +229,7 @@ void Statement() : {} {
 
 void StatementAuxiliar() : {} {
     try{
-        <EQUAL> Expression() <SEMI_COLON> 
+        <EQUAL>  Expression() <SEMI_COLON> 
     }catch(ParseException e) {
         System.out.println("CAUGHT STATEMENT_AUXILIAR DECLARATION");
         skip_to(SEMI_COLON);
@@ -253,15 +253,20 @@ void Expression() : {} {
    | <THIS> 
    | <EXCLM_MARK> Expression()
    | <L_PARENTHESIS> Expression() <R_PARENTHESIS>
-   | <NEW> New_Aux() ) (LOOKAHEAD(2) Expression_Aux())?
+   | <NEW> New_Aux() ) Expression_Aux()
 
 }
 
 void Expression_Aux() : {} {
 
-    (((<MUL> #MUL(2) | <DIV>#DIV(2)) | <BINARY_OP> | (<ADD> #ADD(2) | <SUB>#SUB(2))) Expression()
+    (
+        LOOKAHEAD(2)(
+        ((<MUL> #MUL(2) | <DIV>#DIV(2)) | <BINARY_OP> | (<ADD> #ADD(2) | <SUB>#SUB(2))) Expression()
     | <L_BRACKET> Expression() <R_BRACKET>
-    | <PERIOD> Period_Aux() ) Expression_Aux()
+    | <PERIOD> Period_Aux()
+        ) 
+        Expression_Aux()
+    )?
 
 }
 
