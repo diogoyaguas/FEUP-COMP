@@ -16,7 +16,7 @@ import java.io.IOException;
 public class Program
 {
     private static Program myProg;
-    private static final String FILENAME = "test-file.txt";
+    private static final String FILENAME = "test-file-inc.txt";
 
     public static void main(String args[]) throws ParseException {
 
@@ -121,8 +121,8 @@ TOKEN:
 TOKEN:
 {
     <ID: <LETTER> (<LETTER> | <DIGIT>)* > 
+|   <INTEGER: ((<DIGIT>)+) >
 |   <DIGIT: (["0"-"9"]) >
-|   <INTEGER: (<DIGIT>)+ >
 |   <LETTER: (["a"-"z","A"-"Z", "_"])+ >
 |   <OCTAL : "0"(["0"-"7"])+ >
 |   <HEXA : "0"["x","X"](["0"-"9","a"-"f","A"-"F"])+ >
@@ -146,7 +146,7 @@ void ClassDecl() #Class : {Token n;} {
         skip_to(L_CBRACKET);
     }
     try {
-        (VarDecl())* (<PUBLIC> (MainDecl() | MethodDecl()))* <R_CBRACKET>
+        (VarDecl())* /* (<PUBLIC> (MainDecl() | MethodDecl()))* */ <R_CBRACKET>
 
     }catch(ParseException e){
         System.out.println("CAUGHT CLASS BLOCK DECLARATION");
@@ -157,7 +157,7 @@ void ClassDecl() #Class : {Token n;} {
 
 void VarDecl() #Var: {Token n1;} {
     try{
-        Type() n1=<ID> {jjtThis.name = n1.image;} <SEMI_COLON>
+        Type() n1=<ID> {jjtThis.name = n1.image;} <SEMI_COLON> 
     }catch(ParseException e){
         System.out.println("CAUGHT VAR DECLARATION");
         skip_to(SEMI_COLON);
@@ -203,7 +203,7 @@ void MethodDecl() #Method: {Token n3, n4;} {
 
 void Type() #Type: {Token t1;} {
 
-    t1=<BOOLEAN>{jjtThis.type = t1.image;} | t1=<INT>{jjtThis.type = t1.image;}(<L_BRACKET> <R_BRACKET>)?
+    t1=<BOOLEAN>{jjtThis.type = t1.image;} | (t1=<INT>{jjtThis.type = t1.image;}(<L_BRACKET> <R_BRACKET>)?)
 
 
 }
@@ -273,5 +273,5 @@ void New_Aux() : {} {
 
 void IntegerLiteral() : {} {
 
-    <INTEGER> | <OCTAL> | <HEXA> | <BINARY>      
+    <OCTAL> | <INTEGER> | <HEXA> | <BINARY>      
 }

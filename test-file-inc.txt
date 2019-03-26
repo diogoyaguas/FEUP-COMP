@@ -1,0 +1,5 @@
+class Fac {
+
+    int x;
+
+}1
