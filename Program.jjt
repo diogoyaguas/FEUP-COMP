@@ -146,7 +146,7 @@ void ClassDecl() #Class : {Token n;} {
         skip_to(L_CBRACKET);
     }
     try {
-        (VarDecl())* (<PUBLIC> (/* MainDecl() | */ MethodDecl()))* <R_CBRACKET>
+        (VarDecl())* (<PUBLIC> ( MainDecl() | MethodDecl()))* <R_CBRACKET>
 
     }catch(ParseException e){
         System.out.println("CAUGHT CLASS BLOCK DECLARATION");
@@ -219,7 +219,7 @@ void Statement() : {} {
         <L_CBRACKET> (Statement())* <R_CBRACKET> 
         | <IF> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() <ELSE> Statement() 
         | <WHILE> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() 
-        | LOOKAHEAD(<ID> "[") Expression() <SEMI_COLON> 
+        | LOOKAHEAD(2) Expression() <SEMI_COLON> 
         | <ID> StatementAuxiliar()
     }catch(ParseException e) {
         System.out.println("CAUGHT STATEMENT DECLARATION");
