@@ -262,7 +262,7 @@ void Expression_Aux() : {} {
 
     (
         LOOKAHEAD(2)(
-        ((<MUL> #MUL(2) | <DIV>#DIV(2)) | <BINARY_OP> | (<ADD> #ADD(2) | <SUB>#SUB(2))) Expression()
+        ((<MUL> | <DIV>) | <BINARY_OP> | (<ADD> | <SUB>)) Expression()
     | <L_BRACKET> Expression() <R_BRACKET>
     | <PERIOD> Period_Aux()
         ) 
