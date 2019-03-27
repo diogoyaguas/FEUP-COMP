@@ -94,17 +94,18 @@ public class SimpleNode implements Node {
     case "Return":
       return ProgramTreeConstants.jjtNodeName[id];
     case "Class":
-    case "Var":
     case "Main":
     case "Extends":
-      return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + ")";
+    case "Statement":
+      if(this.type != null)
+      return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Type: " + this.type + ")";
+      else return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + ")";
     case "Type":
       return ProgramTreeConstants.jjtNodeName[id] + " (Type: " + this.type + ")";
     case "Term":
       return ProgramTreeConstants.jjtNodeName[id] + " (Value: " + this.node_value + ")";
-    case "Expression":
-      return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Value: " + this.node_value + ")";
     case "Argument":
+    case "Var":
       return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Type: " + this.type + ")";
     case "Method":
       return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Return Type: " + this.type + ")";

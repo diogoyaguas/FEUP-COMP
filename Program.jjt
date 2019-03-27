@@ -16,7 +16,7 @@ import java.io.IOException;
 public class Program
 {
     private static Program myProg;
-    private static final String FILENAME = "test-file-inc.txt";
+    private static final String FILENAME = "test-file.txt";
 
     public static void main(String args[]) throws ParseException {
 
@@ -136,7 +136,7 @@ SimpleNode Program() : {}  {
     }
 }
 
-void ClassDecl() #Class : {Token n;} {
+void ClassDecl() #Class : {Token n; String s1;} {
 
     try{
     <CLASS> n = <ID> {jjtThis.name = n.image;} (ExtendClass())?
@@ -224,23 +224,23 @@ String Type() #void: {Token t1;} {
 
 }
 
-void Statement() : {} {
+void Statement() #Statement : {Token n1;} {
 
         <L_CBRACKET> (Statement())* <R_CBRACKET> 
-        | <IF> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() <ELSE> Statement() 
+        | n1=<IF> {jjtThis.name = n1.image;} <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() <ELSE> Statement() 
         |    try{ 
-                <WHILE> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() 
+                n1=<WHILE> {jjtThis.name = n1.image;} <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() 
                 } catch(ParseException e) {
                     System.out.println("CAUGHT WHILE DECLARATION");
                     skip_to(R_PARENTHESIS);
                 }
         | LOOKAHEAD(2) Expression() <SEMI_COLON> 
-        | <ID> StatementAuxiliar()
+        | n1=<ID> {jjtThis.name = n1.image;} StatementAuxiliar()
     
 
 }
 
-void StatementAuxiliar() : {} {
+void StatementAuxiliar() #void : {} {
     try{
         <EQUAL>  Expression() <SEMI_COLON> 
     }catch(ParseException e) {
@@ -257,7 +257,7 @@ void StatementAuxiliar() : {} {
     }
 }
 
-void Expression() #void: {String s1;} {
+void Expression() #void: {} {
 
     ( ExpressionTerminal()
    | <EXCLM_MARK> Expression()
@@ -288,13 +288,13 @@ void Expression_Aux() #void: {} {
 
 }
 
-void Period_Aux() : {} {
+void Period_Aux() #void : {} {
 
     <LENGTH>
     | <ID> <L_PARENTHESIS> (Expression() (<COMMA> Expression())*)? <R_PARENTHESIS>
 }
 
-void New_Aux() : {} {
+void New_Aux() #void : {} {
 
     <INT> <L_BRACKET> Expression() <R_BRACKET>
     | <ID> <L_PARENTHESIS> <R_PARENTHESIS>
