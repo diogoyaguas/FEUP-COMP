@@ -189,9 +189,7 @@ void MainDecl() #Main: {Token n2;} {
 void MethodDecl() #Method: {Token n3, n4; String s1;} {
     try{
         s1 = Type() {jjtThis.type = s1;} n3=<ID> {jjtThis.name = n3.image;}     
-        <L_PARENTHESIS> 
-            (s1 = Type() {jjtThis.type = s1;} n4=<ID> {jjtThis.name = n4.image;} (<COMMA> s1 = Type() {jjtThis.type = s1;}  n4=<ID> {jjtThis.name = n4.image;})*)?
-        <R_PARENTHESIS> 
+        <L_PARENTHESIS> MethodArgs() <R_PARENTHESIS> 
     }catch(ParseException e){
         System.out.println("CAUGHT METHOD DECLARATION");
         skip_to(R_PARENTHESIS);
@@ -205,6 +203,14 @@ void MethodDecl() #Method: {Token n3, n4; String s1;} {
         skip_to(R_CBRACKET);
     }
 
+}
+
+void MethodArgs() #MethodArgs: {} {
+    (Argument() (<COMMA> Argument())* )?
+}
+
+void Argument() #Argument: {Token t1; String s1;} {
+    s1 = Type() {jjtThis.type = s1;} t1=<ID> {jjtThis.name = t1.image;}
 }
 
 void MethodReturn() #Return: {Token t1;} {

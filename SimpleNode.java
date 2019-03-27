@@ -105,6 +105,8 @@ public class SimpleNode implements Node {
     case "Method":
     case "Expression":
       return ProgramTreeConstants.jjtNodeName[id] + " (name: " + this.name + " | value: " + this.node_value + ")";
+    case "Argument":
+      return ProgramTreeConstants.jjtNodeName[id] + " (name: " + this.name + " | type: " + this.type + ")";
     default:
       return ProgramTreeConstants.jjtNodeName[id];
     }

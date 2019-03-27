@@ -150,3 +150,11 @@ ASTReturn\.java
 ASTTerm\.class
 
 ASTTerm\.java
+
+ASTArgument\.class
+
+ASTArgument\.java
+
+ASTMethodArgs\.class
+
+ASTMethodArgs\.java
