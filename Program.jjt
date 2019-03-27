@@ -96,7 +96,8 @@ TOKEN:
 
 |   <ADD: "+" >
 |   <SUB: "-" >
-|   <BINARY_OP: "&&" | "<" >
+|   <AND: "&&" >
+|   <LESS_THAN: "<" >
 |   <MUL: "*" >
 |   <DIV:  "/" >
 
@@ -281,7 +282,8 @@ void Expression_Aux() #void: {} {
         LOOKAHEAD(2)(
     <MUL> Expression() #MUL(2)
     | <DIV> Expression() #DIV(2)
-    | <BINARY_OP> Expression() #BINARY_OP(2)
+    | <AND> Expression() #AND(2)
+    | <LESS_THAN> Expression() #LESS_THAN(2)
     | <ADD> Expression() #ADD(2)
     | <SUB> Expression() #SUB(2)
     | <L_BRACKET> Expression() <R_BRACKET>
