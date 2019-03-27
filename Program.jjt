@@ -161,9 +161,9 @@ void ExtendClass() #Extends : {Token n;} {
 
 }
 
-void VarDecl() #Var: {Token n1;} {
+void VarDecl() #Var: {Token n1; String s1;} {
     try{
-        Type() n1=<ID> {jjtThis.name = n1.image;} <SEMI_COLON> 
+        s1 = Type() {jjtThis.type = s1;}  n1=<ID> {jjtThis.name = n1.image;} <SEMI_COLON> 
     }catch(ParseException e){
         System.out.println("CAUGHT VAR DECLARATION");
         skip_to(SEMI_COLON);
@@ -190,7 +190,7 @@ void MethodDecl() #Method: {Token n3, n4; String s1;} {
     try{
         s1 = Type() {jjtThis.type = s1;}    n3=<ID> {jjtThis.name = n3.image;}     
         <L_PARENTHESIS> 
-            (Type() n4=<ID> {jjtThis.name = n4.image;} (<COMMA> Type() n4=<ID> {jjtThis.name = n4.image;})*)?
+            (s1 = Type() {jjtThis.type = s1;} n4=<ID> {jjtThis.name = n4.image;} (<COMMA> s1 = Type() {jjtThis.type = s1;}  n4=<ID> {jjtThis.name = n4.image;})*)?
         <R_PARENTHESIS> 
     }catch(ParseException e){
         System.out.println("CAUGHT METHOD DECLARATION");
