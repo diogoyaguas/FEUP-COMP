@@ -188,7 +188,7 @@ void MainDecl() #Main: {Token n2;} {
 
 void MethodDecl() #Method: {Token n3, n4; String s1;} {
     try{
-        s1 = Type() {jjtThis.type = s1;}    n3=<ID> {jjtThis.name = n3.image;}     
+        s1 = Type() {jjtThis.type = s1;} n3=<ID> {jjtThis.name = n3.image;}     
         <L_PARENTHESIS> 
             (s1 = Type() {jjtThis.type = s1;} n4=<ID> {jjtThis.name = n4.image;} (<COMMA> s1 = Type() {jjtThis.type = s1;}  n4=<ID> {jjtThis.name = n4.image;})*)?
         <R_PARENTHESIS> 
@@ -198,14 +198,18 @@ void MethodDecl() #Method: {Token n3, n4; String s1;} {
     }
     try{
         <L_CBRACKET> 
-            (VarDecl())* (Statement())* <RETURN> Expression() <SEMI_COLON>
+            (VarDecl())* (Statement())* MethodReturn()
         <R_CBRACKET>
     }catch(ParseException e){
         System.out.println("CAUGHT METHOD BLOCK DECLARATION");
         skip_to(R_CBRACKET);
     }
 
-} 
+}
+
+void MethodReturn() #Return: {Token t1;} {
+    t1=<RETURN> {jjtThis.value = t1.image;} Expression() <SEMI_COLON>
+}
 
 String Type() #void: {Token t1;} {
 
@@ -247,20 +251,25 @@ void StatementAuxiliar() : {} {
     }
 }
 
-void Expression() : {} {
+void Expression() #void: {String s1;} {
 
-    ( IntegerLiteral() 
-   | <TRUE>
-   | <FALSE>
-   | <ID>
-   | <THIS> 
+    ( ExpressionTerminal()
    | <EXCLM_MARK> Expression()
    | <L_PARENTHESIS> Expression() <R_PARENTHESIS>
    | <NEW> New_Aux() ) Expression_Aux()
 
 }
 
-void Expression_Aux() : {} {
+void ExpressionTerminal() #Term: {Token t1; String s1;} {
+
+    s1 = IntegerLiteral() {jjtThis.node_value = s1;}
+    | t1=<TRUE> {jjtThis.node_value = t1.image;}
+    | t1=<FALSE> {jjtThis.node_value = t1.image;}
+    | t1=<ID> {jjtThis.node_value = t1.image;}
+    | t1=<THIS> {jjtThis.node_value = t1.image;}
+}
+
+void Expression_Aux() #void: {} {
 
     (
         LOOKAHEAD(2)(
@@ -285,7 +294,10 @@ void New_Aux() : {} {
     | <ID> <L_PARENTHESIS> <R_PARENTHESIS>
 }
 
-void IntegerLiteral() : {} {
+String IntegerLiteral() #void : {Token t1;} {
 
-    <OCTAL> | <INTEGER> | <HEXA> | <BINARY>      
+    ( t1=<OCTAL> {return t1.image;} 
+    | t1=<INTEGER> {return t1.image;} 
+    | t1=<HEXA> {return t1.image;} 
+    | t1=<BINARY> {return t1.image;} )   
 }

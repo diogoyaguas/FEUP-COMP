@@ -10,6 +10,7 @@ public class SimpleNode implements Node {
   protected Token firstToken;
   protected Token lastToken;
 
+  protected String node_value;
   protected String name;
   protected String type;
   protected String return_type;
@@ -90,16 +91,20 @@ public class SimpleNode implements Node {
   public String toString() {
     switch (ProgramTreeConstants.jjtNodeName[id]) {
     case "Program":
+    case "Return":
       return ProgramTreeConstants.jjtNodeName[id];
     case "Class":
+    case "Var":
     case "Main":
     case "Extension":
       return ProgramTreeConstants.jjtNodeName[id] + " (name: " + this.name + ")";
-    case "Method":
-    case "Var":
-      return ProgramTreeConstants.jjtNodeName[id] + " (name: " + this.name + " | type: " + this.type + ")";
     case "Type":
       return ProgramTreeConstants.jjtNodeName[id] + " (type: " + this.type + ")";
+    case "Term":
+      return ProgramTreeConstants.jjtNodeName[id] + " (value: " + this.node_value + ")";
+    case "Method":
+    case "Expression":
+      return ProgramTreeConstants.jjtNodeName[id] + " (name: " + this.name + " | value: " + this.node_value + ")";
     default:
       return ProgramTreeConstants.jjtNodeName[id];
     }
