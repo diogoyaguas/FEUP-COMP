@@ -70,8 +70,10 @@ class SimpleNode implements Node {
     switch(ProgramTreeConstants.jjtNodeName[id]) {
       case "Program":
         return ProgramTreeConstants.jjtNodeName[id];
-      case "Class": case "Method": case "Var": case "Main": case "Extension":
+      case "Class": case "Var": case "Main": case "Extension":
         return ProgramTreeConstants.jjtNodeName[id] + " (name: " + this.name + ")";
+      case "Method":
+        return ProgramTreeConstants.jjtNodeName[id] + " (name: " + this.name + " | type: " + this.type + ")";
       case "Type":
         return ProgramTreeConstants.jjtNodeName[id] + " (type: " + this.type + ")";
       default:

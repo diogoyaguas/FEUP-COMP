@@ -186,9 +186,9 @@ void MainDecl() #Main: {Token n2;} {
     }
 }
 
-void MethodDecl() #Method: {Token n3, n4;} {
+void MethodDecl() #Method: {Token n3, n4; String s1;} {
     try{
-        Type() n3=<ID> {jjtThis.name = n3.image;}     
+        s1 = Type() {jjtThis.type = s1;}    n3=<ID> {jjtThis.name = n3.image;}     
         <L_PARENTHESIS> 
             (Type() n4=<ID> {jjtThis.name = n4.image;} (<COMMA> Type() n4=<ID> {jjtThis.name = n4.image;})*)?
         <R_PARENTHESIS> 
@@ -207,9 +207,9 @@ void MethodDecl() #Method: {Token n3, n4;} {
 
 } 
 
-void Type() #Type: {Token t1;} {
+String Type() #void: {Token t1;} {
 
-    t1=<BOOLEAN>{jjtThis.type = t1.image;} | (t1=<INT>{jjtThis.type = t1.image;}(<L_BRACKET> <R_BRACKET>)?)
+    t1=<BOOLEAN>{return t1.image;} | (t1=<INT>{return t1.image;}(<L_BRACKET> <R_BRACKET>)?)
 
 
 }
@@ -220,12 +220,13 @@ void Statement() : {} {
         | <IF> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() <ELSE> Statement() 
         |    try{ 
                 <WHILE> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() 
-                    }catch(ParseException e) {
-        System.out.println("CAUGHT WHILE DECLARATION");
-        skip_to(R_PARENTHESIS);
+                } catch(ParseException e) {
+                    System.out.println("CAUGHT WHILE DECLARATION");
+                    skip_to(R_PARENTHESIS);
+                }
         | LOOKAHEAD(2) Expression() <SEMI_COLON> 
         | <ID> StatementAuxiliar()
-    }
+    
 
 }
 
