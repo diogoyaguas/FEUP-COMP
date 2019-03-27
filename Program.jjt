@@ -279,7 +279,11 @@ void Expression_Aux() #void: {} {
 
     (
         LOOKAHEAD(2)(
-        ((<MUL> | <DIV>) | <BINARY_OP> | (<ADD> | <SUB>)) Expression()
+    <MUL> Expression() #MUL(2)
+    | <DIV> Expression() #DIV(2)
+    | <BINARY_OP> Expression() #BINARY_OP(2)
+    | <ADD> Expression() #ADD(2)
+    | <SUB> Expression() #SUB(2)
     | <L_BRACKET> Expression() <R_BRACKET>
     | <PERIOD> Period_Aux()
         ) 
