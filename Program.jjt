@@ -215,15 +215,16 @@ void Type() #Type: {Token t1;} {
 }
 
 void Statement() : {} {
-    try{
+
         <L_CBRACKET> (Statement())* <R_CBRACKET> 
         | <IF> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() <ELSE> Statement() 
-        | <WHILE> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() 
+        |    try{ 
+                <WHILE> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement() 
+                    }catch(ParseException e) {
+        System.out.println("CAUGHT WHILE DECLARATION");
+        skip_to(R_PARENTHESIS);
         | LOOKAHEAD(2) Expression() <SEMI_COLON> 
         | <ID> StatementAuxiliar()
-    }catch(ParseException e) {
-        System.out.println("CAUGHT STATEMENT DECLARATION");
-        skip_to(SEMI_COLON);
     }
 
 }
