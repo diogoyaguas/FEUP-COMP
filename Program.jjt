@@ -205,7 +205,7 @@ void MethodDecl() #Method: {Token n3, n4; String s1;} {
 
 }
 
-void MethodArgs() #MethodArgs: {} {
+void MethodArgs() #void: {} {
     (Argument() (<COMMA> Argument())* )?
 }
 
