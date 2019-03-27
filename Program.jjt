@@ -155,9 +155,9 @@ void ClassDecl() #Class : {Token n;} {
 
 }
 
-void ExtendClass() #Extension : {Token n;} {
+void ExtendClass() #Extends : {Token n;} {
 
-    <EXTENDS> n = <ID> {jjtThis.name = n.image;}
+    <EXTENDS> n=<ID> {jjtThis.name = n.image;}
 
 }
 

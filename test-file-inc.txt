@@ -1,4 +1,4 @@
-class Fac {
+class Fac extends A{
 
     public int ComputeFac(int num){
         int num_aux ;
