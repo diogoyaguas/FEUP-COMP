@@ -99,6 +99,10 @@ public class SimpleNode implements Node {
     case "Main":
     case "Extends":
     case "Statement":
+      if(this.name != null)
+        return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + ")";
+      else 
+        return ProgramTreeConstants.jjtNodeName[id];
     case "Id":
       if(this.type != null)
         return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Type: " + this.type + ")";
