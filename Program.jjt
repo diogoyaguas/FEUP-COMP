@@ -281,7 +281,7 @@ void Expression() #void: {} {
     ( ExpressionTerminal()
    | <EXCLM_MARK> Expression()
    | <L_PARENTHESIS> Expression() <R_PARENTHESIS>
-   | <NEW> New_Aux() ) Expression_Aux()
+   | <NEW> #NEW New_Aux() ) Expression_Aux()
 
 }
 
