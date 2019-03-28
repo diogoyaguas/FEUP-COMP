@@ -245,7 +245,7 @@ void IfStatement() #IF: {} {
 
 }
 
-void ElseStatement() #ELSE: {} {
+void ElseStatement() #ELSE: {} { 
     
     <ELSE> Statement()
 
@@ -278,11 +278,15 @@ void NewNode(String s1) #NewNode: {} {
 
 void Expression() #void: {} {
 
+    Expression_AddSub() Expression_Aux()
+
+}
+
+void Expr()#void: {} {
     ( ExpressionTerminal()
    | <EXCLM_MARK> Expression()
    | <L_PARENTHESIS> Expression() <R_PARENTHESIS>
    | <NEW> #NEW New_Aux() ) Expression_Aux()
-
 }
 
 void ExpressionTerminal() #Term: {Token t1; String s1;} {
@@ -298,19 +302,38 @@ void Expression_Aux() #void: {} {
 
     (
         LOOKAHEAD(2)(
-    <MUL> Expression() #MUL(2)
-    | <DIV> Expression() #DIV(2)
-    | <AND> Expression() #AND(2)
-    | <LESS_THAN> Expression() #LESS_THAN(2)
-    | <ADD> Expression() #ADD(2)
-    | <SUB> Expression() #SUB(2)
-    | <L_BRACKET> Expression() <R_BRACKET>
-    | <PERIOD> Period_Aux()
+            <L_BRACKET> Expression() <R_BRACKET>
+            | <PERIOD> Period_Aux()
         ) 
         Expression_Aux()
     )?
 
 }
+
+void Expression_AddSub() #void: {} {
+    Expression_MulDiv()
+    (LOOKAHEAD(2)
+        (<ADD> Expression_MulDiv() #ADD(2)
+        | <SUB> Expression_MulDiv() #SUB(2))
+    )?
+}
+
+void Expression_MulDiv() #void: {} {
+    Expression_BinOps()
+    (LOOKAHEAD(2)
+        (<MUL> Expression_BinOps() #MUL(2)
+        | <DIV> Expression_BinOps() #DIV(2))
+    )?
+}
+
+void Expression_BinOps() #void: {} {
+    Expr()
+    (LOOKAHEAD(2)
+        (<AND> Expr() #AND(2)
+        | <LESS_THAN> Expr() #LESS_THAN(2))
+    )?
+}
+
 
 void Period_Aux() #void : {} {
 
