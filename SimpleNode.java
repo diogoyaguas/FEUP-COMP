@@ -94,6 +94,8 @@ public class SimpleNode implements Node {
     case "Return":
       return ProgramTreeConstants.jjtNodeName[id];
     case "StatementAux":
+    case "PeriodAux":
+    case "NewAux":
       return this.name;
     case "NewNode":
       return "Identifier (Name: " + this.name + ")";
@@ -101,6 +103,7 @@ public class SimpleNode implements Node {
     case "Main":
     case "Extends":
     case "Statement":
+    case "Aux":
       if(this.name != null)
         return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + ")";
       else 

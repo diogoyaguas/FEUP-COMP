@@ -259,8 +259,6 @@ String Identifier() #void : {Token t1;} {
     t1=<ID> {return t1.image;}
 }
 
-
-
 void StatementAuxiliar(String s1) #StatementAux: {Token t1;} {
     
     (NewNode(s1) | ArrayAssign(s1)) t1=<EQUAL> {jjtThis.name = "ASSIGN";} Expression() <SEMI_COLON>
@@ -282,34 +280,6 @@ void Expression() #void: {} {
 
 }
 
-void Expr()#void: {} {
-    ( ExpressionTerminal()
-   | <EXCLM_MARK> Expression()
-   | <L_PARENTHESIS> Expression() <R_PARENTHESIS>
-   | <NEW> #NEW New_Aux() ) Expression_Aux()
-}
-
-void ExpressionTerminal() #Term: {Token t1; String s1;} {
-
-    s1 = IntegerLiteral() {jjtThis.node_value = s1;}
-    | t1=<TRUE> {jjtThis.node_value = t1.image;}
-    | t1=<FALSE> {jjtThis.node_value = t1.image;}
-    | t1=<ID> {jjtThis.node_value = t1.image;}
-    | t1=<THIS> {jjtThis.node_value = t1.image;}
-}
-
-void Expression_Aux() #void: {} {
-
-    (
-        LOOKAHEAD(2)(
-            <L_BRACKET> Expression() <R_BRACKET>
-            | <PERIOD> Period_Aux()
-        ) 
-        Expression_Aux()
-    )?
-
-}
-
 void Expression_AddSub() #void: {} {
     Expression_MulDiv()
     (LOOKAHEAD(2)
@@ -327,24 +297,48 @@ void Expression_MulDiv() #void: {} {
 }
 
 void Expression_BinOps() #void: {} {
-    Expr()
+    Expression_Aux()
     (LOOKAHEAD(2)
-        (<AND> Expr() #AND(2)
-        | <LESS_THAN> Expr() #LESS_THAN(2))
+        (<AND> Expression_Aux() #AND(2)
+        | <LESS_THAN> Expression_Aux() #LESS_THAN(2))
     )?
 }
 
+void Expression_Aux() #void: {Token t1;} {
 
-void Period_Aux() #void : {} {
+    (
+        LOOKAHEAD(2)(
+            ExpressionTerminal()
+            | <EXCLM_MARK> Expression() #EXCLAMATION_MARK(1)
+            | <L_PARENTHESIS> Expression() <R_PARENTHESIS>
+            | <NEW> New_Aux() #NEW(1)
+            | <L_BRACKET> Expression() <R_BRACKET>
+            | <PERIOD> Period_Aux() #PERIOD(1)
+        ) 
+        Expression_Aux()
+    )?
 
-    <LENGTH>
-    | <ID> <L_PARENTHESIS> (Expression() (<COMMA> Expression())*)? <R_PARENTHESIS>
 }
 
-void New_Aux() #void : {} {
+void ExpressionTerminal() #Term: {Token t1; String s1;} {
 
-    <INT> <L_BRACKET> Expression() <R_BRACKET>
-    | <ID> <L_PARENTHESIS> <R_PARENTHESIS>
+    s1 = IntegerLiteral() {jjtThis.node_value = s1;}
+    | t1=<TRUE> {jjtThis.node_value = t1.image;}
+    | t1=<FALSE> {jjtThis.node_value = t1.image;}
+    | t1=<ID> {jjtThis.node_value = t1.image;}
+    | t1=<THIS> {jjtThis.node_value = t1.image;}
+}
+
+void Period_Aux() #PeriodAux : {Token t1;} {
+
+    <LENGTH> {jjtThis.name = "length";}
+    | t1=<ID> {jjtThis.name = t1.image;} <L_PARENTHESIS> Expression() (<COMMA> Expression())* <R_PARENTHESIS>
+}
+
+void New_Aux() #NewAux : {Token t1;} {
+
+    <INT> {jjtThis.name = "int[]";} <L_BRACKET> Expression() <R_BRACKET>
+    | t1=<ID> {jjtThis.name = t1.image;} <L_PARENTHESIS> <R_PARENTHESIS>
 }
 
 String IntegerLiteral() #void : {Token t1;} {
