@@ -224,7 +224,7 @@ String Type() #void: {Token t1;} {
 
 }
 
-void Statement() #void : {String s1;} {
+void Statement() #void : {} {
 
         <L_CBRACKET> (Statement())* <R_CBRACKET> 
         | IfStatement() ElseStatement()
@@ -235,7 +235,7 @@ void Statement() #void : {String s1;} {
                     skip_to(R_PARENTHESIS);
                 }
         | LOOKAHEAD(2) Expression() <SEMI_COLON> 
-        | s1=Identifier() StatementAuxiliar(s1)
+        | StatementAuxiliar()
     
 }
 
@@ -255,29 +255,22 @@ void WhileStatement() #WHILE: {} {
     <WHILE> <L_PARENTHESIS> Expression() <R_PARENTHESIS> Statement()
 }
 
-String Identifier() #void : {Token t1;} {
-    t1=<ID> {return t1.image;}
-}
-
-void StatementAuxiliar(String s1) #StatementAux: {Token t1;} {
+void StatementAuxiliar() #ASSIGN: {Token t1;} {
     
-    (NewNode(s1) | ArrayAssign(s1)) t1=<EQUAL> {jjtThis.name = "ASSIGN";} Expression() <SEMI_COLON>
+    Identifier() <EQUAL> Expression() <SEMI_COLON>
 
 }
 
-void ArrayAssign(String s1) #ArrayAssign: {} {
-    {jjtThis.name = s1;} <L_BRACKET> Expression() <R_BRACKET>
+void Identifier() #Identifier : {Token t1;} {
+    t1=<ID> {jjtThis.node_value = t1.image;} (<L_BRACKET> Expression() <R_BRACKET> {jjtThis.name = jjtThis.name + "[]";})?
 }
 
-void NewNode(String s1) #NewNode: {} {
-    {jjtThis.name = s1;}
+void ArrayAssign() #ArrayAssign: {} {
+    <L_BRACKET> Expression() <R_BRACKET>
 }
-
 
 void Expression() #void: {} {
-
     Expression_AddSub() Expression_Aux()
-
 }
 
 void Expression_AddSub() #void: {} {
@@ -311,9 +304,9 @@ void Expression_Aux() #void: {Token t1;} {
             ExpressionTerminal()
             | <EXCLM_MARK> Expression() #EXCLAMATION_MARK(1)
             | <L_PARENTHESIS> Expression() <R_PARENTHESIS>
-            | <NEW> New_Aux() #NEW(1)
             | <L_BRACKET> Expression() <R_BRACKET>
-            | <PERIOD> Period_Aux() #PERIOD(1)
+            | <PERIOD> Period_Aux() #PERIOD(2)
+            | <NEW> New_Aux() #NEW(1)
         ) 
         Expression_Aux()
     )?

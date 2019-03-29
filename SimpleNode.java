@@ -92,8 +92,8 @@ public class SimpleNode implements Node {
     switch (ProgramTreeConstants.jjtNodeName[id]) {
     case "Program":
     case "Return":
-      return ProgramTreeConstants.jjtNodeName[id];
     case "StatementAux":
+      return ProgramTreeConstants.jjtNodeName[id];
     case "PeriodAux":
     case "NewAux":
       return this.name;
@@ -115,6 +115,7 @@ public class SimpleNode implements Node {
         return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + ")";
     case "Type":
       return ProgramTreeConstants.jjtNodeName[id] + " (Type: " + this.type + ")";
+    case "Identifier":
     case "Term":
       return ProgramTreeConstants.jjtNodeName[id] + " (Value: " + this.node_value + ")";
     case "Argument":
