@@ -1,39 +1,111 @@
 
-ASTClassDecl\.class
+ASTADD\.class
 
-ASTClassDecl\.java
+ASTADD\.java
 
-ASTExpression\.class
+ASTAND\.class
 
-ASTExpression\.java
+ASTAND\.java
 
-ASTMainDecl\.class
+ASTArgument\.class
 
-ASTMainDecl\.java
+ASTArgument\.java
 
-ASTMethodDecl\.class
+ASTArrayAssign\.class
 
-ASTMethodDecl\.java
+ASTArrayAssign\.java
+
+ASTASSIGN\.class
+
+ASTASSIGN\.java
+
+ASTClass\.class
+
+ASTClass\.java
+
+ASTDIV\.class
+
+ASTDIV\.java
+
+ASTELSE\.class
+
+ASTELSE\.java
+
+ASTEXCLAMATION_MARK\.class
+
+ASTEXCLAMATION_MARK\.java
+
+ASTExtends\.class
+
+ASTExtends\.java
+
+ASTIdentifier\.class
+
+ASTIdentifier\.java
+
+ASTIF\.class
+
+ASTIF\.java
+
+ASTLESS_THAN\.class
+
+ASTLESS_THAN\.java
+
+ASTMain\.class
+
+ASTMain\.java
+
+ASTMethod\.class
+
+ASTMethod\.java
+
+ASTMUL\.class
+
+ASTMUL\.java
+
+ASTNEW\.class
+
+ASTNEW\.java
+
+ASTNewAux\.class
+
+ASTNewAux\.java
+
+ASTPERIOD\.class
+
+ASTPERIOD\.java
+
+ASTPeriodAux\.class
+
+ASTPeriodAux\.java
 
 ASTProgram\.class
 
 ASTProgram\.java
 
-ASTStatement\.class
+ASTRETURN\.class
 
-ASTStatement\.java
+ASTRETURN\.java
 
-ASTStatementAuxiliar\.class
+ASTskip_to\.class
 
-ASTStatementAuxiliar\.java
+ASTskip_to\.java
 
-ASTType\.class
+ASTSUB\.class
 
-ASTType\.java
+ASTSUB\.java
 
-ASTVarDecl\.class
+ASTTerm\.class
 
-ASTVarDecl\.java
+ASTTerm\.java
+
+ASTVar\.class
+
+ASTVar\.java
+
+ASTWHILE\.class
+
+ASTWHILE\.java
 
 JJTProgramState\.class
 
@@ -53,6 +125,12 @@ Program\.java
 
 Program\.jj
 
+Program\$1\.class
+
+Program\$JJCalls\.class
+
+Program\$LookaheadSuccess\.class
+
 ProgramConstants\.class
 
 ProgramConstants\.java
@@ -71,8 +149,6 @@ SimpleCharStream\.java
 
 SimpleNode\.class
 
-SimpleNode\.java
-
 Token\.class
 
 Token\.java
@@ -81,150 +157,4 @@ TokenMgrError\.class
 
 TokenMgrError\.java
 
-ASTExpression_Aux\.java
-
-ASTIntegerLiteral\.java
-
-ASTNew_Aux\.java
-
-ASTPeriod_Aux\.java
-
-ASTADD\.java
-
-ASTDIV\.java
-
-ASTMUL\.java
-
-ASTskip_to\.java
-
-ASTSUB\.java
-
-ASTADD\.class
-
-ASTClass\.class
-
-ASTDIV\.class
-
-ASTExpression_Aux\.class
-
-ASTExtension\.class
-
-ASTExtension\.java
-
-ASTIntegerLiteral\.class
-
-ASTMain\.class
-
-ASTMethod\.class
-
-ASTMUL\.class
-
-ASTNew_Aux\.class
-
-ASTPeriod_Aux\.class
-
-ASTskip_to\.class
-
-ASTSUB\.class
-
-ASTVar\.class
-
-Program\$1\.class
-
-Program\$JJCalls\.class
-
-Program\$LookaheadSuccess\.class
-
-ASTExtends\.class
-
-ASTExtends\.java
-
-ASTExpr\.class
-
-ASTExpr\.java
-
-ASTReturn\.class
-
-ASTReturn\.java
-
-ASTTerm\.class
-
-ASTTerm\.java
-
-ASTArgument\.class
-
-ASTArgument\.java
-
-ASTMethodArgs\.class
-
-ASTMethodArgs\.java
-
-ASTAND\.class
-
-ASTAND\.java
-
-ASTELSE\.class
-
-ASTELSE\.java
-
-ASTId\.class
-
-ASTId\.java
-
-ASTIdentifier\.class
-
-ASTIdentifier\.java
-
-ASTIF\.class
-
-ASTIF\.java
-
-ASTLESS_THAN\.class
-
-ASTLESS_THAN\.java
-
-ASTNewNode\.class
-
-ASTNewNode\.java
-
-ASTStatementAux\.class
-
-ASTStatementAux\.java
-
-ASTWHILE\.class
-
-ASTWHILE\.java
-
-ASTArrayAssign\.class
-
-ASTArrayAssign\.java
-
-ASTBINARY_OP\.class
-
-ASTAux\.class
-
-ASTAux\.java
-
-ASTEXCLAMATION_MARK\.class
-
-ASTEXCLAMATION_MARK\.java
-
-ASTEXCLAMATION\.class
-
-ASTEXCLAMATION\.java
-
-ASTNEW\.class
-
-ASTNEW\.java
-
-ASTNewAux\.class
-
-ASTNewAux\.java
-
-ASTPERIOD\.class
-
-ASTPERIOD\.java
-
-ASTPeriodAux\.class
-
-ASTPeriodAux\.java
+ASTBINARY_OP\.java
