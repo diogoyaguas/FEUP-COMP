@@ -1,10 +1,10 @@
 package src.semantic;
 
 import java.util.Vector;
-import src.semantic.*;
-import src.utils.*;
+import src.semantic.Symbol;
+import src.utils.Pair;
 
-class MethodSymbol extends Symbol {
+public class MethodSymbol extends Symbol {
     
     /**
      * Pair = <name, type>
@@ -15,4 +15,16 @@ class MethodSymbol extends Symbol {
         super(return_type, true);
         this.parameters = params;
     }
-}
+
+    public Vector<Pair> getParameters() {
+        return this.parameters;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof MethodSymbol)) return false;
+
+        MethodSymbol method = (MethodSymbol) o;
+        return this.getType().equals(method.getType()) && this.getParameters().equals(method.getParameters());
+    }
+} 

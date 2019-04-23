@@ -1,6 +1,6 @@
 package src.utils;
 
-class Pair {
+public class Pair {
 
     protected Object key;
     protected Object value;

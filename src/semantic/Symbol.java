@@ -1,6 +1,6 @@
 package src.semantic;
 
-class Symbol {
+public class Symbol {
 
     public static enum Type {
         INT, INT_ARRAY, BOOLEAN, VOID
