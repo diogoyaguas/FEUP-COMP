@@ -1,3 +1,5 @@
+package src.semantic;
+
 import java.util.HashMap;
 
 class SymbolTable {
@@ -10,10 +12,6 @@ class SymbolTable {
         this.symbols = new HashMap<>();
     }
 
-    public boolean containsSymbol(String name) {
-        return this.symbols.containsKey(name);
-    }
-
     public boolean addSymbol(String name, Symbol.Type type, String value, boolean init) {
         Symbol new_s = new Symbol(type, value, init);
 
@@ -24,6 +22,19 @@ class SymbolTable {
         return false;
     }
 
+    public Symbol getSymbolWithName(String name) {
+        if(hasSymbolWithName(name))
+            return symbols.get(name);
+
+        return null;
+    }
+
+    public boolean hasSymbolWithName(String name){
+        return symbols.containsKey(name);
+    }
+
+
+    /* GETTERS AND SETTERS*/    
     public SymbolTable getParentTable() {
         return this.parent_table;
     }

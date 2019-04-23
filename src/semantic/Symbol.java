@@ -16,6 +16,11 @@ class Symbol {
         this.initialized = initialized;
     }
 
+    public Symbol(Type type, boolean initialized){
+        this.type = type;
+        this.initialized = initialized;
+    }
+
     public Type getType() {
         return this.type;
     }    
