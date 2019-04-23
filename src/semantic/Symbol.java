@@ -3,12 +3,12 @@ package src.semantic;
 class Symbol {
 
     public static enum Type {
-        INT, INT_ARRAY, BOOLEAN, STRING
+        INT, INT_ARRAY, BOOLEAN, VOID
     }
 
-    private Type type;
-    private String value;
-    private boolean initialized;
+    protected Type type;
+    protected String value;
+    protected boolean initialized;
     
     public Symbol(Type type, String value, boolean initialized) {
         this.type = type;
