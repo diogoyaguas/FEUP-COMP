@@ -29,8 +29,7 @@ public
     if (createInputStream() == false)
       return;
 
-    // myProg = new Program(System.in);
-    SimpleNode root = myProg.Program(); // devolve referencia para o nó da raiz da árvore
+    ASTProgram root = myProg.Program(); // devolve referencia para o nó da raiz da árvore
     root.dump("");
   }
 
@@ -124,7 +123,7 @@ TOKEN : {
 |   <BINARY : "0"["b","B"](["0"-"1"])+ >
 }
 
-SimpleNode Program() : {} {
+ASTProgram Program() : {} {
   ClassDecl()<EOF> { return jjtThis; }
 }
 
