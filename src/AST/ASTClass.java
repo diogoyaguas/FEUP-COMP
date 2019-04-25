@@ -16,6 +16,14 @@ class ASTClass extends SimpleNode {
     this.symbols = getNodeSymbolTable();
     this.methods = getNodeMethodTable();
 
+    Node[] children = getChildren();
+
+    // for(Node child : children){
+    //   if(((SimpleNode) child).getNodeString().equals("Method"))
+    //     return ((ASTMethod) child).addNewMethod();
+    //     if(((SimpleNode) child).getNodeString().equals("Declaration"))
+    //       return ((ASTDecla) child).analyse();  
+    // }Need to solve this issue because there is no Declaration Node
     //TODO Iterate children to get both the variable declaractions and the method signatures
     return true;
   }

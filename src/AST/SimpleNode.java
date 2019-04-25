@@ -205,6 +205,10 @@ public class SimpleNode implements Node {
   public MethodTable getMethods() {
     return this.methods;
   }
+
+  public Node[] getChildren(){
+    return this.children;
+  }
 }
 
 /*

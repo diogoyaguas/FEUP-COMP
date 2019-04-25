@@ -12,5 +12,11 @@ class ASTMethod extends SimpleNode {
     super(p, id);
   }
 
+  public boolean addNewMethod(){
+
+    //TODO Create this method to add to the method table
+    return true;
+  }
+
 }
 /* JavaCC - OriginalChecksum=41c3eccd1d265e4c7c0a6c88f3575598 (do not edit this line) */
