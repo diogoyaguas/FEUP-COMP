@@ -2,6 +2,7 @@ package src.semantic;
 
 import java.util.HashMap;
 import java.util.Vector;
+import src.utils.*;
 
 public class MethodTable {
 

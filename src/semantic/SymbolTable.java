@@ -2,7 +2,7 @@ package src.semantic;
 
 import java.util.HashMap;
 
-class SymbolTable {
+public class SymbolTable {
 
     private SymbolTable parent_table;
     private HashMap<String, Symbol> symbols;
