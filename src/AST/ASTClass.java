@@ -2,31 +2,46 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-public
-class ASTClass extends SimpleNode {
-  public ASTClass(int id) {
-    super(id, true);
-  }
+public class ASTClass extends SimpleNode {
+	public ASTClass(int id) {
+		super(id, true);
+	}
 
-  public ASTClass(Program p, int id) {
-    super(p, id, true);
-  }
+	public ASTClass(Program p, int id) {
+		super(p, id, true);
+	}
 
-  public boolean analyse(){
-    this.symbols = getNodeSymbolTable();
-    this.methods = getNodeMethodTable();
+	public boolean analyse() {
+		this.symbols = getNodeSymbolTable();
+		this.methods = getNodeMethodTable();
+		Node[] children = getChildren();
 
-    Node[] children = getChildren();
+		boolean success = true;
 
-    // for(Node child : children){
-    //   if(((SimpleNode) child).getNodeString().equals("Method"))
-    //     return ((ASTMethod) child).addNewMethod();
-    //     if(((SimpleNode) child).getNodeString().equals("Declaration"))
-    //       return ((ASTDecla) child).analyse();  
-    // }Need to solve this issue because there is no Declaration Node
-    //TODO Iterate children to get both the variable declaractions and the method signatures
-    return true;
-  }
+		if (children == null)
+			return false;
+
+		for (Node child : children) {
+
+			if (((SimpleNode) child).getNodeString().equals("Method"))
+				success = ((ASTMethod) child).addNewMethod();
+
+			else if (((SimpleNode) child).getNodeString().equals("Var"))
+				success = ((ASTVar) child).analyse();
+		}
+
+		for (Node child : children) {
+
+			if (((SimpleNode) child).getNodeString().equals("Method"))
+				success = ((ASTVar) child).analyse();
+
+		}
+
+		return success;
+	}
 
 }
-/* JavaCC - OriginalChecksum=8a9dc2db515203387b264bd6aa6bee4b (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=8a9dc2db515203387b264bd6aa6bee4b (do not edit this
+ * line)
+ */

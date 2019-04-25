@@ -7,208 +7,238 @@ import src.semantic.*;
 
 public class SimpleNode implements Node {
 
-  protected Node parent;
-  protected Node[] children;
-  protected int id;
-  protected Object value;
-  protected Program parser;
-  protected Token firstToken;
-  protected Token lastToken;
+    protected Node parent;
+    protected Node[] children;
+    protected int id;
+    protected Object value;
+    protected Program parser;
+    protected Token firstToken;
+    protected Token lastToken;
 
-  protected String node_value;
-  protected String name;
-  protected String type;
+    protected String node_value;
+    protected String name;
+    protected String type;
 
-  protected boolean has_scope;
-  protected SymbolTable symbols;
-  protected MethodTable methods;
+    protected boolean has_scope;
+    protected SymbolTable symbols;
+    protected MethodTable methods;
 
-  public SimpleNode(int i) {
-    id = i;
-    this.has_scope = false;
-  }
-
-  public SimpleNode(int i, boolean has_scope) {
-    this(i);
-    this.has_scope = has_scope;
-  }
-
-  public SimpleNode(Program p, int i) {
-    this(i);
-    parser = p;
-  }
-
-  public SimpleNode(Program p, int i, boolean has_scope) {
-    this(i);
-    parser = p;
-    this.has_scope = has_scope;
-  }
-
-  public SymbolTable getNodeSymbolTable() {
-    if (parent == null)
-      return null;
-
-    else if (this.has_scope)
-      return new SymbolTable(((SimpleNode) this.parent).getSymbols());
-    else
-      return ((SimpleNode) this.parent).getSymbols();
-
-  }
-
-  public MethodTable getNodeMethodTable() {
-    if (parent == null)
-      return null;
-
-    else if (this.has_scope)
-      return new MethodTable();
-    else
-      return ((SimpleNode) this.parent).getMethods();
-  }
-
-  public void jjtOpen() {
-  }
-
-  public void jjtClose() {
-  }
-
-  public void jjtSetParent(Node n) {
-    parent = n;
-  }
-
-  public Node jjtGetParent() {
-    return parent;
-  }
-
-  public void jjtAddChild(Node n, int i) {
-    if (children == null) {
-      children = new Node[i + 1];
-    } else if (i >= children.length) {
-      Node c[] = new Node[i + 1];
-      System.arraycopy(children, 0, c, 0, children.length);
-      children = c;
+    public SimpleNode(int i) {
+        id = i;
+        this.has_scope = false;
     }
-    children[i] = n;
-  }
 
-  public Node jjtGetChild(int i) {
-    return children[i];
-  }
-
-  public int jjtGetNumChildren() {
-    return (children == null) ? 0 : children.length;
-  }
-
-  public void jjtSetValue(Object value) {
-    this.value = value;
-  }
-
-  public Object jjtGetValue() {
-    return value;
-  }
-
-  public Token jjtGetFirstToken() {
-    return firstToken;
-  }
-
-  public void jjtSetFirstToken(Token token) {
-    this.firstToken = token;
-  }
-
-  public Token jjtGetLastToken() {
-    return lastToken;
-  }
-
-  public void jjtSetLastToken(Token token) {
-    this.lastToken = token;
-  }
-
-  /*
-   * You can override these two methods in subclasses of SimpleNode to customize
-   * the way the node appears when the tree is dumped. If your output uses more
-   * than one line you should override toString(String), otherwise overriding
-   * toString() is probably all you need to do.
-   */
-
-  public String toString() {
-    switch (ProgramTreeConstants.jjtNodeName[id]) {
-    case "Program":
-    case "Return":
-    case "StatementAux":
-      return ProgramTreeConstants.jjtNodeName[id];
-    case "PeriodAux":
-    case "NewAux":
-      return this.name;
-    case "NewNode":
-      return "Identifier (Name: " + this.name + ")";
-    case "Class":
-    case "Main":
-    case "Extends":
-    case "Statement":
-    case "Aux":
-      if (this.name != null)
-        return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + ")";
-      else
-        return ProgramTreeConstants.jjtNodeName[id];
-    case "Id":
-      if (this.type != null)
-        return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Type: " + this.type + ")";
-      else
-        return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + ")";
-    case "Type":
-      return ProgramTreeConstants.jjtNodeName[id] + " (Type: " + this.type + ")";
-    case "Identifier":
-    case "Term":
-      return ProgramTreeConstants.jjtNodeName[id] + " (Value: " + this.node_value + ")";
-    case "Argument":
-    case "Var":
-      return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Type: " + this.type + ")";
-    case "Method":
-      return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Return Type: " + this.type + ")";
-    default:
-      return ProgramTreeConstants.jjtNodeName[id];
+    public SimpleNode(int i, boolean has_scope) {
+        this(i);
+        this.has_scope = has_scope;
     }
-  }
 
-  public String toString(String prefix) {
-    return prefix + toString();
-  }
+    public SimpleNode(Program p, int i) {
+        this(i);
+        parser = p;
+    }
 
-  /*
-   * Override this method if you want to customize how the node dumps out its
-   * children.
-   */
+    public SimpleNode(Program p, int i, boolean has_scope) {
+        this(i);
+        parser = p;
+        this.has_scope = has_scope;
+    }
 
-  public void dump(String prefix) {
-    System.out.println(toString(prefix));
-    if (children != null) {
-      for (int i = 0; i < children.length; ++i) {
-        SimpleNode n = (SimpleNode) children[i];
-        if (n != null) {
-          n.dump(prefix + " ");
+    public SymbolTable getNodeSymbolTable() {
+        if (parent == null)
+            return null;
+
+        else if (this.has_scope)
+            return new SymbolTable(((SimpleNode) this.parent).getSymbols());
+        else
+            return ((SimpleNode) this.parent).getSymbols();
+
+    }
+
+    public MethodTable getNodeMethodTable() {
+        if (parent == null)
+            return null;
+
+        else if (this.has_scope)
+            return new MethodTable();
+        else
+            return ((SimpleNode) this.parent).getMethods();
+    }
+
+    public boolean analyse() {
+        return true;
+    }
+
+    public void jjtOpen() {
+    }
+
+    public void jjtClose() {
+    }
+
+    public void jjtSetParent(Node n) {
+        parent = n;
+    }
+
+    public Node jjtGetParent() {
+        return parent;
+    }
+
+    public void jjtAddChild(Node n, int i) {
+        if (children == null) {
+            children = new Node[i + 1];
+        } else if (i >= children.length) {
+            Node c[] = new Node[i + 1];
+            System.arraycopy(children, 0, c, 0, children.length);
+            children = c;
         }
-      }
+        children[i] = n;
     }
-  }
 
-  public int getId() {
-    return id;
-  }
+    public Node jjtGetChild(int i) {
+        return children[i];
+    }
 
-  public String getNodeString() {
-    return ProgramTreeConstants.jjtNodeName[this.id];
-  }
+    public int jjtGetNumChildren() {
+        return (children == null) ? 0 : children.length;
+    }
 
-  public SymbolTable getSymbols() {
-    return this.symbols;
-  }
+    public void jjtSetValue(Object value) {
+        this.value = value;
+    }
 
-  public MethodTable getMethods() {
-    return this.methods;
-  }
+    public Object jjtGetValue() {
+        return value;
+    }
 
-  public Node[] getChildren(){
-    return this.children;
-  }
+    public Token jjtGetFirstToken() {
+        return firstToken;
+    }
+
+    public void jjtSetFirstToken(Token token) {
+        this.firstToken = token;
+    }
+
+    public Token jjtGetLastToken() {
+        return lastToken;
+    }
+
+    public void jjtSetLastToken(Token token) {
+        this.lastToken = token;
+    }
+
+    /*
+     * You can override these two methods in subclasses of SimpleNode to customize
+     * the way the node appears when the tree is dumped. If your output uses more
+     * than one line you should override toString(String), otherwise overriding
+     * toString() is probably all you need to do.
+     */
+
+    public String toString() {
+        switch (ProgramTreeConstants.jjtNodeName[id]) {
+        case "Program":
+        case "Return":
+        case "StatementAux":
+            return ProgramTreeConstants.jjtNodeName[id];
+        case "PeriodAux":
+        case "NewAux":
+            return this.name;
+        case "NewNode":
+            return "Identifier (Name: " + this.name + ")";
+        case "Class":
+        case "Main":
+        case "Extends":
+        case "Statement":
+        case "Aux":
+            if (this.name != null)
+                return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + ")";
+            else
+                return ProgramTreeConstants.jjtNodeName[id];
+        case "Id":
+            if (this.type != null)
+                return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Type: " + this.type + ")";
+            else
+                return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + ")";
+        case "Type":
+            return ProgramTreeConstants.jjtNodeName[id] + " (Type: " + this.type + ")";
+        case "Identifier":
+        case "Term":
+            return ProgramTreeConstants.jjtNodeName[id] + " (Value: " + this.node_value + ")";
+        case "Argument":
+        case "Var":
+            return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Type: " + this.type + ")";
+        case "Method":
+            return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Return Type: " + this.type + ")";
+        default:
+            return ProgramTreeConstants.jjtNodeName[id];
+        }
+    }
+
+    public String toString(String prefix) {
+        return prefix + toString();
+    }
+
+    /*
+     * Override this method if you want to customize how the node dumps out its
+     * children.
+     */
+
+    public void dump(String prefix) {
+        System.out.println(toString(prefix));
+        if (children != null) {
+            for (int i = 0; i < children.length; ++i) {
+                SimpleNode n = (SimpleNode) children[i];
+                if (n != null) {
+                    n.dump(prefix + " ");
+                }
+            }
+        }
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getNodeString() {
+        return ProgramTreeConstants.jjtNodeName[this.id];
+    }
+
+    public SymbolTable getSymbols() {
+        return this.symbols;
+    }
+
+    public MethodTable getMethods() {
+        return this.methods;
+    }
+
+    public Node[] getChildren() {
+        return this.children;
+    }
+
+    public String getName(){
+        return this.name;
+    }
+
+    public String getNodeValue(){
+        return this.node_value;
+    }
+
+    public Symbol.Type getReturnType(){
+        
+        switch(this.type) {
+            case "int":
+                return Symbol.Type.INT;
+            case "boolean":
+                return Symbol.Type.BOOLEAN;
+            case "int[]":
+                return Symbol.Type.INT_ARRAY;
+            default:
+                return Symbol.Type.VOID;           
+        }
+    }
+
+    public boolean isTypeValidForVar(Symbol.Type type){
+        return !type.equals(Symbol.Type.VOID);
+    }
 }
 
 /*

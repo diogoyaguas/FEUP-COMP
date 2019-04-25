@@ -2,15 +2,39 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-public
-class ASTVar extends SimpleNode {
-  public ASTVar(int id) {
-    super(id);
-  }
+import src.semantic.*;
 
-  public ASTVar(Program p, int id) {
-    super(p, id);
-  }
+public class ASTVar extends SimpleNode {
+    public ASTVar(int id) {
+        super(id);
+    }
+
+    public ASTVar(Program p, int id) {
+        super(p, id);
+    }
+
+    public boolean analyse() {
+
+        Node[] children;
+
+        if ((children = this.getChildren()) == null)
+            return false;
+
+        Symbol.Type var_type = ((SimpleNode) children[0]).getReturnType();
+
+        boolean success = true;
+        symbols = getNodeSymbolTable();
+
+        //TODO
+        // - Verify if variable with same name already exists (both local and globaly)
+        // - Verify if type is valid isTypeValidForVar()
+        // - Store new variable in symbol table
+
+        return success;
+    }
 
 }
-/* JavaCC - OriginalChecksum=60c42965936a814821d35643cdb9ea6d (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=60c42965936a814821d35643cdb9ea6d (do not edit this
+ * line)
+ */
