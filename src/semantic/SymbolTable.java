@@ -33,6 +33,18 @@ public class SymbolTable {
         return symbols.containsKey(name);
     }
 
+    public void printSymbolTable(){
+
+        Symbol symbol;
+
+        System.out.println("*** SYMBOL TABLE  ***");
+
+        for(String symbol_name : this.symbols.keySet()){
+            symbol = this.symbols.get(symbol_name);
+            System.out.println("NAME: " + symbol_name + "TYPE: " + symbol.getType());
+        }
+    }
+
 
     /* GETTERS AND SETTERS*/    
     public SymbolTable getParentTable() {
