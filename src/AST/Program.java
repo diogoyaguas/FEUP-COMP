@@ -8,6 +8,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import src.codegeneration.CodeGenerator;
+
 public
 class Program/*@bgen(jjtree)*/implements ProgramTreeConstants, ProgramConstants {/*@bgen(jjtree)*/
   protected static JJTProgramState jjtree = new JJTProgramState();private static Program myProg;
@@ -26,13 +28,21 @@ public
       return;
 
     ASTProgram root = myProg.Program(); // devolve referencia para o nó da raiz da árvore
-    root.dump("");
-
+    //root.dump("");
+/*
     if(!root.analyse())
         System.out.println("We have sematic error(s) !! Be aware !!");
 
     System.out.println("\n *********** SYMBOLS *********** \n");
-    root.printSymbolsTable("SYMBOL TABLE: ");;
+    root.printSymbolsTable("SYMBOL TABLE: ");
+    */
+
+    try {
+      CodeGenerator generator = new CodeGenerator(root, "test-file.j");
+	    generator.generateCode();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
 public
