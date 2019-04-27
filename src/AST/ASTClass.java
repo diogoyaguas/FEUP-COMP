@@ -33,7 +33,7 @@ public class ASTClass extends SimpleNode {
 		for (Node child : children) {
 
 			if (((SimpleNode) child).getNodeString().equals("Method"))
-				success = ((ASTVar) child).analyse();
+				success = ((ASTMethod) child).analyse();
 
 		}
 

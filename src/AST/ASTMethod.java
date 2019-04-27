@@ -2,21 +2,45 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-public
-class ASTMethod extends SimpleNode {
-  public ASTMethod(int id) {
-    super(id);
-  }
+public class ASTMethod extends SimpleNode {
+    public ASTMethod(int id) {
+        super(id, true);
+    }
 
-  public ASTMethod(Program p, int id) {
-    super(p, id);
-  }
+    public ASTMethod(Program p, int id) {
+        super(p, id, true);
+    }
 
-  public boolean addNewMethod(){
+    public boolean addNewMethod() {
 
-    //TODO Create this method to add to the method table
-    return true;
-  }
+        this.symbols = getNodeSymbolTable();
+        this.methods = getNodeMethodTable();
+
+        // TODO
+        // Make proper verifications
+        // Create this method to add to the method table
+
+        return true;
+    }
+
+    public boolean analyse() {
+
+        Node[] children = getChildren();
+
+        boolean success = true;
+        
+        if (children == null)
+            return false;
+
+        for(Node child : children){
+            success = ((SimpleNode) child).analyse();
+        }
+
+        return success;
+    }
 
 }
-/* JavaCC - OriginalChecksum=41c3eccd1d265e4c7c0a6c88f3575598 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=41c3eccd1d265e4c7c0a6c88f3575598 (do not edit this
+ * line)
+ */

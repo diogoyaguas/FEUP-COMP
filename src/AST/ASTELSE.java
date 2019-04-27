@@ -2,15 +2,23 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-public
-class ASTELSE extends SimpleNode {
-  public ASTELSE(int id) {
-    super(id);
-  }
+public class ASTELSE extends SimpleNode {
+    public ASTELSE(int id) {
+        super(id);
+    }
 
-  public ASTELSE(Program p, int id) {
-    super(p, id);
-  }
+    public ASTELSE(Program p, int id) {
+        super(p, id);
+    }
+
+    public boolean analyse() {
+        // TODO
+        // Verify when children nodes are correct or not
+        return true;
+    }
 
 }
-/* JavaCC - OriginalChecksum=d3553314478bd9130526825036e5d2d6 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=d3553314478bd9130526825036e5d2d6 (do not edit this
+ * line)
+ */

@@ -6,23 +6,23 @@ import src.semantic.*;
 
 public class ASTVar extends SimpleNode {
     public ASTVar(int id) {
-        super(id);
+        super(id, false);
     }
 
     public ASTVar(Program p, int id) {
-        super(p, id);
+        super(p, id, false);
     }
 
     public boolean analyse() {
 
-        Node[] children;
+        Node[] children = this.getChildren();
 
-        if ((children = this.getChildren()) == null)
+        if (children == null){
             return false;
+        }
 
         Symbol.Type var_type = ((SimpleNode) children[0]).getReturnType();
 
-        boolean success = true;
         symbols = getNodeSymbolTable();
 
         //TODO
@@ -30,7 +30,19 @@ public class ASTVar extends SimpleNode {
         // - Verify if type is valid isTypeValidForVar()
         // - Store new variable in symbol table
 
-        return success;
+        if(symbols.hasSymbolWithName(this.getName())){
+            printSemanticError("Variable with the same name already declared");
+            return false;
+        }
+
+        if(!this.isTypeValidForVar(var_type)){
+            printSemanticError("Variable declared with an invalid type");
+            return false;
+        }
+
+        symbols.addSymbol(this.getName(), var_type, false);
+
+        return true;
     }
 
 }

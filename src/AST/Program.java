@@ -27,6 +27,12 @@ public
 
     ASTProgram root = myProg.Program(); // devolve referencia para o nó da raiz da árvore
     root.dump("");
+
+    if(!root.analyse())
+        System.out.println("We have sematic error(s) !! Be aware !!");
+
+    System.out.println("\n *********** SYMBOLS *********** \n");
+    root.printSymbolsTable("SYMBOL TABLE: ");;
   }
 
 public

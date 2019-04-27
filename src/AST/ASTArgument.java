@@ -3,15 +3,23 @@
 
 package src.AST;
 
-public
-class ASTArgument extends SimpleNode {
-  public ASTArgument(int id) {
-    super(id);
-  }
+public class ASTArgument extends SimpleNode {
+    public ASTArgument(int id) {
+        super(id);
+    }
 
-  public ASTArgument(Program p, int id) {
-    super(p, id);
-  }
+    public ASTArgument(Program p, int id) {
+        super(p, id);
+    }
+
+    public boolean analyse() {
+        // TODO
+        // Verify when children nodes are correct or not
+        return true;
+    }
 
 }
-/* JavaCC - OriginalChecksum=42d14b8a3bb371e133304e73a2a9236f (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=42d14b8a3bb371e133304e73a2a9236f (do not edit this
+ * line)
+ */

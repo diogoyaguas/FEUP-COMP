@@ -2,15 +2,23 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-public
-class ASTIF extends SimpleNode {
-  public ASTIF(int id) {
-    super(id);
-  }
+public class ASTIF extends SimpleNode {
+    public ASTIF(int id) {
+        super(id);
+    }
 
-  public ASTIF(Program p, int id) {
-    super(p, id);
-  }
+    public ASTIF(Program p, int id) {
+        super(p, id);
+    }
+
+    public boolean analyse() {
+        // TODO
+        // Verify when children nodes are correct or not
+        return true;
+    }
 
 }
-/* JavaCC - OriginalChecksum=6293c8d687507a551b42aaec8f893d2c (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=6293c8d687507a551b42aaec8f893d2c (do not edit this
+ * line)
+ */

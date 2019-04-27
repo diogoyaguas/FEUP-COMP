@@ -2,15 +2,23 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-public
-class ASTRETURN extends SimpleNode {
-  public ASTRETURN(int id) {
-    super(id);
-  }
+public class ASTRETURN extends SimpleNode {
+    public ASTRETURN(int id) {
+        super(id);
+    }
 
-  public ASTRETURN(Program p, int id) {
-    super(p, id);
-  }
+    public ASTRETURN(Program p, int id) {
+        super(p, id);
+    }
+
+    public boolean analyse() {
+        // TODO
+        // Verify when children nodes are correct or not
+        return true;
+    }
 
 }
-/* JavaCC - OriginalChecksum=a25a7460b68f1e51ef6fbb9c25d95cca (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=a25a7460b68f1e51ef6fbb9c25d95cca (do not edit this
+ * line)
+ */

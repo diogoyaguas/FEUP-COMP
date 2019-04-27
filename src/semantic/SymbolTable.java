@@ -12,6 +12,16 @@ public class SymbolTable {
         this.symbols = new HashMap<>();
     }
 
+    public boolean addSymbol(String name, Symbol.Type type, boolean init) {
+        Symbol new_s = new Symbol(type, init);
+
+        if(!this.symbols.containsKey(name)){
+            this.symbols.put(name, new_s);
+            return true;
+        }
+        return false;
+    }
+
     public boolean addSymbol(String name, Symbol.Type type, String value, boolean init) {
         Symbol new_s = new Symbol(type, value, init);
 
@@ -36,8 +46,6 @@ public class SymbolTable {
     public void printSymbolTable(){
 
         Symbol symbol;
-
-        System.out.println("*** SYMBOL TABLE  ***");
 
         for(String symbol_name : this.symbols.keySet()){
             symbol = this.symbols.get(symbol_name);

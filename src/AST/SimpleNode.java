@@ -36,6 +36,7 @@ public class SimpleNode implements Node {
     public SimpleNode(Program p, int i) {
         this(i);
         parser = p;
+        this.has_scope = false;
     }
 
     public SimpleNode(Program p, int i, boolean has_scope) {
@@ -45,6 +46,7 @@ public class SimpleNode implements Node {
     }
 
     public SymbolTable getNodeSymbolTable() {
+
         if (parent == null)
             return null;
 
@@ -65,8 +67,27 @@ public class SimpleNode implements Node {
             return ((SimpleNode) this.parent).getMethods();
     }
 
+    public void printSemanticError(String error) {
+        // TODO
+        // Get location of where the error is
+        // Function + line + column
+        // Make an error counter
+        System.out.println("Semantic error: " + error);
+
+    }
+
     public boolean analyse() {
-        return true;
+        Node[] children = getChildren();
+
+        boolean success = true;
+
+        if (children == null)
+            return false;
+
+        for (Node child : getChildren())
+            success = ((SimpleNode) child).analyse();
+
+        return success;
     }
 
     public void jjtOpen() {
@@ -194,6 +215,32 @@ public class SimpleNode implements Node {
         }
     }
 
+    public void printSymbolsTable(String prefix) {
+        if (this.has_scope) {
+
+            String msg = prefix + "=> " + ProgramTreeConstants.jjtNodeName[id];
+
+            if (ProgramTreeConstants.jjtNodeName[id].equals("Method"))
+                msg += " ( " + this.name + " )";
+
+            System.out.println(msg);
+            symbols.printSymbolTable();
+        }
+
+        Node[] children = getChildren();
+
+        if (children != null && children.length > 0) {
+
+            for (Node child : children) {
+                
+                SimpleNode simple_n = (SimpleNode) child;
+                if (simple_n != null)
+                    simple_n.printSymbolsTable(prefix);
+            }
+
+        }
+    }
+
     public int getId() {
         return id;
     }
@@ -214,29 +261,29 @@ public class SimpleNode implements Node {
         return this.children;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public String getNodeValue(){
+    public String getNodeValue() {
         return this.node_value;
     }
 
-    public Symbol.Type getReturnType(){
-        
-        switch(this.type) {
-            case "int":
-                return Symbol.Type.INT;
-            case "boolean":
-                return Symbol.Type.BOOLEAN;
-            case "int[]":
-                return Symbol.Type.INT_ARRAY;
-            default:
-                return Symbol.Type.VOID;           
+    public Symbol.Type getReturnType() {
+
+        switch (this.type) {
+        case "int":
+            return Symbol.Type.INT;
+        case "boolean":
+            return Symbol.Type.BOOLEAN;
+        case "int[]":
+            return Symbol.Type.INT_ARRAY;
+        default:
+            return Symbol.Type.VOID;
         }
     }
 
-    public boolean isTypeValidForVar(Symbol.Type type){
+    public boolean isTypeValidForVar(Symbol.Type type) {
         return !type.equals(Symbol.Type.VOID);
     }
 }
