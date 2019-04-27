@@ -11,12 +11,6 @@ public class ASTIF extends SimpleNode {
         super(p, id);
     }
 
-    public boolean analyse() {
-        // TODO
-        // Verify when children nodes are correct or not
-        return true;
-    }
-
 }
 /*
  * JavaCC - OriginalChecksum=6293c8d687507a551b42aaec8f893d2c (do not edit this

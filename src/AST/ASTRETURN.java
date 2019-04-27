@@ -11,12 +11,6 @@ public class ASTRETURN extends SimpleNode {
         super(p, id);
     }
 
-    public boolean analyse() {
-        // TODO
-        // Verify when children nodes are correct or not
-        return true;
-    }
-
 }
 /*
  * JavaCC - OriginalChecksum=a25a7460b68f1e51ef6fbb9c25d95cca (do not edit this

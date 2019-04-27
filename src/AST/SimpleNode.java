@@ -77,6 +77,8 @@ public class SimpleNode implements Node {
     }
 
     public boolean analyse() {
+        symbols = getNodeSymbolTable();
+        methods = getNodeMethodTable();
         Node[] children = getChildren();
 
         boolean success = true;

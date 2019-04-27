@@ -11,12 +11,6 @@ public class ASTELSE extends SimpleNode {
         super(p, id);
     }
 
-    public boolean analyse() {
-        // TODO
-        // Verify when children nodes are correct or not
-        return true;
-    }
-
 }
 /*
  * JavaCC - OriginalChecksum=d3553314478bd9130526825036e5d2d6 (do not edit this
