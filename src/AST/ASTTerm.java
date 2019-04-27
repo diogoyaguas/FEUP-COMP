@@ -2,15 +2,21 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-public
-class ASTTerm extends SimpleNode {
-  public ASTTerm(int id) {
-    super(id);
-  }
+public class ASTTerm extends SimpleNode {
+    public ASTTerm(int id) {
+        super(id);
+    }
 
-  public ASTTerm(Program p, int id) {
-    super(p, id);
-  }
+    public ASTTerm(Program p, int id) {
+        super(p, id);
+    }
+
+    // TODO
+    // Add ReturnType function
+    // Add Verify table in case of variable (and "this" keyword maybe?)
 
 }
-/* JavaCC - OriginalChecksum=89a6ef7c8b00c460ffa31c31fefd6bde (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=89a6ef7c8b00c460ffa31c31fefd6bde (do not edit this
+ * line)
+ */

@@ -15,13 +15,7 @@ public class ASTVar extends SimpleNode {
 
     public boolean analyse() {
 
-        Node[] children = this.getChildren();
-
-        if (children == null){
-            return false;
-        }
-
-        Symbol.Type var_type = ((SimpleNode) children[0]).getReturnType();
+        Symbol.Type var_type = this.getReturnType();
 
         symbols = getNodeSymbolTable();
 
