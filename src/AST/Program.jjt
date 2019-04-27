@@ -311,11 +311,11 @@ void ExpressionTerminal() #Term : {
 }
 {
 
-  s1 = IntegerLiteral() { jjtThis.node_value = s1; }
-  | t1 = <TRUE> { jjtThis.node_value = t1.image; }
-  | t1 = <FALSE> { jjtThis.node_value = t1.image; }
+  s1 = IntegerLiteral() { jjtThis.node_value = s1; jjThis.type = "int"; }
+  | t1 = <TRUE> { jjtThis.node_value = t1.image; jjThis.type = "boolean"; }
+  | t1 = <FALSE> { jjtThis.node_value = t1.image; jjThis.type = "boolean"; }
   | t1 = <ID> { jjtThis.node_value = t1.image; }
-  | t1 = <THIS> { jjtThis.node_value = t1.image; }
+  | t1 = <THIS> { jjtThis.node_value = t1.image; jjThis.type = "this"; }
 }
 
 void Period_Aux() #PeriodAux : { Token t1; }
