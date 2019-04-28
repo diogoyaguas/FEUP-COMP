@@ -43,6 +43,13 @@ public class SymbolTable {
         return symbols.containsKey(name);
     }
 
+    public boolean checkIfInitialized(String name) {
+        if(!this.hasSymbolWithName(name))
+            return false;
+
+        return this.getSymbolWithName(name).getInitialized();
+    }
+
     public void printSymbolTable(){
 
         Symbol symbol;

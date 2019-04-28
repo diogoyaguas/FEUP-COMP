@@ -1037,7 +1037,7 @@ void ExpressionTerminal()       : {/*@bgen(jjtree) Term */
                 jjtc000 = false;
                 jjtn000.jjtSetLastToken(getToken(0));
               }
-/*@egen*/ { jjtn000.node_value = t1.image; }
+/*@egen*/ { jjtn000.node_value = t1.image; jjtn000.type = ""; }
   | t1 = <THIS>/*@bgen(jjtree)*/
                 {
                   jjtree.closeNodeScope(jjtn000, true);

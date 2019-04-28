@@ -1248,7 +1248,7 @@ try {ParseException exception = generateParseException();
                 jjtree.closeNodeScope(jjtn000, true);
                 jjtc000 = false;
                 jjtn000.jjtSetLastToken(getToken(0));
-                jjtn000.node_value = t1.image;
+                jjtn000.node_value = t1.image; jjtn000.type = "";
         break;
       case THIS:
         t1 = jj_consume_token(THIS);

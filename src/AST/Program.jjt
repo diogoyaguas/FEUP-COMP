@@ -39,8 +39,8 @@ public
     if(!root.analyse())
         System.out.println("We have sematic error(s) !! Be aware !!");
 
-    System.out.println("\n *********** SYMBOLS *********** \n");
-    root.printSymbolsTable("SYMBOL TABLE: ");
+    System.out.println(" *********** TABLES *********** ");
+    root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
     
 
     try {
@@ -332,7 +332,7 @@ void ExpressionTerminal() #Term : {
   s1 = IntegerLiteral() { jjtThis.node_value = s1; jjtThis.type = "int"; }
   | t1 = <TRUE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
   | t1 = <FALSE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
-  | t1 = <ID> { jjtThis.node_value = t1.image; }
+  | t1 = <ID> { jjtThis.node_value = t1.image; jjtThis.type = ""; }
   | t1 = <THIS> { jjtThis.node_value = t1.image; jjtThis.type = "this"; }
 }
 

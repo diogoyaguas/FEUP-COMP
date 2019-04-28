@@ -11,6 +11,11 @@ public class ASTTerm extends SimpleNode {
         super(p, id);
     }
 
+    public boolean checkSymbolTable() {
+
+        return true;
+    }
+
     // TODO
     // Add ReturnType function
     // Add Verify table in case of variable (and "this" keyword maybe?)

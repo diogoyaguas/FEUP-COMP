@@ -62,7 +62,6 @@ public class ASTMethod extends SimpleNode {
         }
 
         this.methods.addMethod(method_name, argument_types, return_type, parameters);
-        System.out.println("size: " + methods.getMethods().size());
 
         // TODO
         // Verification list: 

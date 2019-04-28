@@ -16,7 +16,6 @@ public class ASTArgument extends SimpleNode {
 
     public Symbol.Type getArgumentType() {
         Symbol.Type type = this.getReturnType();
-        System.out.println("type: " + type);
         
         if(isTypeValidForVar(type))
             return type;

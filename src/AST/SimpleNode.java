@@ -93,7 +93,13 @@ public class SimpleNode implements Node {
             for (Node child : children)
                 success = ((SimpleNode) child).analyse();
 
+        success = checkSymbolTable();
+
         return success;
+    }
+
+    public boolean checkSymbolTable() {
+        return true;
     }
 
     public void jjtOpen() {
