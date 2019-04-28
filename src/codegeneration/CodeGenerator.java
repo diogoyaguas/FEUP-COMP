@@ -58,11 +58,18 @@ import src.semantic.Symbol.Type;
            generateGlobals((SimpleNode) current_node.jjtGetChild(i));
        }
 
-        if(current_node.getId() == ProgramTreeConstants.JJTMAIN){
+        if(current_node.getId() == ProgramTreeConstants.JJTVAR){
 			//TODO PRINT STATIC DIFFERENTIATION
-			//TODO PRINT FIELD TYPES CORRECTLY
-           output.println(".field " + current_node.getName() + " I" );
-	 	}
+		   output.print(".field public static " + current_node.getName() + " ");
+		   if(current_node.getType() == "int")
+				output.println("I");
+			else 
+			if(current_node.getType() == "boolean")
+				output.println("B");
+			else 
+			if(current_node.getType() == "String")
+				output.println("[Ljava/lang/String;");
+		}
 	}
 
  	private void generateStatic() {
@@ -72,8 +79,84 @@ import src.semantic.Symbol.Type;
  	}
 
  	private void generateFunctions() {
-		// TODO Auto-generated method stub
+		 
+		for (int i = 0; i < root.jjtGetNumChildren(); i++) {
+			SimpleNode child_root = (SimpleNode) root.jjtGetChild(i);
+			if (child_root.getId() == ProgramTreeConstants.JJTMAIN) {
+				generateFunction(child_root);
+			}
+			if (child_root.getId() == ProgramTreeConstants.JJTMETHOD) {
+				generateFunction(child_root);
+			}
+			
+		}
+		
+	 }
+	 
 
-     }
+	 private void generateFunction(SimpleNode function_node) {
+		output.println();
+
+		if (function_node.getId() == ProgramTreeConstants.JJTMAIN)
+			generateFunctionMainHeader(function_node);
+		/*else if (function_node.jjtGetNumChildren() >= 2
+				&& ((SimpleNode) function_node.jjtGetChild(1)).getId() == ProgramTreeConstants.JJTASSIGN)
+			generateAssignFunction(function_node);
+		*/
+		else{
+			generateFunctionHeader(function_node);
+		}
+		
+		//body stub
+		//declarations, etc etc
+		if (function_node.jjtGetNumChildren() >= 2){
+			if(function_node.getReturnType() == Symbol.Type.INT)
+				output.println("ireturn");
+			else output.println("areturn");
+		}
+
+		else
+			output.println("return");
+		
+		output.println(".end method");
+		output.println();
+
+	}
+
+	private void generateFunctionHeader(SimpleNode function_node){
+		output.print(".method public static " + function_node.getName());
+		
+		if (function_node.jjtGetNumChildren() == 0)
+			output.println("()V");
+		else {
+			output.print("(");
+			for (int i = 0; i < function_node.jjtGetNumChildren(); i++){
+				SimpleNode childFunction = (SimpleNode) function_node.jjtGetChild(i);
+				if (childFunction.getId() == ProgramTreeConstants.JJTARGUMENT) {
+					if(childFunction.getType() == "int")
+						output.print("I");
+					else 
+					if(childFunction.getType() == "boolean")
+						output.print("B");
+					else 
+					if(childFunction.getType() == "String")
+						output.print("[Ljava/lang/String;");
+					else output.println(")V");
+				continue;
+				}
+				if(function_node.getType() == "int")
+				output.println(")I");
+				else output.println(")V");
+				break;
+			}
+		}
+	}
+
+	private void generateFunctionMainHeader(SimpleNode function_node) {
+		output.println(".method public static main([Ljava/lang/String;)V");
+
+	}
+
+
      
     }

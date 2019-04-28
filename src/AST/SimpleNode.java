@@ -266,6 +266,10 @@ public class SimpleNode implements Node {
     public String getName() {
         return this.name;
     }
+    public String getType() {
+        return this.type;
+    }
+
 
     public String getNodeValue() {
         return this.node_value;

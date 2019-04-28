@@ -12,6 +12,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import src.codegeneration.CodeGenerator;
+
 public
 class Program {
 private static Program myProg;
