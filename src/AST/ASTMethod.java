@@ -2,13 +2,18 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
+import java.util.Vector;
+
+import src.semantic.*;
+import src.utils.*;
+
 public class ASTMethod extends SimpleNode {
     public ASTMethod(int id) {
-        super(id, true);
+        super(id, true, false);
     }
 
     public ASTMethod(Program p, int id) {
-        super(p, id, true);
+        super(p, id, true, false);
     }
 
     public boolean addNewMethod() {
@@ -16,9 +21,54 @@ public class ASTMethod extends SimpleNode {
         this.symbols = getNodeSymbolTable();
         this.methods = getNodeMethodTable();
 
+        Symbol.Type return_type = Symbol.Type.VOID;
+        Vector<Symbol.Type> argument_types = new Vector<>();
+        Vector<Pair> parameters = new Vector<>();
+
+        Node[] children = getChildren();
+        int i = 0;
+        String method_name = this.getName();
+
+        return_type = this.getReturnType();
+        if(return_type.equals(Symbol.Type.UNDEFINED)){
+            printSemanticError("Method " + method_name + "has invalid return type");
+            return false;
+        }
+
+        while(((SimpleNode) children[i]).getNodeString().equals("Argument")){
+            
+            ASTArgument arg = (ASTArgument) children[i];
+            String arg_name = arg.getName();
+            Symbol.Type aux_type = arg.getArgumentType();
+
+            if(aux_type.equals(Symbol.Type.VOID) && aux_type.equals(Symbol.Type.UNDEFINED)){
+                printSemanticError("Argument " + arg_name + " has invalid type");
+                return false;
+            }
+
+            Pair param_pair = new Pair(arg_name, aux_type);
+            
+            argument_types.add(aux_type);
+            parameters.add(param_pair);
+
+            i++;
+        }
+
+        MethodSignature signature = new MethodSignature(method_name, argument_types);
+
+        if(this.methods.hasMethod(signature)){
+            printSemanticError("Method " + method_name + " is already defined with the same arguments");
+            return false;
+        }
+
+        this.methods.addMethod(method_name, argument_types, return_type, parameters);
+        System.out.println("size: " + methods.getMethods().size());
+
         // TODO
-        // Make proper verifications
-        // Create this method to add to the method table
+        // Verification list: 
+        //   Verify if parameter type is valid
+        //   Verify if return type is valid
+        //   Verify if method with same args exists;
 
         return true;
     }

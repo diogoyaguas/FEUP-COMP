@@ -3,7 +3,7 @@ package src.semantic;
 public class Symbol {
 
     public static enum Type {
-        INT, INT_ARRAY, BOOLEAN, VOID
+        INT, INT_ARRAY, BOOLEAN, VOID, UNDEFINED
     }
 
     protected Type type;

@@ -8,10 +8,14 @@
 
 PARSER_BEGIN(Program)
 
+package src.AST;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import src.codegeneration.CodeGenerator;
 
 public
 class Program/*@bgen(jjtree)*/implements ProgramTreeConstants/*@egen*/ {/*@bgen(jjtree)*/
@@ -35,6 +39,20 @@ public
 
     ASTProgram root = myProg.Program(); // devolve referencia para o n\u00f3 da raiz da \u00e1rvore
     root.dump("");
+
+    if(!root.analyse())
+        System.out.println("We have sematic error(s) !! Be aware !!");
+
+    System.out.println("\n *********** SYMBOLS *********** \n");
+    root.printSymbolsTable("SYMBOL TABLE: ");
+    
+
+    try {
+      CodeGenerator generator = new CodeGenerator(root, "test-file.j");
+	    generator.generateCode();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
 public
@@ -475,11 +493,11 @@ void MethodReturn()         : {/*@bgen(jjtree) RETURN */
 /*@egen*/
 }
 
-String Type()       : { Token t1; }
+String Type()       : { Token t1; Boolean b1 = false;}
 {
 
-  t1 = <BOOLEAN> { return t1.image; } | (t1=<INT>{
-    return t1.image;}(<L_BRACKET> <R_BRACKET>)?)
+  t1 = <BOOLEAN> { return t1.image; } 
+  | (t1=<INT>(<L_BRACKET> <R_BRACKET> {b1 = true;})? {if(b1) return t1.image + "[]"; return t1.image;})
 }
 
 void Statement()       : {} {
@@ -998,21 +1016,21 @@ void ExpressionTerminal()       : {/*@bgen(jjtree) Term */
                           jjtc000 = false;
                           jjtn000.jjtSetLastToken(getToken(0));
                         }
-/*@egen*/ { jjtn000.node_value = s1; jjThis.type = "int"; }
+/*@egen*/ { jjtn000.node_value = s1; jjtn000.type = "int"; }
   | t1 = <TRUE>/*@bgen(jjtree)*/
                 {
                   jjtree.closeNodeScope(jjtn000, true);
                   jjtc000 = false;
                   jjtn000.jjtSetLastToken(getToken(0));
                 }
-/*@egen*/ { jjtn000.node_value = t1.image; jjThis.type = "boolean"; }
+/*@egen*/ { jjtn000.node_value = t1.image; jjtn000.type = "boolean"; }
   | t1 = <FALSE>/*@bgen(jjtree)*/
                  {
                    jjtree.closeNodeScope(jjtn000, true);
                    jjtc000 = false;
                    jjtn000.jjtSetLastToken(getToken(0));
                  }
-/*@egen*/ { jjtn000.node_value = t1.image; jjThis.type = "boolean"; }
+/*@egen*/ { jjtn000.node_value = t1.image; jjtn000.type = "boolean"; }
   | t1 = <ID>/*@bgen(jjtree)*/
               {
                 jjtree.closeNodeScope(jjtn000, true);
@@ -1026,7 +1044,7 @@ void ExpressionTerminal()       : {/*@bgen(jjtree) Term */
                   jjtc000 = false;
                   jjtn000.jjtSetLastToken(getToken(0));
                 }
-/*@egen*/ { jjtn000.node_value = t1.image; jjThis.type = "this"; }/*@bgen(jjtree)*/
+/*@egen*/ { jjtn000.node_value = t1.image; jjtn000.type = "this"; }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

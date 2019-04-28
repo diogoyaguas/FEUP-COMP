@@ -7,6 +7,8 @@ options {
 
 PARSER_BEGIN(Program)
 
+package src.AST;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,6 +35,20 @@ public
 
     ASTProgram root = myProg.Program(); // devolve referencia para o nó da raiz da árvore
     root.dump("");
+
+    if(!root.analyse())
+        System.out.println("We have sematic error(s) !! Be aware !!");
+
+    System.out.println("\n *********** SYMBOLS *********** \n");
+    root.printSymbolsTable("SYMBOL TABLE: ");
+    
+
+    try {
+      CodeGenerator generator = new CodeGenerator(root, "test-file.j");
+	    generator.generateCode();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
 public
@@ -232,11 +248,11 @@ void MethodReturn() #RETURN : { Token t1; }
   Expression()<SEMI_COLON>
 }
 
-String Type() #void : { Token t1; }
+String Type() #void : { Token t1; Boolean b1 = false;}
 {
 
-  t1 = <BOOLEAN> { return t1.image; } | (t1=<INT>{
-    return t1.image;}(<L_BRACKET> <R_BRACKET>)?)
+  t1 = <BOOLEAN> { return t1.image; } 
+  | (t1=<INT>(<L_BRACKET> <R_BRACKET> {b1 = true;})? {if(b1) return t1.image + "[]"; return t1.image;})
 }
 
 void Statement() #void : {} {
@@ -313,11 +329,11 @@ void ExpressionTerminal() #Term : {
 }
 {
 
-  s1 = IntegerLiteral() { jjtThis.node_value = s1; jjThis.type = "int"; }
-  | t1 = <TRUE> { jjtThis.node_value = t1.image; jjThis.type = "boolean"; }
-  | t1 = <FALSE> { jjtThis.node_value = t1.image; jjThis.type = "boolean"; }
+  s1 = IntegerLiteral() { jjtThis.node_value = s1; jjtThis.type = "int"; }
+  | t1 = <TRUE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
+  | t1 = <FALSE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
   | t1 = <ID> { jjtThis.node_value = t1.image; }
-  | t1 = <THIS> { jjtThis.node_value = t1.image; jjThis.type = "this"; }
+  | t1 = <THIS> { jjtThis.node_value = t1.image; jjtThis.type = "this"; }
 }
 
 void Period_Aux() #PeriodAux : { Token t1; }

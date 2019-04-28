@@ -38,6 +38,18 @@ public class MethodTable {
         return null;
     }
 
+    public void printMethodsTable(){
+
+        MethodSymbol method;
+
+        for(MethodSignature signature : this.methods.keySet()){
+            method = this.methods.get(signature);
+            System.out.print(signature.getMethodName() + " | Parameters:");
+            method.printParameters();
+            System.out.print("Returns " + method.getType() + "\n");
+        }
+    }
+
     public HashMap<MethodSignature, MethodSymbol> getMethods(){
         return this.methods;
     }

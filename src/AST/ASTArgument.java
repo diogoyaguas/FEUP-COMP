@@ -3,6 +3,8 @@
 
 package src.AST;
 
+import src.semantic.*;
+
 public class ASTArgument extends SimpleNode {
     public ASTArgument(int id) {
         super(id);
@@ -12,10 +14,14 @@ public class ASTArgument extends SimpleNode {
         super(p, id);
     }
 
-    public boolean analyse() {
-        // TODO
-        // Verify when children nodes are correct or not
-        return true;
+    public Symbol.Type getArgumentType() {
+        Symbol.Type type = this.getReturnType();
+        System.out.println("type: " + type);
+        
+        if(isTypeValidForVar(type))
+            return type;
+        else
+            return Symbol.Type.UNDEFINED;
     }
 
 }
