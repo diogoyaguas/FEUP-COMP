@@ -2,15 +2,47 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-public
-class ASTMUL extends SimpleNode {
-  public ASTMUL(int id) {
-    super(id);
-  }
+import src.semantic.*;
 
-  public ASTMUL(Program p, int id) {
-    super(p, id);
-  }
+public class ASTMUL extends SimpleNode {
+    public ASTMUL(int id) {
+        super(id);
+    }
+
+    public ASTMUL(Program p, int id) {
+        super(p, id);
+    }
+
+    public Symbol.Type getReturnType() {
+        return Symbol.Type.INT;
+    }
+
+    public boolean checkSymbolTable() {
+
+        if (getChildren().length != 2) {
+            printSemanticError("Not valid MUL operands");
+            return false;
+        }
+
+        Symbol.Type lop_type = ((SimpleNode) getChildren()[0]).getReturnType();
+
+        if (!lop_type.equals(Symbol.Type.INT)) {
+            printSemanticError("Invalid type for left operand");
+            return false;
+        }
+
+        Symbol.Type rop_type = ((SimpleNode) getChildren()[1]).getReturnType();
+
+        if (!rop_type.equals(Symbol.Type.INT)) {
+            printSemanticError("Invalid type for right operand");
+            return false;
+        }
+
+        return true;
+    }
 
 }
-/* JavaCC - OriginalChecksum=922caef4ea363c4951a74af871fffff8 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=922caef4ea363c4951a74af871fffff8 (do not edit this
+ * line)
+ */

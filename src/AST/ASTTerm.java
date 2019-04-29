@@ -2,7 +2,12 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
+import src.semantic.Symbol;
+
 public class ASTTerm extends SimpleNode {
+
+    protected Symbol.Type var_type = Symbol.Type.VOID;
+
     public ASTTerm(int id) {
         super(id);
     }
@@ -11,13 +16,66 @@ public class ASTTerm extends SimpleNode {
         super(p, id);
     }
 
+    // public boolean checkSymbolTable() {
+
+    //     if(!(this.getReturnType().equals(Symbol.Type.VOID) || this.getReturnType().equals(Symbol.Type.UNDEFINED)))
+    //         return true;
+
+
+    //     symbols = getNodeSymbolTable();
+
+    //     if(!symbols.hasSymbolWithName(this.getNodeValue())){
+    //         printSemanticError("Variable " + this.getNodeValue() + " has not been declared");
+    //         return false;
+    //     }
+        
+    //     if(!symbols.checkIfInitialized(this.getNodeValue())){
+    //         printSemanticError("Variable " + this.getNodeValue() + " has not been initialized");
+    //         return false;
+    //     }
+
+    //     return true;
+    // }
+
+    public Symbol.Type getReturnType() {
+
+        switch (this.type) {
+        case "int":
+            return Symbol.Type.INT;
+        case "boolean":
+            return Symbol.Type.BOOLEAN;
+        case "int[]":
+            return Symbol.Type.INT_ARRAY;
+        case "id":
+            return Symbol.Type.VOID;
+        default:
+            return Symbol.Type.UNDEFINED;
+        }
+    }
+
     public boolean checkSymbolTable() {
 
+        if(!getReturnType().equals(Symbol.Type.VOID))
+            return true;
+
+        if(!symbols.hasSymbolWithName(this.getNodeValue())){
+            printSemanticError("Variable '" + this.getNodeValue() + "' has not been declared");
+            return false;
+        }
+                
+        if(!symbols.checkIfInitialized(this.getNodeValue())){
+            printSemanticError("Variable '" + this.getNodeValue() + "' has not been initialized");
+            return false;
+        }
+
+        var_type = symbols.getSymbolWithName(this.getNodeValue()).getType();
         return true;
     }
 
-    // TODO
-    // Add ReturnType function
+    public Symbol.Type getVarType(){
+        return this.var_type;
+    }
+
     // Add Verify table in case of variable (and "this" keyword maybe?)
 
 }

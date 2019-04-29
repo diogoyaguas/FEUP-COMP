@@ -51,6 +51,8 @@ public class ASTMethod extends SimpleNode {
             argument_types.add(aux_type);
             parameters.add(param_pair);
 
+            symbols.addSymbol(arg_name, aux_type, true);
+
             i++;
         }
 
@@ -62,12 +64,6 @@ public class ASTMethod extends SimpleNode {
         }
 
         this.methods.addMethod(method_name, argument_types, return_type, parameters);
-
-        // TODO
-        // Verification list: 
-        //   Verify if parameter type is valid
-        //   Verify if return type is valid
-        //   Verify if method with same args exists;
 
         return true;
     }

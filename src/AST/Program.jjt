@@ -284,8 +284,8 @@ void StatementAuxiliar() #ASSIGN : { Token t1; }
 void Identifier() #Identifier : { Token t1; }
 {
   t1 = <ID> { jjtThis.node_value = t1.image; }
-  (<L_BRACKET> Expression() < R_BRACKET > {
-    jjtThis.name = jjtThis.name + "[]";
+  (<L_BRACKET> Expression() <R_BRACKET> {
+    jjtThis.node_value = jjtThis.node_value + "[]"; jjtThis.type = "int[]";
   }) ?
 }
 
@@ -332,7 +332,7 @@ void ExpressionTerminal() #Term : {
   s1 = IntegerLiteral() { jjtThis.node_value = s1; jjtThis.type = "int"; }
   | t1 = <TRUE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
   | t1 = <FALSE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
-  | t1 = <ID> { jjtThis.node_value = t1.image; jjtThis.type = ""; }
+  | t1 = <ID> { jjtThis.node_value = t1.image; jjtThis.type = "id"; }
   | t1 = <THIS> { jjtThis.node_value = t1.image; jjtThis.type = "this"; }
 }
 

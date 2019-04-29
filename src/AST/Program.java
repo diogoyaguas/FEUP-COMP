@@ -31,7 +31,7 @@ public
     if(!root.analyse())
         System.out.println("We have sematic error(s) !! Be aware !!");
 
-    System.out.println(" *********** SYMBOLS *********** ");
+    System.out.println(" *********** TABLES *********** ");
     root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
 
 
@@ -807,7 +807,7 @@ try {ParseException exception = generateParseException();
         jj_consume_token(L_BRACKET);
         Expression();
         jj_consume_token(R_BRACKET);
-    jjtn000.name = jjtn000.name + "[]";
+    jjtn000.node_value = jjtn000.node_value + "[]"; jjtn000.type = "int[]";
         break;
       default:
         jj_la1[15] = jj_gen;
@@ -1248,7 +1248,7 @@ try {ParseException exception = generateParseException();
                 jjtree.closeNodeScope(jjtn000, true);
                 jjtc000 = false;
                 jjtn000.jjtSetLastToken(getToken(0));
-                jjtn000.node_value = t1.image; jjtn000.type = "";
+                jjtn000.node_value = t1.image; jjtn000.type = "id";
         break;
       case THIS:
         t1 = jj_consume_token(THIS);

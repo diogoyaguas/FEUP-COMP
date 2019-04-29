@@ -43,8 +43,8 @@ public
     if(!root.analyse())
         System.out.println("We have sematic error(s) !! Be aware !!");
 
-    System.out.println("\n *********** SYMBOLS *********** \n");
-    root.printSymbolsTable("SYMBOL TABLE: ");
+    System.out.println(" *********** TABLES *********** ");
+    root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
     
 
     try {
@@ -648,8 +648,8 @@ void Identifier()             : {/*@bgen(jjtree) Identifier */
   try {
 /*@egen*/
   t1 = <ID> { jjtn000.node_value = t1.image; }
-  (<L_BRACKET> Expression() < R_BRACKET > {
-    jjtn000.name = jjtn000.name + "[]";
+  (<L_BRACKET> Expression() <R_BRACKET> {
+    jjtn000.node_value = jjtn000.node_value + "[]"; jjtn000.type = "int[]";
   }) ?/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -1037,7 +1037,7 @@ void ExpressionTerminal()       : {/*@bgen(jjtree) Term */
                 jjtc000 = false;
                 jjtn000.jjtSetLastToken(getToken(0));
               }
-/*@egen*/ { jjtn000.node_value = t1.image; jjtn000.type = ""; }
+/*@egen*/ { jjtn000.node_value = t1.image; jjtn000.type = "id"; }
   | t1 = <THIS>/*@bgen(jjtree)*/
                 {
                   jjtree.closeNodeScope(jjtn000, true);
