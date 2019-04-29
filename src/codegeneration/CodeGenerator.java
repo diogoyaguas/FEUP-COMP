@@ -195,7 +195,7 @@ public class CodeGenerator {
         String method_name, method_ret, method_arg = "";
 
         if (method_class == "this")
-            method_name = root.getNodeValue() + "." + method.getName();
+            method_name = "." + method.getName();
         else
             method_name = method_class + "." + method.getName();
 
