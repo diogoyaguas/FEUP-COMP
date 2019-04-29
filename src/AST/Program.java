@@ -287,7 +287,7 @@ try {ParseException exception = generateParseException();
         jj_consume_token(L_BRACKET);
         jj_consume_token(R_BRACKET);
         n2 = jj_consume_token(ID);
-      jjtn000.name = n2.image;
+      jjtn000.name = n2.image; jjtn000.type = "";
         jj_consume_token(R_PARENTHESIS);
         jj_consume_token(L_CBRACKET);
       } catch (ParseException e) {
@@ -807,7 +807,7 @@ try {ParseException exception = generateParseException();
         jj_consume_token(L_BRACKET);
         Expression();
         jj_consume_token(R_BRACKET);
-    jjtn000.node_value = jjtn000.node_value + "[]"; jjtn000.type = "int[]";
+                                          jjtn000.node_value = jjtn000.node_value + "[]"; jjtn000.type = "int[]";
         break;
       default:
         jj_la1[15] = jj_gen;
@@ -1462,14 +1462,14 @@ try {ParseException exception = generateParseException();
     return false;
   }
 
-  static private boolean jj_3R_42() {
-    if (jj_scan_token(HEXA)) return true;
-    return false;
-  }
-
   static private boolean jj_3_1() {
     if (jj_3R_10()) return true;
     if (jj_scan_token(SEMI_COLON)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_42() {
+    if (jj_scan_token(HEXA)) return true;
     return false;
   }
 

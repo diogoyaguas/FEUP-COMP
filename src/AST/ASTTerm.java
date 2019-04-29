@@ -18,23 +18,25 @@ public class ASTTerm extends SimpleNode {
 
     // public boolean checkSymbolTable() {
 
-    //     if(!(this.getReturnType().equals(Symbol.Type.VOID) || this.getReturnType().equals(Symbol.Type.UNDEFINED)))
-    //         return true;
+    // if(!(this.getReturnType().equals(Symbol.Type.VOID) ||
+    // this.getReturnType().equals(Symbol.Type.UNDEFINED)))
+    // return true;
 
+    // symbols = getNodeSymbolTable();
 
-    //     symbols = getNodeSymbolTable();
+    // if(!symbols.hasSymbolWithName(this.getNodeValue())){
+    // printSemanticError("Variable " + this.getNodeValue() + " has not been
+    // declared");
+    // return false;
+    // }
 
-    //     if(!symbols.hasSymbolWithName(this.getNodeValue())){
-    //         printSemanticError("Variable " + this.getNodeValue() + " has not been declared");
-    //         return false;
-    //     }
-        
-    //     if(!symbols.checkIfInitialized(this.getNodeValue())){
-    //         printSemanticError("Variable " + this.getNodeValue() + " has not been initialized");
-    //         return false;
-    //     }
+    // if(!symbols.checkIfInitialized(this.getNodeValue())){
+    // printSemanticError("Variable " + this.getNodeValue() + " has not been
+    // initialized");
+    // return false;
+    // }
 
-    //     return true;
+    // return true;
     // }
 
     public Symbol.Type getReturnType() {
@@ -55,15 +57,19 @@ public class ASTTerm extends SimpleNode {
 
     public boolean checkSymbolTable() {
 
-        if(!getReturnType().equals(Symbol.Type.VOID))
+        if (!getReturnType().equals(Symbol.Type.VOID))
             return true;
 
-        if(!symbols.hasSymbolWithName(this.getNodeValue())){
+        // When Term is an identifier different from "this" and the parent is a period
+        if (ProgramTreeConstants.jjtNodeName[((SimpleNode) this.jjtGetParent()).getId()].equals("PERIOD") && !this.getType().equals("this"))
+            return true;
+
+        if (!symbols.hasSymbolWithName(this.getNodeValue())) {
             printSemanticError("Variable '" + this.getNodeValue() + "' has not been declared");
             return false;
         }
-                
-        if(!symbols.checkIfInitialized(this.getNodeValue())){
+
+        if (!symbols.checkIfInitialized(this.getNodeValue())) {
             printSemanticError("Variable '" + this.getNodeValue() + "' has not been initialized");
             return false;
         }
@@ -72,7 +78,7 @@ public class ASTTerm extends SimpleNode {
         return true;
     }
 
-    public Symbol.Type getVarType(){
+    public Symbol.Type getVarType() {
         return this.var_type;
     }
 

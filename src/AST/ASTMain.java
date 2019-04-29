@@ -2,15 +2,48 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
+import java.util.Vector;
+
+import src.utils.*;
+import src.semantic.*;
+
 public
 class ASTMain extends SimpleNode {
   public ASTMain(int id) {
-    super(id);
+    super(id, true, false);
   }
 
   public ASTMain(Program p, int id) {
-    super(p, id);
+    super(p, id, true, false);
   }
+
+  public boolean addMain() {
+
+    this.symbols = getNodeSymbolTable();
+    this.methods = getNodeMethodTable();
+
+    Symbol.Type return_type = Symbol.Type.VOID;
+
+    Node[] children = getChildren();
+
+    Vector<Symbol.Type> argument_types = new Vector<>();
+    Vector<Pair> parameters = new Vector<>();
+
+    Pair pair = new Pair(Symbol.Type.STRING_ARRAY, this.getName());
+    parameters.add(pair);
+
+    MethodSignature signature = new MethodSignature("main", argument_types);
+
+    if(this.methods.hasMethod(signature)){
+        printSemanticError("Method main is already defined ");
+        return false;
+    }
+
+    symbols.addSymbol(this.getName(), Symbol.Type.STRING_ARRAY, true);
+    this.methods.addMethod("main", argument_types, return_type, parameters);
+
+    return true;
+}
 
 }
 /* JavaCC - OriginalChecksum=310eca1807b3405c5ba7a03532e03070 (do not edit this line) */

@@ -8,6 +8,7 @@ import src.semantic.*;
 public class ASTPERIOD extends SimpleNode {
 
     Symbol.Type return_type = Symbol.Type.UNDEFINED;
+
     public ASTPERIOD(int id) {
         super(id);
     }
@@ -16,7 +17,7 @@ public class ASTPERIOD extends SimpleNode {
         super(p, id);
     }
 
-    public Symbol.Type getReturnType(){
+    public Symbol.Type getReturnType() {
         return this.return_type;
     }
 
@@ -28,10 +29,29 @@ public class ASTPERIOD extends SimpleNode {
         }
 
         Node[] children = getChildren();
+        SimpleNode left_node = (SimpleNode) children[0];
+        SimpleNode right_node = (SimpleNode) children[1];
+
+        // TODO
+        // Verify if the first node is a new node
+
+        // Verify if second node is a "length" node
+        if (right_node.getName().equals("length")) {
+
+            System.out.println("value " + right_node.getNodeValue());
+            if (!left_node.getReturnType().equals(Symbol.Type.INT_ARRAY)) {
+                printSemanticError("Length can only be applied to int[]. Given: " + left_node.getReturnType());
+                return false;
+            }
+
+            //Verify if left is initialized
+
+            return true;
+        }
 
         // Don't verify what is ahead if it isn't from the current class, assuming it is
         // valid
-        if (!((SimpleNode) children[0]).getType().equals("this"))
+        if (!(left_node.getType().equals("this")))
             return true;
 
         SimpleNode method_call = (SimpleNode) children[1];
@@ -56,6 +76,7 @@ public class ASTPERIOD extends SimpleNode {
 
         return true;
     }
+
 }
 /*
  * JavaCC - OriginalChecksum=ceda7f0b7d22d82a4a9eea22a05d4678 (do not edit this

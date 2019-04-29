@@ -3,42 +3,48 @@
 package src.AST;
 
 public class ASTClass extends SimpleNode {
-	public ASTClass(int id) {
-		super(id, true, true);
-	}
+    public ASTClass(int id) {
+        super(id, true, true);
+    }
 
-	public ASTClass(Program p, int id) {
-		super(p, id, true, true);
-	}
+    public ASTClass(Program p, int id) {
+        super(p, id, true, true);
+    }
 
-	public boolean analyse() {
-		this.symbols = getNodeSymbolTable();
-		this.methods = getNodeMethodTable();
-		Node[] children = getChildren();
+    public boolean analyse() {
+        this.symbols = getNodeSymbolTable();
+        this.methods = getNodeMethodTable();
+        Node[] children = getChildren();
 
-		boolean success = true;
+        boolean success = true;
 
-		if (children == null)
-			return false;
+        if (children == null)
+            return false;
 
-		for (Node child : children) {
+        for (Node child : children) {
 
-			if (((SimpleNode) child).getNodeString().equals("Method"))
-				success = ((ASTMethod) child).addNewMethod();
+            if (((SimpleNode) child).getNodeString().equals("Method"))
+                success = ((ASTMethod) child).addNewMethod();
 
-			else if (((SimpleNode) child).getNodeString().equals("Var"))
-				success = ((ASTVar) child).analyse();
-		}
+            else if (((SimpleNode) child).getNodeString().equals("Main"))
+                success = ((ASTMain) child).addMain();
 
-		for (Node child : children) {
+            else if (((SimpleNode) child).getNodeString().equals("Var"))
+                success = ((ASTVar) child).analyse();
+        }
 
-			if (((SimpleNode) child).getNodeString().equals("Method"))
-				success = ((ASTMethod) child).analyse();
+        for (Node child : children) {
 
-		}
+            if (((SimpleNode) child).getNodeString().equals("Method"))
+                success = ((ASTMethod) child).analyse();
 
-		return success;
-	}
+            else if (((SimpleNode) child).getNodeString().equals("Main"))
+                success = ((ASTMain) child).analyse();
+
+        }
+
+        return success;
+    }
 
 }
 /*
