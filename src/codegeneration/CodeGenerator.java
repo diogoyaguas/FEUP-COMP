@@ -108,19 +108,90 @@ import src.semantic.Symbol.Type;
 		}
 		
 		//body stub
+		generateBodyStub(function_node);
+
 		//declarations, etc etc
 		if (function_node.jjtGetNumChildren() >= 2){
 			if(function_node.getReturnType() == Symbol.Type.INT)
-				output.println("ireturn");
-			else output.println("areturn");
+				output.println("\t" + "ireturn");
+			else output.println("\t" + "areturn");
 		}
 
 		else
-			output.println("return");
+			output.println("\t" + "return");
 		
 		output.println(".end method");
 		output.println();
 
+	}
+
+	private void generateBodyStub(SimpleNode function_node) {
+		for (int i = 0; i < function_node.jjtGetNumChildren(); i++) {
+			SimpleNode function_child = (SimpleNode) function_node.jjtGetChild(i);
+			
+			switch (function_child.getId()) {
+				case ProgramTreeConstants.JJTTERM:
+					
+					output.print("\t" + "invokestatic " + function_child.getNodeValue() + "(");
+					if ((function_child.getType() == "int"))
+						output.print("I");
+
+					if ((i + 1 == function_child.jjtGetNumChildren())){
+						output.print(";");
+						continue;
+					}
+					
+				output.print(")");
+				
+				if (function_node.getType() == "int")
+					output.println("I");
+				else
+					output.println("V");
+				break;
+
+				case ProgramTreeConstants.JJTPERIOD:
+					generateCall(function_child);
+					break;
+				case ProgramTreeConstants.JJTASSIGN:
+					//generateAssign(functionChild);
+					break;
+				default:
+					break;
+			}
+			
+		}
+	}
+
+	private void generateCall(SimpleNode function_child) {
+
+		SimpleNode call_method_name = (SimpleNode) function_child.jjtGetChild(0);
+		output.print("\t" + "invokestatic " + call_method_name.getNodeValue() + "(");
+
+
+		for (int i = 1; i < function_child.jjtGetNumChildren(); i++) {
+			SimpleNode argument = (SimpleNode) function_child.jjtGetChild(i);
+
+			if ((argument.getType() == "int"))
+				output.print("I");
+			else
+				output.print("V");
+
+			if ((i + 1 == argument.jjtGetNumChildren())){
+				output.print(";");
+			} else break;
+			
+			continue;
+		}
+
+		output.print(")");
+
+		if (((SimpleNode) function_child.jjtGetParent()).getId() == ProgramTreeConstants.JJTTERM)
+			output.print("I");
+		else
+			output.print("V");
+
+		output.println();
+		output.println();
 	}
 
 	private void generateFunctionHeader(SimpleNode function_node){
