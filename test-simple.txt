@@ -1,0 +1,13 @@
+class Bar {
+
+    public int Foo(int a){
+        return a;
+    }
+
+    public int Bar(){
+        boolean b;
+        b = true;
+        this.Foo(b);
+        return b;
+    }
+}

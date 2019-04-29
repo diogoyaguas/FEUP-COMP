@@ -20,29 +20,35 @@ public class SimpleNode implements Node {
     protected String type;
 
     protected boolean has_scope;
+    protected boolean has_method_scope;
     protected SymbolTable symbols;
     protected MethodTable methods;
 
     public SimpleNode(int i) {
         id = i;
         this.has_scope = false;
+        this.has_method_scope = false;
     }
 
-    public SimpleNode(int i, boolean has_scope) {
+    public SimpleNode(int i, boolean has_scope, boolean has_method_scope) {
         this(i);
         this.has_scope = has_scope;
+        this.has_method_scope = has_method_scope;
     }
 
     public SimpleNode(Program p, int i) {
         this(i);
         parser = p;
         this.has_scope = false;
+        this.has_method_scope = false;
     }
 
-    public SimpleNode(Program p, int i, boolean has_scope) {
+    public SimpleNode(Program p, int i, boolean has_scope, boolean has_method_scope) {
         this(i);
         parser = p;
         this.has_scope = has_scope;
+        this.has_method_scope = has_method_scope;
+
     }
 
     public SymbolTable getNodeSymbolTable() {
@@ -61,7 +67,7 @@ public class SimpleNode implements Node {
         if (parent == null)
             return null;
 
-        else if (this.has_scope)
+        else if (this.has_method_scope)
             return new MethodTable();
         else
             return ((SimpleNode) this.parent).getMethods();
@@ -83,13 +89,17 @@ public class SimpleNode implements Node {
 
         boolean success = true;
 
-        if (children == null)
-            return false;
+        if (children != null)
+            for (Node child : children)
+                success = ((SimpleNode) child).analyse();
 
-        for (Node child : getChildren())
-            success = ((SimpleNode) child).analyse();
+        success = checkSymbolTable();
 
         return success;
+    }
+
+    public boolean checkSymbolTable() {
+        return true;
     }
 
     public void jjtOpen() {
@@ -184,8 +194,9 @@ public class SimpleNode implements Node {
         case "Type":
             return ProgramTreeConstants.jjtNodeName[id] + " (Type: " + this.type + ")";
         case "Identifier":
-        case "Term":
             return ProgramTreeConstants.jjtNodeName[id] + " (Value: " + this.node_value + ")";
+        case "Term":
+            return ProgramTreeConstants.jjtNodeName[id] + " (Value: " + this.node_value + " | Type: " + this.type + ")";
         case "Argument":
         case "Var":
             return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Type: " + this.type + ")";
@@ -217,30 +228,50 @@ public class SimpleNode implements Node {
         }
     }
 
-    public void printSymbolsTable(String prefix) {
-        if (this.has_scope) {
+    public void printTables(String symbols_prefix, String methods_prefix) {
 
-            String msg = prefix + "=> " + ProgramTreeConstants.jjtNodeName[id];
-
-            if (ProgramTreeConstants.jjtNodeName[id].equals("Method"))
-                msg += " ( " + this.name + " )";
-
-            System.out.println(msg);
-            symbols.printSymbolTable();
-        }
+        printMethodsTable(methods_prefix);
+        printSymbolsTable(symbols_prefix);
 
         Node[] children = getChildren();
 
         if (children != null && children.length > 0) {
 
             for (Node child : children) {
-                
+
                 SimpleNode simple_n = (SimpleNode) child;
                 if (simple_n != null)
-                    simple_n.printSymbolsTable(prefix);
+                    simple_n.printTables(symbols_prefix, methods_prefix);
             }
 
         }
+    }
+
+    public void printSymbolsTable(String prefix) {
+
+        if (!this.has_scope)
+            return;
+
+        String msg = prefix + "=> " + ProgramTreeConstants.jjtNodeName[id];
+
+        if (ProgramTreeConstants.jjtNodeName[id].equals("Method"))
+            msg += " ( " + this.name + " )";
+
+        System.out.println(msg);
+        symbols.printSymbolTable();
+
+    }
+
+    public void printMethodsTable(String prefix) {
+
+        if (!this.has_method_scope)
+            return;
+
+        String msg = prefix + "=> " + ProgramTreeConstants.jjtNodeName[id];
+
+        System.out.println(msg);
+        methods.printMethodsTable();
+
     }
 
     public int getId() {
@@ -266,10 +297,10 @@ public class SimpleNode implements Node {
     public String getName() {
         return this.name;
     }
+
     public String getType() {
         return this.type;
     }
-
 
     public String getNodeValue() {
         return this.node_value;
@@ -284,13 +315,19 @@ public class SimpleNode implements Node {
             return Symbol.Type.BOOLEAN;
         case "int[]":
             return Symbol.Type.INT_ARRAY;
-        default:
+        case "":
             return Symbol.Type.VOID;
+        default:
+            return Symbol.Type.UNDEFINED;
         }
     }
 
     public boolean isTypeValidForVar(Symbol.Type type) {
-        return !type.equals(Symbol.Type.VOID);
+        return !type.equals(Symbol.Type.VOID) && !type.equals(Symbol.Type.UNDEFINED);
+    }
+
+    public boolean isTypeValidForMethod(Symbol.Type type) {
+        return !type.equals(Symbol.Type.UNDEFINED);
     }
 }
 

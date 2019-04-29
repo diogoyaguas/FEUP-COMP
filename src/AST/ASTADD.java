@@ -3,15 +3,47 @@
 
 package src.AST;
 
-public
-class ASTADD extends SimpleNode {
-  public ASTADD(int id) {
-    super(id);
-  }
+import src.semantic.Symbol;
 
-  public ASTADD(Program p, int id) {
-    super(p, id);
-  }
+public class ASTADD extends SimpleNode {
+    public ASTADD(int id) {
+        super(id);
+    }
+
+    public ASTADD(Program p, int id) {
+        super(p, id);
+    }
+
+    public Symbol.Type getReturnType() {
+        return Symbol.Type.INT;
+    }
+
+    public boolean checkSymbolTable() {
+
+        if (getChildren().length != 2) {
+            printSemanticError("Not valid ADD operands");
+            return false;
+        }
+
+        Symbol.Type lop_type = ((SimpleNode) getChildren()[0]).getReturnType();
+
+        if (!lop_type.equals(Symbol.Type.INT)) {
+            printSemanticError("Invalid type for left operand");
+            return false;
+        }
+
+        Symbol.Type rop_type = ((SimpleNode) getChildren()[1]).getReturnType();
+
+        if (!rop_type.equals(Symbol.Type.INT)) {
+            printSemanticError("Invalid type for right operand");
+            return false;
+        }
+
+        return true;
+    }
 
 }
-/* JavaCC - OriginalChecksum=9844ed4d90077456326d709c50eb9827 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=9844ed4d90077456326d709c50eb9827 (do not edit this
+ * line)
+ */

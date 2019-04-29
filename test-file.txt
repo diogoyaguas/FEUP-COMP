@@ -16,9 +16,9 @@ class Fac {
         if (num < 1)
             num_aux = 1 * 2 + 3;
         else
-            num_aux = num + (this.ComputeFac(num-1));
+            num_aux = num + (this.ComputeFac(num-1, num_aux));
         
-        Quatre();
+        this.Quatre();
         return num_aux;
     }
     

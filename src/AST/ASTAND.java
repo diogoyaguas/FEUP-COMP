@@ -2,15 +2,47 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-public
-class ASTAND extends SimpleNode {
-  public ASTAND(int id) {
-    super(id);
-  }
+import src.semantic.*;
 
-  public ASTAND(Program p, int id) {
-    super(p, id);
-  }
+public class ASTAND extends SimpleNode {
+    public ASTAND(int id) {
+        super(id);
+    }
+
+    public ASTAND(Program p, int id) {
+        super(p, id);
+    }
+
+    public Symbol.Type getReturnType() {
+        return Symbol.Type.BOOLEAN;
+    }
+
+    public boolean checkSymbolTable() {
+
+        if (getChildren().length != 2) {
+            printSemanticError("Not valid AND operands");
+            return false;
+        }
+
+        Symbol.Type lop_type = ((SimpleNode) getChildren()[0]).getReturnType();
+
+        if (!lop_type.equals(Symbol.Type.BOOLEAN)) {
+            printSemanticError("Invalid type for left operand");
+            return false;
+        }
+
+        Symbol.Type rop_type = ((SimpleNode) getChildren()[1]).getReturnType();
+
+        if (!rop_type.equals(Symbol.Type.BOOLEAN)) {
+            printSemanticError("Invalid type for right operand");
+            return false;
+        }
+
+        return true;
+    }
 
 }
-/* JavaCC - OriginalChecksum=f12b26cdfa9f625fc12cbe5cc7c17e91 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=f12b26cdfa9f625fc12cbe5cc7c17e91 (do not edit this
+ * line)
+ */

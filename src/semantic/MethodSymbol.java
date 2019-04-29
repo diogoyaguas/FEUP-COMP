@@ -20,6 +20,13 @@ public class MethodSymbol extends Symbol {
         return this.parameters;
     }
 
+    public void printParameters() {
+
+        for(Pair param : this.parameters) {
+            System.out.print(" <" + param.getKey() + ", " + param.getValue() + "> | ");
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if(!(o instanceof MethodSymbol)) return false;

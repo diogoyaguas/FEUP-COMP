@@ -6,11 +6,11 @@ import src.semantic.*;
 
 public class ASTVar extends SimpleNode {
     public ASTVar(int id) {
-        super(id, false);
+        super(id);
     }
 
     public ASTVar(Program p, int id) {
-        super(p, id, false);
+        super(p, id);
     }
 
     public boolean analyse() {

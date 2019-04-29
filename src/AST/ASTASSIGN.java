@@ -2,16 +2,54 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
+import src.semantic.Symbol;
 
-public
-class ASTASSIGN extends SimpleNode {
-  public ASTASSIGN(int id) {
-    super(id);
-  }
+public class ASTASSIGN extends SimpleNode {
+    public ASTASSIGN(int id) {
+        super(id);
+    }
 
-  public ASTASSIGN(Program p, int id) {
-    super(p, id);
-  }
+    public ASTASSIGN(Program p, int id) {
+        super(p, id);
+    }
+
+    public boolean checkSymbolTable() {
+
+        if (getChildren().length != 2) {
+            printSemanticError("Not valid ASSIGN operands");
+            return false;
+        }
+
+        // Left hand side
+        SimpleNode lhs = (SimpleNode) getChildren()[0];
+
+        if (!symbols.hasSymbolWithName(lhs.getNodeValue())) {
+            printSemanticError("Variable '" + lhs.getNodeValue() + "' has not been declared");
+            return false;
+        }
+
+        Symbol.Type lhs_type = symbols.getSymbolWithName(lhs.getNodeValue()).getType();
+
+        // Right hand side
+        SimpleNode rhs = (SimpleNode) getChildren()[1];
+
+        if (!rhs.checkSymbolTable())
+            return false;
+
+        Symbol.Type rhs_type = rhs.getReturnType();
+
+        if (!lhs_type.equals(rhs_type)) {
+            printSemanticError("Assign has different types on members");
+            return false;
+        }
+
+        symbols.initializeSymbol(lhs.getNodeValue());
+
+        return true;
+    }
 
 }
-/* JavaCC - OriginalChecksum=44a56ebc5ea18729019b75dcebd62514 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=44a56ebc5ea18729019b75dcebd62514 (do not edit this
+ * line)
+ */

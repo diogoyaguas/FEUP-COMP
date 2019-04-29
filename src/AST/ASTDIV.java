@@ -2,15 +2,47 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-public
-class ASTDIV extends SimpleNode {
-  public ASTDIV(int id) {
-    super(id);
-  }
+import src.semantic.*;
 
-  public ASTDIV(Program p, int id) {
-    super(p, id);
-  }
+public class ASTDIV extends SimpleNode {
+    public ASTDIV(int id) {
+        super(id);
+    }
+
+    public ASTDIV(Program p, int id) {
+        super(p, id);
+    }
+
+    public Symbol.Type getReturnType() {
+        return Symbol.Type.INT;
+    }
+
+    public boolean checkSymbolTable() {
+
+        if (getChildren().length != 2) {
+            printSemanticError("Not valid DIV operands");
+            return false;
+        }
+
+        Symbol.Type lop_type = ((SimpleNode) getChildren()[0]).getReturnType();
+
+        if (!lop_type.equals(Symbol.Type.INT)) {
+            printSemanticError("Invalid type for left operand");
+            return false;
+        }
+
+        Symbol.Type rop_type = ((SimpleNode) getChildren()[1]).getReturnType();
+
+        if (!rop_type.equals(Symbol.Type.INT)) {
+            printSemanticError("Invalid type for right operand");
+            return false;
+        }
+
+        return true;
+    }
 
 }
-/* JavaCC - OriginalChecksum=4d7d13f78d5c33b5a5e76147dd0fffc6 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=4d7d13f78d5c33b5a5e76147dd0fffc6 (do not edit this
+ * line)
+ */

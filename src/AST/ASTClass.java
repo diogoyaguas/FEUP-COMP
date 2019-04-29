@@ -4,11 +4,11 @@ package src.AST;
 
 public class ASTClass extends SimpleNode {
 	public ASTClass(int id) {
-		super(id, true);
+		super(id, true, true);
 	}
 
 	public ASTClass(Program p, int id) {
-		super(p, id, true);
+		super(p, id, true, true);
 	}
 
 	public boolean analyse() {

@@ -2,15 +2,50 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-public
-class ASTLESS_THAN extends SimpleNode {
-  public ASTLESS_THAN(int id) {
-    super(id);
-  }
+import src.semantic.*;
 
-  public ASTLESS_THAN(Program p, int id) {
-    super(p, id);
-  }
+public class ASTLESS_THAN extends SimpleNode {
+    public ASTLESS_THAN(int id) {
+        super(id);
+    }
+
+    public ASTLESS_THAN(Program p, int id) {
+        super(p, id);
+    }
+
+    public Symbol.Type getReturnType() {
+        return Symbol.Type.BOOLEAN;
+    }
+
+    public boolean checkSymbolTable() {
+
+        if (getChildren().length != 2) {
+            printSemanticError("Not valid LESS_THAN operands");
+            return false;
+        }
+
+        for(Node child : getChildren())
+            ((SimpleNode) child).checkSymbolTable();
+
+        Symbol.Type lop_type = ((SimpleNode) getChildren()[0]).getReturnType();
+
+        if (!lop_type.equals(Symbol.Type.INT)) {
+            printSemanticError("Invalid type for left operand");
+            return false;
+        }
+
+        Symbol.Type rop_type = ((SimpleNode) getChildren()[1]).getReturnType();
+
+        if (!rop_type.equals(Symbol.Type.INT)) {
+            printSemanticError("Invalid type for right operand");
+            return false;
+        }
+
+        return true;
+    }
 
 }
-/* JavaCC - OriginalChecksum=ad5070dad0f02986ae4d465bccb34115 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=ad5070dad0f02986ae4d465bccb34115 (do not edit this
+ * line)
+ */
