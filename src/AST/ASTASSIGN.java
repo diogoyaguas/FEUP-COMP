@@ -33,14 +33,10 @@ public class ASTASSIGN extends SimpleNode {
         // Right hand side
         SimpleNode rhs = (SimpleNode) getChildren()[1];
 
-        Symbol.Type rhs_type = rhs.getReturnType();
-
         if (!rhs.checkSymbolTable())
             return false;
 
-        // when rhs is an identifier
-        if (rhs_type.equals(Symbol.Type.VOID))
-            rhs_type = ((ASTTerm) rhs).getVarType();
+        Symbol.Type rhs_type = rhs.getReturnType();
 
         if (!lhs_type.equals(rhs_type)) {
             printSemanticError("Assign has different types on members");

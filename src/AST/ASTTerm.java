@@ -47,7 +47,7 @@ public class ASTTerm extends SimpleNode {
         case "int[]":
             return Symbol.Type.INT_ARRAY;
         case "id":
-            return Symbol.Type.VOID;
+            return var_type;
         default:
             return Symbol.Type.UNDEFINED;
         }

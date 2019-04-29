@@ -24,6 +24,9 @@ public class ASTLESS_THAN extends SimpleNode {
             return false;
         }
 
+        for(Node child : getChildren())
+            ((SimpleNode) child).checkSymbolTable();
+
         Symbol.Type lop_type = ((SimpleNode) getChildren()[0]).getReturnType();
 
         if (!lop_type.equals(Symbol.Type.INT)) {

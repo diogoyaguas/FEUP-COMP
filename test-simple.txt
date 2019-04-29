@@ -1,0 +1,8 @@
+class Bar {
+
+    public int Foo(int a){
+        int num;
+        num = a;
+        return num;
+    }
+}
