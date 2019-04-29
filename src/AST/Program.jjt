@@ -193,7 +193,7 @@ void MainDecl() #Main : { Token n2; }
   try {
     <STATIC><VOID><MAIN><L_PARENTHESIS><STRING><L_BRACKET><R_BRACKET> n2 =
         <ID> {
-      jjtThis.name = n2.image;
+      jjtThis.name = n2.image; jjtThis.type = "";
     }
     <R_PARENTHESIS> <L_CBRACKET>
   } catch (ParseException e) {
@@ -284,9 +284,7 @@ void StatementAuxiliar() #ASSIGN : { Token t1; }
 void Identifier() #Identifier : { Token t1; }
 {
   t1 = <ID> { jjtThis.node_value = t1.image; }
-  (<L_BRACKET> Expression() <R_BRACKET> {
-    jjtThis.node_value = jjtThis.node_value + "[]"; jjtThis.type = "int[]";
-  }) ?
+  (<L_BRACKET> Expression() <R_BRACKET> { jjtThis.node_value = jjtThis.node_value + "[]"; jjtThis.type = "int[]"; }) ?
 }
 
 void ArrayAssign() #ArrayAssign : {} { <L_BRACKET> Expression() <R_BRACKET> }

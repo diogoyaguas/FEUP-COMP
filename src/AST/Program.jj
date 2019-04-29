@@ -327,7 +327,7 @@ void MainDecl()       : {/*@bgen(jjtree) Main */
   try {
     <STATIC><VOID><MAIN><L_PARENTHESIS><STRING><L_BRACKET><R_BRACKET> n2 =
         <ID> {
-      jjtn000.name = n2.image;
+      jjtn000.name = n2.image; jjtn000.type = "";
     }
     <R_PARENTHESIS> <L_CBRACKET>
   } catch (ParseException e) {
@@ -648,9 +648,7 @@ void Identifier()             : {/*@bgen(jjtree) Identifier */
   try {
 /*@egen*/
   t1 = <ID> { jjtn000.node_value = t1.image; }
-  (<L_BRACKET> Expression() <R_BRACKET> {
-    jjtn000.node_value = jjtn000.node_value + "[]"; jjtn000.type = "int[]";
-  }) ?/*@bgen(jjtree)*/
+  (<L_BRACKET> Expression() <R_BRACKET> { jjtn000.node_value = jjtn000.node_value + "[]"; jjtn000.type = "int[]"; }) ?/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

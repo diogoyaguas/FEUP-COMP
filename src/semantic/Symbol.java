@@ -3,7 +3,7 @@ package src.semantic;
 public class Symbol {
 
     public static enum Type {
-        INT, INT_ARRAY, BOOLEAN, VOID, UNDEFINED
+        INT, INT_ARRAY, BOOLEAN, VOID, STRING_ARRAY, UNDEFINED
     }
 
     protected Type type;
@@ -45,6 +45,7 @@ public class Symbol {
         this.initialized = init;
     }
 
+    @Override
     public boolean equals(Object symbol) {
         Symbol s = (Symbol) symbol;
 
