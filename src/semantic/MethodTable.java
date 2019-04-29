@@ -12,11 +12,12 @@ public class MethodTable {
         this.methods = new HashMap<>();
     }
 
-    public boolean addMethod(String method_name, Vector<Symbol.Type> arg_types, Symbol.Type return_type, Vector<Pair> paramenters) {
-        
+    public boolean addMethod(String method_name, Vector<Symbol.Type> arg_types, Symbol.Type return_type,
+            Vector<Pair> paramenters) {
+
         MethodSignature signature = new MethodSignature(method_name, arg_types);
 
-        if(this.hasMethod(signature))
+        if (this.hasMethod(signature))
             return false;
 
         MethodSymbol method_entry = new MethodSymbol(return_type, paramenters);
@@ -29,20 +30,21 @@ public class MethodTable {
         return this.methods.containsKey(signature);
     }
 
-    public MethodSymbol obtainMethod(String method_name, Vector<Symbol.Type> arg_types){
+    public MethodSymbol obtainMethod(String method_name, Vector<Symbol.Type> arg_types) {
         MethodSignature signature = new MethodSignature(method_name, arg_types);
 
-        if(this.hasMethod(signature))
+        if (this.hasMethod(signature)){
             return this.methods.get(signature);
+        }
 
         return null;
     }
 
-    public void printMethodsTable(){
+    public void printMethodsTable() {
 
         MethodSymbol method;
 
-        for(MethodSignature signature : this.methods.keySet()){
+        for (MethodSignature signature : this.methods.keySet()) {
             method = this.methods.get(signature);
             System.out.print(signature.getMethodName() + " | Parameters:");
             method.printParameters();
@@ -50,10 +52,8 @@ public class MethodTable {
         }
     }
 
-    public HashMap<MethodSignature, MethodSymbol> getMethods(){
+    public HashMap<MethodSignature, MethodSymbol> getMethods() {
         return this.methods;
     }
-
-
 
 }

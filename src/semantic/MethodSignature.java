@@ -23,6 +23,11 @@ public class MethodSignature {
         return this.method_name.equals(method.getMethodName()) && this.argument_types.equals(method.getArgumentTypes());
     }
 
+    @Override
+    public int hashCode() {
+        return 31 * this.method_name.hashCode() + 31 * 31 * argument_types.hashCode();
+    }
+
     public String getMethodName(){
         return this.method_name;
     }
