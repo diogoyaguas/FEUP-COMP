@@ -253,7 +253,7 @@ public class CodeGenerator {
             return;
         }
 
-        output.println("invokestatic " + method_name + "(" + method_arg + ")" + method_ret);
+        output.println("\t" + "invokestatic " + method_name + "(" + method_arg + ")" + method_ret);
 
     }
 
@@ -354,7 +354,6 @@ public class CodeGenerator {
                     // output.println("iconst ACHO eu);
 
                 } else {
-
                     switch (rhs.jjtGetChild(i).getId()) {
                     case ProgramTreeConstants.JJTADD:
                         output.println("\tiadd");
@@ -368,10 +367,12 @@ public class CodeGenerator {
                     case ProgramTreeConstants.JJTDIV:
                         output.println("\tidiv");
                         break;
-                    }
+					}
+					
 
-                }
-            }
+				}
+				break;
+			}
 
         }
         // TODO: right now always assuming ArrayAccess and ScalarAccess are from static
