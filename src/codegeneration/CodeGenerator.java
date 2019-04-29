@@ -55,21 +55,21 @@ import src.semantic.Symbol.Type;
 
         for(int i=0; i< current_node.jjtGetNumChildren(); i++)
        {
-           generateGlobals((SimpleNode) current_node.jjtGetChild(i));
-       }
+        SimpleNode child = (SimpleNode) current_node.jjtGetChild(i);
 
-        if(current_node.getId() == ProgramTreeConstants.JJTVAR){
+        if(child.getId() == ProgramTreeConstants.JJTVAR){
 			//TODO PRINT STATIC DIFFERENTIATION
-		   output.print(".field public static " + current_node.getName() + " ");
-		   if(current_node.getType() == "int")
+		   output.print(".field public static " + child.getName() + " ");
+		   if(child.getType() == "int")
 				output.println("I");
 			else 
-			if(current_node.getType() == "boolean")
+			if(child.getType() == "boolean")
 				output.println("B");
 			else 
-			if(current_node.getType() == "String")
+			if(child.getType() == "String")
 				output.println("[Ljava/lang/String;");
 		}
+	}
 	}
 
  	private void generateStatic() {
