@@ -2,12 +2,19 @@ class Fac {
 
     int c;
     boolean troix;
-    public int ComputeFac(int num){
+
+    public int Quatre(){
+        return 2;
+    }
+
+    public int ComputeFac(int num, int deux){
         int num_aux ;
         if (num < 1)
             num_aux = 1 * 2 + 3;
         else
             num_aux = num + (this.ComputeFac(num-1));
+        
+        Quatre();
         return num_aux;
     }
     
