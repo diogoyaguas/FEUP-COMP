@@ -99,10 +99,6 @@ import src.semantic.Symbol.Type;
 
 		if (function_node.getId() == ProgramTreeConstants.JJTMAIN)
 			generateFunctionMainHeader(function_node);
-		/*else if (function_node.jjtGetNumChildren() >= 2
-				&& ((SimpleNode) function_node.jjtGetChild(1)).getId() == ProgramTreeConstants.JJTASSIGN)
-			generateAssignFunction(function_node);
-		*/
 		else{
 			generateFunctionHeader(function_node);
 		}
@@ -153,7 +149,7 @@ import src.semantic.Symbol.Type;
 					generateCall(function_child);
 					break;
 				case ProgramTreeConstants.JJTASSIGN:
-					//generateAssign(functionChild);
+					generateAssign(function_child);
 					break;
 				default:
 					break;
@@ -229,5 +225,47 @@ import src.semantic.Symbol.Type;
 	}
 
 
+	private void generateAssign(SimpleNode node) {
+		
+		SimpleNode lhs = (SimpleNode) node.jjtGetChild(0);
+
+		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+			
+			SimpleNode rhs = (SimpleNode) node.jjtGetChild(1);
+
+			for(int j = 0; j < rhs.jjtGetNumChildren(); j++){
+				if(rhs.jjtGetChild(i).getId() == ProgramTreeConstants.JJTTERM){
+					//VERIFICAR SE É O JJTERM o certo	
+					//TODO: Dar load das variáveis na expressão aritmética
+					//output.println("iload " + rhs.jjtGetChild(i).getName());
+					//TODO: Dar load dos valores na expressão aritmética caso não sejam variáveis
+					//output.println("iconst ACHO eu);
+
+				}else
+				{
+
+				switch(rhs.jjtGetChild(i).getId()) {
+				case ProgramTreeConstants.JJTADD:
+					output.println("\tiadd");
+					break;
+				case ProgramTreeConstants.JJTSUB:
+					output.println("\tisub");
+					break;
+				case ProgramTreeConstants.JJTMUL:
+					output.println("\timul");
+					break;
+				case ProgramTreeConstants.JJTDIV:
+					output.println("\tidiv");
+					break;
+				}
+
+			}
+			}
+			
+		}
+		//TODO: right now always assuming ArrayAccess and ScalarAccess are from static fields
+		output.println("\tputstatic " + lhs.getNodeValue() + " I");
+
+	}
      
     }

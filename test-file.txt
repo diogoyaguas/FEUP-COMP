@@ -4,11 +4,15 @@ class Fac {
     boolean troix;
 
     public int Quatre(){
+
         return 2;
     }
 
     public int ComputeFac(int num, int deux){
         int num_aux ;
+        
+        num_aux = 1 * 2 + 3;
+        
         if (num < 1)
             num_aux = 1 * 2 + 3;
         else
