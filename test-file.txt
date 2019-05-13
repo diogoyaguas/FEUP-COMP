@@ -1,11 +1,17 @@
-class Fac {
+class Fac extends Test{
 
     int c;
     boolean troix;
 
-    public int Quatre(){
+    public boolean Quatre(int value){
+        boolean testBool;
+        int[] array;
+        array = new int[3];
 
-        return 2;
+        array[1] = value * value;
+        test_bool = array[1] < value;
+
+        return true;
     }
 
     public int ComputeFac(int num, int deux){
@@ -23,6 +29,6 @@ class Fac {
     }
     
     public static void main(String[] a){
-        //io.println(new Fac().ComputeFac(10)); //assuming the existence of the classfile io.class
+        io.println(new Fac().ComputeFac(10)); //assuming the existence of the classfile io.class
     }
 }

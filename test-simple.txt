@@ -1,5 +1,9 @@
-class Bar {
+class Fac {
 
-    public static void main(String[] arg){
+    public boolean Quatre(int value){
+        int[] array;
+        array = new int[3];
+        //array[1] = value * value;
+        return true;
     }
 }

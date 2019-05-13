@@ -43,12 +43,12 @@ public
     root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
     
 
-    try {
+    /*try {
       CodeGenerator generator = new CodeGenerator(root, "test-file.j");
 	    generator.generateCode();
     } catch (IOException e) {
       e.printStackTrace();
-    }
+    }*/
   }
 
 public
@@ -264,7 +264,7 @@ void Statement() #void : {} {
     System.out.println("CAUGHT WHILE DECLARATION");
     skip_to(R_PARENTHESIS);
   }
-  | LOOKAHEAD(2) Expression()<SEMI_COLON> | StatementAuxiliar()
+  | LOOKAHEAD( <ID> (<L_BRACKET> | <EQUAL>)) StatementAuxiliar() | Expression()<SEMI_COLON>
 }
 
 void IfStatement() #IF : {} {
@@ -279,15 +279,17 @@ void WhileStatement() #WHILE : {} {
 }
 
 void StatementAuxiliar() #ASSIGN : { Token t1; }
-{ Identifier()<EQUAL> Expression()<SEMI_COLON> }
+{ Identifier() <EQUAL> Expression()<SEMI_COLON> }
 
 void Identifier() #Identifier : { Token t1; }
 {
-  t1 = <ID> { jjtThis.node_value = t1.image; }
-  (<L_BRACKET> Expression() <R_BRACKET> { jjtThis.node_value = jjtThis.node_value + "[]"; jjtThis.type = "int[]"; }) ?
+    t1=<ID> { jjtThis.name = t1.image; } (ArrayIndex())?
 }
 
-void ArrayAssign() #ArrayAssign : {} { <L_BRACKET> Expression() <R_BRACKET> }
+void ArrayIndex() #void : {}
+{
+  <L_BRACKET> Expression() <R_BRACKET>
+}
 
 void Expression() #void : {} { Expression_AddSub() Expression_Aux() }
 
@@ -316,7 +318,7 @@ void Expression_Aux() #void : { Token t1; }
                 <EXCLM_MARK> Expression() #EXCLAMATION_MARK(1) |
                 <L_PARENTHESIS> Expression() < R_PARENTHESIS > |
                 <L_BRACKET> Expression() < R_BRACKET > |
-                <PERIOD> Period_Aux() #PERIOD(2) | <NEW> New_Aux() #NEW(1))
+                <PERIOD> Period_Aux() #PERIOD(2) | <NEW> New_Aux())
        Expression_Aux())
       ?
 }
@@ -342,11 +344,11 @@ void Period_Aux() #PeriodAux : { Token t1; }
   <L_PARENTHESIS> Expression() (<COMMA> Expression())* <R_PARENTHESIS>
 }
 
-void New_Aux() #NewAux : { Token t1; }
+void New_Aux() #NEW : { Token t1; }
 {
 
-  <INT> { jjtThis.name = "int[]"; }
-  <L_BRACKET> Expression()<R_BRACKET> | t1 = <ID> { jjtThis.name = t1.image; }
+  <INT> { jjtThis.type = "int[]"; }
+  <L_BRACKET> Expression()<R_BRACKET> | t1 = <ID> { jjtThis.type = "id"; jjtThis.name = t1.image; }
   <L_PARENTHESIS> <R_PARENTHESIS>
 }
 

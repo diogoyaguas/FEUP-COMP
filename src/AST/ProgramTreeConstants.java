@@ -18,19 +18,17 @@ public interface ProgramTreeConstants
   public int JJTWHILE = 12;
   public int JJTASSIGN = 13;
   public int JJTIDENTIFIER = 14;
-  public int JJTARRAYASSIGN = 15;
-  public int JJTADD = 16;
-  public int JJTSUB = 17;
-  public int JJTMUL = 18;
-  public int JJTDIV = 19;
-  public int JJTAND = 20;
-  public int JJTLESS_THAN = 21;
-  public int JJTEXCLAMATION_MARK = 22;
-  public int JJTPERIOD = 23;
-  public int JJTNEW = 24;
-  public int JJTTERM = 25;
-  public int JJTPERIODAUX = 26;
-  public int JJTNEWAUX = 27;
+  public int JJTADD = 15;
+  public int JJTSUB = 16;
+  public int JJTMUL = 17;
+  public int JJTDIV = 18;
+  public int JJTAND = 19;
+  public int JJTLESS_THAN = 20;
+  public int JJTEXCLAMATION_MARK = 21;
+  public int JJTPERIOD = 22;
+  public int JJTTERM = 23;
+  public int JJTPERIODAUX = 24;
+  public int JJTNEW = 25;
 
 
   public String[] jjtNodeName = {
@@ -49,7 +47,6 @@ public interface ProgramTreeConstants
     "WHILE",
     "ASSIGN",
     "Identifier",
-    "ArrayAssign",
     "ADD",
     "SUB",
     "MUL",
@@ -58,10 +55,9 @@ public interface ProgramTreeConstants
     "LESS_THAN",
     "EXCLAMATION_MARK",
     "PERIOD",
-    "NEW",
     "Term",
     "PeriodAux",
-    "NewAux",
+    "NEW",
   };
 }
-/* JavaCC - OriginalChecksum=342feedc83029b1293e4d0878233aa48 (do not edit this line) */
+/* JavaCC - OriginalChecksum=7ccb2a4039cbae26b0761fbbace51750 (do not edit this line) */

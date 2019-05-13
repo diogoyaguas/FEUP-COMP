@@ -173,7 +173,6 @@ public class SimpleNode implements Node {
         case "StatementAux":
             return ProgramTreeConstants.jjtNodeName[id];
         case "PeriodAux":
-        case "NewAux":
             return this.name;
         case "NewNode":
             return "Identifier (Name: " + this.name + ")";
@@ -182,19 +181,18 @@ public class SimpleNode implements Node {
         case "Extends":
         case "Statement":
         case "Aux":
+        case "Identifier":
             if (this.name != null)
                 return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + ")";
             else
                 return ProgramTreeConstants.jjtNodeName[id];
-        case "Id":
-            if (this.type != null)
+        case "NEW":
+            if (this.name != null)
                 return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Type: " + this.type + ")";
             else
-                return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + ")";
+                return ProgramTreeConstants.jjtNodeName[id] + " (Type: " + this.type + ")";
         case "Type":
             return ProgramTreeConstants.jjtNodeName[id] + " (Type: " + this.type + ")";
-        case "Identifier":
-            return ProgramTreeConstants.jjtNodeName[id] + " (Value: " + this.node_value + ")";
         case "Term":
             return ProgramTreeConstants.jjtNodeName[id] + " (Value: " + this.node_value + " | Type: " + this.type + ")";
         case "Argument":
