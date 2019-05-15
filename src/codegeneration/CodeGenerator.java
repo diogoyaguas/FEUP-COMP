@@ -349,7 +349,9 @@ public class CodeGenerator {
         SimpleNode lhs = (SimpleNode) node.jjtGetChild(0);
         
         SimpleNode rhs = (SimpleNode) node.jjtGetChild(1);
-
+        
+        
+        count.set(0);
         output.print(generateOperation(rhs));
 
         // TODO: right now always assuming ArrayAccess and ScalarAccess are from static
@@ -360,12 +362,16 @@ public class CodeGenerator {
 
     private String generateOperation(SimpleNode rhs) {
         String generated_code = "";
-        if (rhs.getChildren() != null)
+
+
+        if (rhs.getChildren() != null){
             for (Node child : rhs.getChildren()) {
                 SimpleNode child_simplenode = (SimpleNode) child;
                 generated_code += generateOperation(child_simplenode);
 
             }
+        }
+
         if (rhs != null) {
             if (rhs.getChildren() != null) {
                 if (rhs.getChildren().length > 1) {
@@ -392,7 +398,6 @@ public class CodeGenerator {
         }
 
         return generated_code;
-
     }
 
 }
