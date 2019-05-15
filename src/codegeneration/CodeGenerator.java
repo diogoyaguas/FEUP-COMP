@@ -205,8 +205,10 @@ public class CodeGenerator {
                 generateAssign(method_child);
                 break;
             case ProgramTreeConstants.JJTIF:
+                generateIfStatement(method_child);
                 break;
             case ProgramTreeConstants.JJTELSE:
+                generateBodyStub(method_child);
                 break;
             case ProgramTreeConstants.JJTPERIOD:
                 break;
@@ -348,7 +350,7 @@ public class CodeGenerator {
     }
 
     private String loadIntString(String v) {
-        String generated_code ="";
+        String generated_code = "";
         int value = Integer.parseInt(v);
         if ((value >= 0) && (value <= 5)) {
             generated_code += "\ticonst_" + value;
@@ -366,8 +368,8 @@ public class CodeGenerator {
     }
 
     private void loadLocalVariable(String name) {
-        //TODO
-        //WITH INDEXES
+        // TODO
+        // WITH INDEXES
     }
 
     private void loadGlobalVariable(String name) {
@@ -393,23 +395,23 @@ public class CodeGenerator {
     private void generateAssign(SimpleNode node) {
 
         SimpleNode lhs = (SimpleNode) node.jjtGetChild(0);
-        
+
         SimpleNode rhs = (SimpleNode) node.jjtGetChild(1);
         String generated_code = "";
-        
-        if(rhs.getId() == ProgramTreeConstants.JJTNEW){
+
+        if (rhs.getId() == ProgramTreeConstants.JJTNEW) {
             output.print(generateNew(rhs, generated_code));
-        } else{
-        count.set(0);
-        output.print(generateOperation(rhs, generated_code));
+        } else {
+            count.set(0);
+            output.print(generateOperation(rhs, generated_code));
         }
         // TODO: right now always assuming ArrayAccess and ScalarAccess are from static
         // fields
-        //output.println("\tputstatic " + lhs.getName());
+        // output.println("\tputstatic " + lhs.getName());
     }
 
-    private String generateNew(SimpleNode rhs, String generated_code){
-        if (rhs.getChildren() != null){
+    private String generateNew(SimpleNode rhs, String generated_code) {
+        if (rhs.getChildren() != null) {
             for (Node child : rhs.getChildren()) {
                 SimpleNode child_simplenode = (SimpleNode) child;
                 generated_code += generateNew(child_simplenode, generated_code);
@@ -437,7 +439,7 @@ public class CodeGenerator {
 
     private String generateOperation(SimpleNode rhs, String generated_code) {
 
-        if (rhs.getChildren() != null){
+        if (rhs.getChildren() != null) {
             for (Node child : rhs.getChildren()) {
                 SimpleNode child_simplenode = (SimpleNode) child;
                 generated_code += generateOperation(child_simplenode, generated_code);
@@ -471,6 +473,49 @@ public class CodeGenerator {
                 generated_code = "\tiload_" + count.getAndIncrement();
             }
             generated_code += "\n";
+        }
+
+        return generated_code;
+    }
+
+    private void generateIfStatement(SimpleNode node) {
+
+        String generated_code = "";
+
+        SimpleNode exprNode = (SimpleNode) node.jjtGetChild(0);
+
+        generated_code += generateExpr(exprNode);
+        generated_code += "\n";
+        output.print(generated_code);
+
+        SimpleNode assingNode = (SimpleNode) node.jjtGetChild(1);
+
+        if (assingNode.getId() == ProgramTreeConstants.JJTASSIGN)
+            generateAssign(assingNode);
+
+    }
+
+    private String generateExpr(SimpleNode exprNode) {
+
+        String generated_code = "";
+
+        switch (exprNode.getId()) {
+
+        case ProgramTreeConstants.JJTLESS_THAN:
+            if (exprNode.getChildren() != null) {
+                for (Node child : exprNode.getChildren()) {
+                    SimpleNode child_simpleNode = (SimpleNode) child;
+                    if (child_simpleNode.getId() == ProgramTreeConstants.JJTTERM) {
+                        generated_code += "\tiload_" + count.getAndIncrement();
+                        generated_code += "\n";
+                    }
+                }
+            }
+            generated_code += "\tif_icmplt " + count.getAndIncrement();
+            break;
+
+        case ProgramTreeConstants.JJTAND:
+            break;
         }
 
         return generated_code;
