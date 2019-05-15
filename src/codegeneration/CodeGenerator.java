@@ -360,7 +360,12 @@ public class CodeGenerator {
 
     private String generateOperation(SimpleNode rhs) {
         String generated_code = "";
+        if (rhs.getChildren() != null)
+            for (Node child : rhs.getChildren()) {
+                SimpleNode child_simplenode = (SimpleNode) child;
+                generated_code += generateOperation(child_simplenode);
 
+            }
         if (rhs != null) {
             if (rhs.getChildren() != null) {
                 if (rhs.getChildren().length > 1) {
@@ -385,13 +390,6 @@ public class CodeGenerator {
             }
             generated_code += "\n";
         }
-
-        if (rhs.getChildren() != null)
-            for (Node child : rhs.getChildren()) {
-                SimpleNode child_simplenode = (SimpleNode) child;
-                generated_code += generateOperation(child_simplenode);
-
-            }
 
         return generated_code;
 
