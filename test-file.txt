@@ -6,7 +6,7 @@ class Fac extends Test{
     public boolean Quatre(int value){
         boolean testBool;
         int[] array;
-        array = new int[3];
+        array = new int[value];
 
         array = 1 * value;
 

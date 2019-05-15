@@ -37,7 +37,7 @@ public
     if (createInputStream() == false)
       return;
 
-    ASTProgram root = myProg.Program(); // devolve referencia para o n\u00f3 da raiz da \u00e1rvore
+    ASTProgram root = myProg.Program(); // devolve referencia para o n\u00c3\u00b3 da raiz da \u00c3\u00a1rvore
     root.dump("");
 
     if(!root.analyse())
@@ -1063,7 +1063,7 @@ void New_Aux()      : {/*@bgen(jjtree) NEW */
   try {
 /*@egen*/
 
-  <INT> { jjtn000.type = "int[]"; }
+  t1 = <INT> { jjtn000.type = "int[]"; }
   <L_BRACKET> Expression()<R_BRACKET> | t1 = <ID> { jjtn000.type = "id"; jjtn000.name = t1.image; }
   <L_PARENTHESIS> <R_PARENTHESIS>/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {

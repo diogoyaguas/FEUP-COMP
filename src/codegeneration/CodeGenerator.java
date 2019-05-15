@@ -359,8 +359,8 @@ public class CodeGenerator {
         } else {
             generated_code += "\tldc " + value;
         }
-
         return generated_code + "\n";
+
     }
 
     private void loadLocalVariable(String name) {
@@ -416,18 +416,18 @@ public class CodeGenerator {
 
         if (rhs != null) {
             if (rhs.getChildren() != null) {
-                    if(rhs.getType() == "int[]") {
-                        SimpleNode array_type = (SimpleNode) rhs.jjtGetChild(0);
-                        generated_code += "\tnewarray " + array_type.getType();
+                    if(rhs.getType() == "new") {
+                        generated_code += "\tnewarray " + rhs.getType().replace("new", "int");
+                        generated_code += "\n";
                     }
-            } else if (rhs.getId() == ProgramTreeConstants.JJTTERM) {
+            }else if (rhs.getId() == ProgramTreeConstants.JJTTERM) {
                 if(rhs.getType() == "int") {
                     generated_code += loadIntString(rhs.getNodeValue());
+                } else if(rhs.getType() == "id") {
+                    generated_code += "\tiload_" + count.getAndIncrement();
+                    generated_code += "\n";
                 }
-
-                generated_code += "\tiaload";
             }
-            generated_code += "\n";
         }
 
         return generated_code;
