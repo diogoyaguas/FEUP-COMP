@@ -8,12 +8,13 @@ import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import src.AST.SimpleNode;
+import src.AST.ASTArgument;
+import src.AST.ASTMethod;
+import src.AST.ASTVar;
 import src.AST.Node;
-import src.AST.Program;
 import src.AST.ProgramTreeConstants;
 
 import src.semantic.Symbol;
-import src.semantic.Symbol.Type;
 
 public class CodeGenerator {
 
@@ -42,7 +43,7 @@ public class CodeGenerator {
         generateClassHeader();
         generateGlobals(root);
         generateStatic();
-        generateFunctions();
+        generateMethods();
         output.close();
 
     }
@@ -60,102 +61,161 @@ public class CodeGenerator {
             SimpleNode child = (SimpleNode) current_node.jjtGetChild(i);
 
             if (child.getId() == ProgramTreeConstants.JJTVAR) {
-                // TODO PRINT STATIC DIFFERENTIATION
-                output.print(".field public static " + child.getName() + " ");
-                if (child.getType() == "int")
-                    output.println("I");
-                else if (child.getType() == "boolean")
-                    output.println("B");
-                else if (child.getType() == "String")
-                    output.println("[Ljava/lang/String;");
+                generateVar((ASTVar) child);
             }
         }
     }
 
     private void generateStatic() {
-        // TODO Auto-generated method stub
+        // TODO
+        // limit stack....
+    }
+
+    private void generateVar(ASTVar var) {
+        String var_type = var.getType();
+        String var_name = var.getName();
+        String output_type = "";
+
+        switch (var_type) {
+        case "int":
+            output_type = "I";
+            break;
+        case "int[]":
+            output_type = "[I";
+            break;
+        case "boolean":
+            output_type = "B";
+            break;
+        }
+
+        output.println(".field public static " + var_name + " " + output_type);
 
     }
 
-    private void generateFunctions() {
+    private void generateMethods() {
 
         for (int i = 0; i < root.jjtGetNumChildren(); i++) {
             SimpleNode child_root = (SimpleNode) root.jjtGetChild(i);
-            if (child_root.getId() == ProgramTreeConstants.JJTMAIN) {
-                generateFunction(child_root);
-            }
-            if (child_root.getId() == ProgramTreeConstants.JJTMETHOD) {
-                generateFunction(child_root);
-            }
+
+            if (child_root.getId() == ProgramTreeConstants.JJTMAIN)
+                generateMethod(child_root);
+
+            if (child_root.getId() == ProgramTreeConstants.JJTMETHOD)
+                generateMethod(child_root);
 
         }
+    }
+
+    private void generateMethod(SimpleNode method) {
+        output.println();
+
+        if (method.getId() == ProgramTreeConstants.JJTMAIN)
+            generateMainMethodHeader(method);
+        else {
+            generateMethodHeader((ASTMethod) method);
+        }
+
+        generateBodyStub(method);
+
+        generateMethodFooter(method);
 
     }
 
-    private void generateFunction(SimpleNode function_node) {
-        output.println();
+    private void generateMainMethodHeader(SimpleNode function_node) {
+        output.println(".method public static main([Ljava/lang/String;)V");
 
-        if (function_node.getId() == ProgramTreeConstants.JJTMAIN)
-            generateFunctionMainHeader(function_node);
+    }
+
+    private void generateMethodHeader(ASTMethod method) {
+        output.print(".method public static " + method.getName());
+
+        if (method.jjtGetNumChildren() == 0)
+            output.print("()");
         else {
-            generateFunctionHeader(function_node);
+            output.print("(");
+            for (int i = 0; i < method.jjtGetNumChildren(); i++) {
+                SimpleNode child = (SimpleNode) method.jjtGetChild(i);
+
+                if (child.getId() == ProgramTreeConstants.JJTARGUMENT)
+                    generateArgument((ASTArgument) child);
+            }
+            output.print(")");
         }
 
-        // body stub
-        generateBodyStub(function_node);
+        switch (method.getType()) {
+        case "int":
+            output.print("I\n");
+            break;
+        case "int[]":
+            output.print("[I\n");
+            break;
+        case "boolean":
+            output.print("B\n");
+            break;
+        default:
+            output.print("V\n");
+        }
+    }
 
-        // declarations, etc etc
-        if (function_node.jjtGetNumChildren() >= 2) {
-            if (function_node.getReturnType() == Symbol.Type.INT)
-                output.println("\t" + "ireturn");
-            else
-                output.println("\t" + "areturn");
+    private void generateArgument(ASTArgument argument) {
+
+        switch (argument.getType()) {
+        case "int":
+            output.print("I");
+            break;
+        case "int[]":
+            output.print("[I");
+            break;
+        case "boolean":
+            output.print("B");
+            break;
+        }
+    }
+
+    private void generateMethodFooter(SimpleNode method) {
+        String return_type = "";
+
+        if (method.getId() != ProgramTreeConstants.JJTMAIN) {
+            switch (method.getType()) {
+            case "int":
+            case "boolean":
+                return_type = "i";
+                break;
+            case "int[]":
+                return_type = "a";
+                break;
+            }
         }
 
-        else
-            output.println("\t" + "return");
-
+        output.println("\t" + return_type + "return");
         output.println(".end method");
         output.println();
-
     }
 
-    private void generateBodyStub(SimpleNode function_node) {
-        for (int i = 0; i < function_node.jjtGetNumChildren(); i++) {
-            SimpleNode function_child = (SimpleNode) function_node.jjtGetChild(i);
+    private void generateBodyStub(SimpleNode method) {
+        for (int i = 0; i < method.jjtGetNumChildren(); i++) {
+            SimpleNode method_child = (SimpleNode) method.jjtGetChild(i);
 
-            switch (function_child.getId()) {
-            case ProgramTreeConstants.JJTTERM:
-
-                output.print("\t" + "invokestatic " + function_child.getNodeValue() + "(");
-                if ((function_child.getType() == "int"))
-                    output.print("I");
-
-                if ((i + 1 == function_child.jjtGetNumChildren())) {
-                    output.print(";");
-                    continue;
-                }
-
-                output.print(")");
-
-                if (function_node.getType() == "int")
-                    output.println("I");
-                else
-                    output.println("V");
-                break;
-
-            case ProgramTreeConstants.JJTPERIOD:
-                generateCall(function_child);
+            switch (method_child.getId()) {
+            case ProgramTreeConstants.JJTVAR:
                 break;
             case ProgramTreeConstants.JJTASSIGN:
-                generateAssign(function_child);
+                generateAssign(method_child);
                 break;
-            default:
+            case ProgramTreeConstants.JJTIF:
+                break;
+            case ProgramTreeConstants.JJTELSE:
+                break;
+            case ProgramTreeConstants.JJTPERIOD:
+                break;
+            case ProgramTreeConstants.JJTWHILE:
                 break;
             }
-
         }
+
     }
+
+    /*********************************************** */
 
     private void generateCall(SimpleNode function_child) {
 
@@ -262,33 +322,8 @@ public class CodeGenerator {
 
     }
 
-    private void loadGlobalVariable(String name) {
-
-        String type;
-        Symbol symbol = root.getSymbols().getSymbolWithName(name);
-
-        switch (symbol.getType()) {
-        case INT:
-        case BOOLEAN:
-            type = "B";
-            break;
-        case INT_ARRAY:
-            type = "[I";
-            break;
-        default:
-            return;
-        }
-
-        output.println("getstatic /" + name + type);
-
-    }
-
-    private void loadLocalVariable(String name) {
-        // TODO
-    }
-
-    private void loadBoolean(String b) {
-        output.println("ldc " + b);
+    private void loadBoolean(String bool) {
+        this.loadInt(bool);
     }
 
     private void loadInt(String v) {
@@ -308,39 +343,28 @@ public class CodeGenerator {
         }
     }
 
-    private void generateFunctionHeader(SimpleNode function_node) {
-        output.print(".method public static " + function_node.getName());
-
-        if (function_node.jjtGetNumChildren() == 0)
-            output.println("()V");
-        else {
-            output.print("(");
-            for (int i = 0; i < function_node.jjtGetNumChildren(); i++) {
-                SimpleNode childFunction = (SimpleNode) function_node.jjtGetChild(i);
-                if (childFunction.getId() == ProgramTreeConstants.JJTARGUMENT) {
-                    if (childFunction.getType() == "int")
-                        output.print("I");
-                    else if (childFunction.getType() == "boolean")
-                        output.print("B");
-                    else if (childFunction.getType() == "String")
-                        output.print("[Ljava/lang/String;");
-                    else
-                        output.println(")V");
-                    continue;
-                }
-                if (function_node.getType() == "int")
-                    output.println(")I");
-                else if (function_node.getType() == "boolean")
-                    output.println(")B");
-                else
-                    output.println(")V");
-                break;
-            }
-        }
+    private void loadLocalVariable(String name) {
+        // TODO
+        // needs indexes maybe?
     }
 
-    private void generateFunctionMainHeader(SimpleNode function_node) {
-        output.println(".method public static main([Ljava/lang/String;)V");
+    private void loadGlobalVariable(String name) {
+        String type;
+        Symbol symbol = root.getSymbols().getSymbolWithName(name);
+
+        switch (symbol.getType()) {
+        case INT:
+        case BOOLEAN:
+            type = " I";
+            break;
+        case INT_ARRAY:
+            type = "[I";
+            break;
+        default:
+            return;
+        }
+
+        output.println("getstatic /" + name + type);
 
     }
 

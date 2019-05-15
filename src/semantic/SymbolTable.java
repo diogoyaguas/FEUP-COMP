@@ -1,6 +1,8 @@
 package src.semantic;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class SymbolTable {
 
@@ -22,8 +24,28 @@ public class SymbolTable {
         return false;
     }
 
+    public boolean addSymbol(String name, Symbol.Type type, boolean init, int index) {
+        Symbol new_s = new Symbol(type, init, index);
+
+        if (!this.symbols.containsKey(name)) {
+            this.symbols.put(name, new_s);
+            return true;
+        }
+        return false;
+    }
+
     public boolean addSymbol(String name, Symbol.Type type, String value, boolean init) {
         Symbol new_s = new Symbol(type, value, init);
+
+        if (!this.symbols.containsKey(name)) {
+            this.symbols.put(name, new_s);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean addSymbol(String name, Symbol.Type type, String value, boolean init, int index) {
+        Symbol new_s = new Symbol(type, value, init, index);
 
         if (!this.symbols.containsKey(name)) {
             this.symbols.put(name, new_s);
@@ -95,6 +117,25 @@ public class SymbolTable {
             symbol = this.symbols.get(symbol_name);
             System.out.println("  " + symbol_name + " | " + symbol.getType());
         }
+    }
+
+    public int attributeIndexes(int last_index_attributed) {
+        int current_index = last_index_attributed;
+
+        Iterator<Map.Entry<String, Symbol>> iterator = symbols.entrySet().iterator();
+        while(iterator.hasNext()) {
+
+            Map.Entry<String,Symbol> entry = iterator.next();
+
+            //String name = entry.getKey();
+            Symbol symbol = entry.getValue();
+
+            if(symbol.getIndex() == -1) 
+                symbol.setIndex(++current_index);
+            
+        }
+
+        return current_index;
     }
 
     /* GETTERS AND SETTERS */

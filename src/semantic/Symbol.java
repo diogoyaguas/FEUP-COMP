@@ -9,16 +9,32 @@ public class Symbol {
     protected Type type;
     protected String value;
     protected boolean initialized;
+    protected int index;
     
     public Symbol(Type type, String value, boolean initialized) {
         this.type = type;
         this.value = value;
         this.initialized = initialized;
+        this.index = -1;
+    }
+
+    public Symbol(Type type, String value, boolean initialized, int index) {
+        this.type = type;
+        this.value = value;
+        this.initialized = initialized;
+        this.index = index;
     }
 
     public Symbol(Type type, boolean initialized){
         this.type = type;
         this.initialized = initialized;
+        this.index = -1;
+    }
+
+    public Symbol(Type type, boolean initialized, int index){
+        this.type = type;
+        this.initialized = initialized;
+        this.index = index;
     }
 
     public Type getType() {
@@ -43,6 +59,14 @@ public class Symbol {
 
     public void setInitialized(boolean init) {
         this.initialized = init;
+    }
+
+    public int getIndex(){
+        return this.index;
+    }
+
+    public void setIndex(int new_index){
+        this.index = new_index;
     }
 
     @Override

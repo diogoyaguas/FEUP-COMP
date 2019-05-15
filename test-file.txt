@@ -18,7 +18,7 @@ class Fac extends Test{
         num_aux = 1 * 2 + 3;
         
         if (num < 1)
-            num_aux = 1 * 2 + 3 + 4;
+            num_aux = 2 * 3 + 4;
         else
             num_aux = num + (this.ComputeFac(num-1, num_aux));
         

@@ -98,6 +98,19 @@ public class SimpleNode implements Node {
         return success;
     }
 
+    public int attributeIndexes(int last_index_attributed) {
+        int current_index = last_index_attributed;
+        if(this.has_scope)
+            current_index = this.symbols.attributeIndexes(current_index);
+
+        if(getChildren() != null) {
+            for(Node child : getChildren())
+            current_index = ((SimpleNode) child).attributeIndexes(current_index);
+        }
+
+        return current_index;
+    }
+
     public boolean checkSymbolTable() {
         return true;
     }

@@ -24,8 +24,6 @@ class ASTMain extends SimpleNode {
 
     Symbol.Type return_type = Symbol.Type.VOID;
 
-    Node[] children = getChildren();
-
     Vector<Symbol.Type> argument_types = new Vector<>();
     Vector<Pair> parameters = new Vector<>();
 

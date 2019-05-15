@@ -8,6 +8,9 @@ import src.semantic.*;
 import src.utils.*;
 
 public class ASTMethod extends SimpleNode {
+
+    protected int index_counter = -1;
+
     public ASTMethod(int id) {
         super(id, true, false);
     }
@@ -51,7 +54,7 @@ public class ASTMethod extends SimpleNode {
             argument_types.add(aux_type);
             parameters.add(param_pair);
 
-            symbols.addSymbol(arg_name, aux_type, true);
+            symbols.addSymbol(arg_name, aux_type, true, ++index_counter);
 
             i++;
         }
@@ -80,6 +83,8 @@ public class ASTMethod extends SimpleNode {
         for(Node child : children){
             success = ((SimpleNode) child).analyse();
         }
+
+        index_counter = attributeIndexes(index_counter);
 
         return success;
     }
