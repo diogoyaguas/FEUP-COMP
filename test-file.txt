@@ -6,10 +6,8 @@ class Fac extends Test{
     public boolean Quatre(int value){
         boolean testBool;
         int[] array;
-        array = new int[3];
 
-        array[1] = value * value;
-        test_bool = array[1] < value;
+        array = 1 * value;
 
         return true;
     }
@@ -20,7 +18,7 @@ class Fac extends Test{
         num_aux = 1 * 2 + 3;
         
         if (num < 1)
-            num_aux = 1 * 2 + 3;
+            num_aux = 1 * 2 + 3 + 4;
         else
             num_aux = num + (this.ComputeFac(num-1, num_aux));
         
