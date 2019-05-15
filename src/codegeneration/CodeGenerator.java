@@ -322,6 +322,8 @@ public class CodeGenerator {
 
     }
 
+    /*********************** */
+
     private void loadBoolean(String bool) {
         this.loadInt(bool);
     }
@@ -361,8 +363,10 @@ public class CodeGenerator {
         return generated_code + "\n";
     }
 
-    private void generateFunctionHeader(SimpleNode function_node) {
-        output.print(".method public static " + function_node.getName());
+    private void loadLocalVariable(String name) {
+        //TODO
+        //WITH INDEXES
+    }
 
     private void loadGlobalVariable(String name) {
         String type;
