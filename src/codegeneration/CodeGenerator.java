@@ -178,8 +178,10 @@ public class CodeGenerator {
         if (method.getId() != ProgramTreeConstants.JJTMAIN) {
             switch (method.getType()) {
             case "int":
-            case "boolean":
                 return_type = "i";
+                break;
+            case "boolean":
+                return_type = "i"; //TODO: NOT CORRECT, DIFERENCIAR AQUI RETURNS BOOLEANOS
                 break;
             case "int[]":
                 return_type = "a";
@@ -359,7 +361,7 @@ public class CodeGenerator {
         } else {
             generated_code += "\tldc " + value;
         }
-        return generated_code + "\n";
+        return generated_code;
 
     }
 
@@ -463,6 +465,9 @@ public class CodeGenerator {
 
                 }
             } else if (rhs.getId() == ProgramTreeConstants.JJTTERM) {
+                if(rhs.getType() == "int") {
+                    generated_code = loadIntString(rhs.getNodeValue());
+                }else
                 generated_code = "\tiload_" + count.getAndIncrement();
             }
             generated_code += "\n";
