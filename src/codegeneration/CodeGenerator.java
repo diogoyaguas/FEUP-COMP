@@ -343,10 +343,26 @@ public class CodeGenerator {
         }
     }
 
-    private void loadLocalVariable(String name) {
-        // TODO
-        // needs indexes maybe?
+    private String loadIntString(String v) {
+        String generated_code ="";
+        int value = Integer.parseInt(v);
+        if ((value >= 0) && (value <= 5)) {
+            generated_code += "\ticonst_" + value;
+        } else if (value == -1) {
+            generated_code += "\ticonst_m1";
+        } else if (value > -129 && value < 128) {
+            generated_code += "\tbipush " + value;
+        } else if (value > -32769 && value < 32768) {
+            generated_code += "\tsipush " + value;
+        } else {
+            generated_code += "\tldc " + value;
+        }
+
+        return generated_code + "\n";
     }
+
+    private void generateFunctionHeader(SimpleNode function_node) {
+        output.print(".method public static " + function_node.getName());
 
     private void loadGlobalVariable(String name) {
         String type;
@@ -373,25 +389,52 @@ public class CodeGenerator {
         SimpleNode lhs = (SimpleNode) node.jjtGetChild(0);
         
         SimpleNode rhs = (SimpleNode) node.jjtGetChild(1);
+        String generated_code = "";
         
-        
+        if(rhs.getId() == ProgramTreeConstants.JJTNEW){
+            output.print(generateNew(rhs, generated_code));
+        } else{
         count.set(0);
-        output.print(generateOperation(rhs));
-
+        output.print(generateOperation(rhs, generated_code));
+        }
         // TODO: right now always assuming ArrayAccess and ScalarAccess are from static
         // fields
         //output.println("\tputstatic " + lhs.getName());
-
     }
 
-    private String generateOperation(SimpleNode rhs) {
-        String generated_code = "";
+    private String generateNew(SimpleNode rhs, String generated_code){
+        if (rhs.getChildren() != null){
+            for (Node child : rhs.getChildren()) {
+                SimpleNode child_simplenode = (SimpleNode) child;
+                generated_code += generateNew(child_simplenode, generated_code);
+            }
+        }
 
+        if (rhs != null) {
+            if (rhs.getChildren() != null) {
+                    if(rhs.getType() == "int[]") {
+                        SimpleNode array_type = (SimpleNode) rhs.jjtGetChild(0);
+                        generated_code += "\tnewarray " + array_type.getType();
+                    }
+            } else if (rhs.getId() == ProgramTreeConstants.JJTTERM) {
+                if(rhs.getType() == "int") {
+                    generated_code += loadIntString(rhs.getNodeValue());
+                }
+
+                generated_code += "\tiaload";
+            }
+            generated_code += "\n";
+        }
+
+        return generated_code;
+    }
+
+    private String generateOperation(SimpleNode rhs, String generated_code) {
 
         if (rhs.getChildren() != null){
             for (Node child : rhs.getChildren()) {
                 SimpleNode child_simplenode = (SimpleNode) child;
-                generated_code += generateOperation(child_simplenode);
+                generated_code += generateOperation(child_simplenode, generated_code);
 
             }
         }
@@ -416,7 +459,7 @@ public class CodeGenerator {
 
                 }
             } else if (rhs.getId() == ProgramTreeConstants.JJTTERM) {
-                generated_code = "\tiload_" + count.incrementAndGet();
+                generated_code = "\tiload_" + count.getAndIncrement();
             }
             generated_code += "\n";
         }
