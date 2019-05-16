@@ -181,7 +181,7 @@ public class CodeGenerator {
                 return_type = "i";
                 break;
             case "boolean":
-                return_type = "i"; //TODO: NOT CORRECT, DIFERENCIAR AQUI RETURNS BOOLEANOS
+                return_type = "i"; // TODO: NOT CORRECT, DIFERENCIAR AQUI RETURNS BOOLEANOS
                 break;
             case "int[]":
                 return_type = "a";
@@ -370,21 +370,40 @@ public class CodeGenerator {
 
     private void loadLocalVariable(SimpleNode node, String name) {
         int index = node.getSymbolIndex(name);
-        Symbol.Type var_t = node.getSymbols().getSymbols().get(name).getType();
+        Symbol.Type var_t = node.getSymbols().getSymbolWithName(name).getType();
         String type, code;
 
-        if(var_t == Symbol.Type.INT || var_t == Symbol.Type.BOOLEAN)
+        if (var_t == Symbol.Type.INT || var_t == Symbol.Type.BOOLEAN)
             type = "i";
         else
             type = "a";
 
-        if(index <= 3)
+        if (index <= 3)
             code = "load_";
         else
             code = "load ";
 
-        output.println(type + code + index);
+        output.println("\t" + type + code + index);
     }
+
+    private void storeLocalVariable(SimpleNode node, String name) {
+        int index = node.getSymbolIndex(name);
+        Symbol.Type var_t = node.getSymbols().getSymbolWithName(name).getType();
+        String type, code;
+
+        if (var_t == Symbol.Type.INT || var_t == Symbol.Type.BOOLEAN)
+            type = "i";
+        else
+            type = "a";
+
+        if (index <= 3)
+            code = "store_";
+        else
+            code = "store ";
+
+        output.println("\t" + type + code + index);
+    }
+    
 
     private void loadGlobalVariable(String name) {
         String type;
@@ -402,8 +421,26 @@ public class CodeGenerator {
             return;
         }
 
-        output.println("getstatic /" + name + type);
+        output.println("\tgetstatic " + root.getName() + "/" + name + type);
+    }
 
+    private void storeGlobalVariable(String name) {
+        String type;
+        Symbol symbol = root.getSymbols().getSymbolWithName(name);
+
+        switch (symbol.getType()) {
+            case INT:
+            case BOOLEAN:
+                type = " I";
+                break;
+            case INT_ARRAY:
+                type = "[I";
+                break;
+            default:
+                return;
+            }
+    
+            output.println("\tputstatic " + root.getName() + "/" + name + type);
     }
 
     private void generateAssign(SimpleNode node) {
@@ -414,50 +451,62 @@ public class CodeGenerator {
         String generated_code = "";
 
         if (rhs.getId() == ProgramTreeConstants.JJTNEW) {
-            output.print(generateNew(rhs, generated_code));
+            generateNew(rhs, generated_code);
         } else {
             count.set(0);
-            output.print(generateOperation(rhs, generated_code));
+            generateOperation(rhs, generated_code);
         }
+
+        generateAssignLhs(lhs);
         // TODO: right now always assuming ArrayAccess and ScalarAccess are from static
         // fields
         // output.println("\tputstatic " + lhs.getName());
     }
 
-    private String generateNew(SimpleNode rhs, String generated_code) {
+    private void generateAssignLhs(SimpleNode lhs) {
+        String var_name = lhs.getName();
+
+        if(root.getSymbols().hasSymbolWithNameLocal(var_name))
+            storeGlobalVariable(var_name);
+        else
+            storeLocalVariable(lhs, var_name);
+    }
+
+    private void generateNew(SimpleNode rhs, String generated_code) {
         if (rhs.getChildren() != null) {
             for (Node child : rhs.getChildren()) {
                 SimpleNode child_simplenode = (SimpleNode) child;
-                generated_code += generateNew(child_simplenode, generated_code);
+                generateNew(child_simplenode, generated_code);
             }
         }
 
         if (rhs != null) {
             if (rhs.getChildren() != null) {
-                    if(rhs.getType() == "new") {
-                        generated_code += "\tnewarray " + rhs.getType().replace("new", "int");
-                        generated_code += "\n";
-                    }
-            }else if (rhs.getId() == ProgramTreeConstants.JJTTERM) {
-                if(rhs.getType() == "int") {
-                    generated_code += loadIntString(rhs.getNodeValue());
-                } else if(rhs.getType() == "id") {
-                    generated_code += "\tiload_" + count.getAndIncrement();
+                if (rhs.getType() == "new") {
+                    generated_code += "\tnewarray " + rhs.getType().replace("new", "int");
                     generated_code += "\n";
+                }
+            } else if (rhs.getId() == ProgramTreeConstants.JJTTERM) {
+                if (rhs.getType() == "int") {
+                    generated_code = loadIntString(rhs.getNodeValue());
+                } else {
+                    if (this.root.getSymbols().hasSymbolWithNameLocal(rhs.getName()))
+                        this.loadGlobalVariable(rhs.getNodeValue());
+                    else
+                        this.loadLocalVariable(rhs, rhs.getNodeValue());
                 }
             }
         }
 
-        return generated_code;
+        output.println(generated_code);
     }
 
-    private String generateOperation(SimpleNode rhs, String generated_code) {
+    private void generateOperation(SimpleNode rhs, String generated_code) {
 
         if (rhs.getChildren() != null) {
             for (Node child : rhs.getChildren()) {
                 SimpleNode child_simplenode = (SimpleNode) child;
-                generated_code += generateOperation(child_simplenode, generated_code);
-
+                generateOperation(child_simplenode, generated_code);
             }
         }
 
@@ -481,15 +530,17 @@ public class CodeGenerator {
 
                 }
             } else if (rhs.getId() == ProgramTreeConstants.JJTTERM) {
-                if(rhs.getType() == "int") {
+                if (rhs.getType() == "int") {
                     generated_code = loadIntString(rhs.getNodeValue());
-                }else
-                generated_code = "\tiload_" + count.getAndIncrement();
+                } else {
+                    if (this.root.getSymbols().hasSymbolWithNameLocal(rhs.getName()))
+                        this.loadGlobalVariable(rhs.getNodeValue());
+                    else
+                        this.loadLocalVariable(rhs, rhs.getNodeValue());
+                }
             }
-            generated_code += "\n";
+            output.println(generated_code);
         }
-
-        return generated_code;
     }
 
     private void generateIfStatement(SimpleNode node) {
