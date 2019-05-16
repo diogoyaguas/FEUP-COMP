@@ -209,7 +209,7 @@ public class CodeGenerator {
                 generateIfStatement(method_child);
                 break;
             case ProgramTreeConstants.JJTELSE:
-                generateBodyStub(method_child);
+                generateElseStatement(method_child);
                 break;
             case ProgramTreeConstants.JJTPERIOD:
                 generateCall(method_child);
@@ -584,6 +584,11 @@ public class CodeGenerator {
         }
 
         return generated_code;
+    }
+
+    private void generateElseStatement(SimpleNode node) {
+
+        output.print("\t");
     }
 
 }
