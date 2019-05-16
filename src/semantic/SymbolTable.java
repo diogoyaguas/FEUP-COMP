@@ -65,6 +65,18 @@ public class SymbolTable {
             return parent_table.getSymbolWithName(name);
     }
 
+    public int getSymbolIndex(String name){
+
+        if(hasSymbolWithName(name))
+            return symbols.get(name).getIndex();
+        else{
+            if(parent_table == null)
+                return -1;
+            else
+                return parent_table.getSymbolIndex(name);
+        }
+    }
+
     public boolean hasSymbolWithNameLocal(String name) {
 
         return symbols.containsKey(name);

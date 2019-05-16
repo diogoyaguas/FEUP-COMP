@@ -233,7 +233,7 @@ public class CodeGenerator {
     }
 
     private void generateCallArguments(SimpleNode method_node, String method_class) {
-
+        int dum;
         if (method_class != "this")
             return;
 
@@ -250,7 +250,8 @@ public class CodeGenerator {
             case "id":
                 String name = argument.getNodeValue();
                 if (root.getSymbols().hasSymbolWithNameLocal(name))
-                    this.loadLocalVariable(name);
+                    // this.loadLocalVariable((SimpleNode) arg, name);
+                    dum = 1;
                 else
                     this.loadGlobalVariable(name);
                 break;
@@ -367,9 +368,22 @@ public class CodeGenerator {
 
     }
 
-    private void loadLocalVariable(String name) {
-        // TODO
-        // WITH INDEXES
+    private void loadLocalVariable(SimpleNode node, String name) {
+        int index = node.getSymbolIndex(name);
+        Symbol.Type var_t = node.getSymbols().getSymbols().get(name).getType();
+        String type, code;
+
+        if(var_t == Symbol.Type.INT || var_t == Symbol.Type.BOOLEAN)
+            type = "i";
+        else
+            type = "a";
+
+        if(index <= 3)
+            code = "load_";
+        else
+            code = "load ";
+
+        output.println(type + code + index);
     }
 
     private void loadGlobalVariable(String name) {

@@ -73,6 +73,10 @@ public class SimpleNode implements Node {
             return ((SimpleNode) this.parent).getMethods();
     }
 
+    public int getSymbolIndex(String name){
+        return symbols.getSymbolIndex(name);
+    }
+
     public void printSemanticError(String error) {
         // TODO
         // Get location of where the error is
