@@ -28,6 +28,7 @@ public class CodeGenerator {
 
     public CodeGenerator(SimpleNode root, String file_name) throws IOException {
         this.root = (SimpleNode) root.getChildren()[0];
+
         this.file_name = file_name;
 
         FileWriter filewriter = new FileWriter(file_name, false);
@@ -211,6 +212,7 @@ public class CodeGenerator {
                 generateBodyStub(method_child);
                 break;
             case ProgramTreeConstants.JJTPERIOD:
+                generateCall(method_child);
                 break;
             case ProgramTreeConstants.JJTWHILE:
                 break;
@@ -227,13 +229,13 @@ public class CodeGenerator {
             generateCallArguments((SimpleNode) function_child.getChildren()[1],
                     ((SimpleNode) function_child.getChildren()[0]).getNodeValue());
 
-        // generateCallInvoke((SimpleNode) function_child.getChildren()[1],
-        // ((SimpleNode) function_child.getChildren()[0]).getNodeValue());
+        generateCallInvoke((SimpleNode) function_child.getChildren()[1],
+                ((SimpleNode) function_child.getChildren()[0]).getNodeValue());
 
     }
 
     private void generateCallArguments(SimpleNode method_node, String method_class) {
-        int dum;
+
         if (method_class != "this")
             return;
 
@@ -250,10 +252,9 @@ public class CodeGenerator {
             case "id":
                 String name = argument.getNodeValue();
                 if (root.getSymbols().hasSymbolWithNameLocal(name))
-                    // this.loadLocalVariable((SimpleNode) arg, name);
-                    dum = 1;
-                else
                     this.loadGlobalVariable(name);
+                else
+                    this.loadLocalVariable((SimpleNode) arg, name);
                 break;
             case "int[]":
                 break;
@@ -265,7 +266,7 @@ public class CodeGenerator {
         String method_name, method_ret, method_arg = "";
 
         if (method_class == "this")
-            method_name = "." + method.getName();
+            method_name = this.root.getName() + "." + method.getName();
         else
             method_name = method_class + "." + method.getName();
 
@@ -403,7 +404,6 @@ public class CodeGenerator {
 
         output.println("\t" + type + code + index);
     }
-    
 
     private void loadGlobalVariable(String name) {
         String type;
@@ -466,7 +466,7 @@ public class CodeGenerator {
     private void generateAssignLhs(SimpleNode lhs) {
         String var_name = lhs.getName();
 
-        if(root.getSymbols().hasSymbolWithNameLocal(var_name))
+        if (root.getSymbols().hasSymbolWithNameLocal(var_name))
             storeGlobalVariable(var_name);
         else
             storeLocalVariable(lhs, var_name);
