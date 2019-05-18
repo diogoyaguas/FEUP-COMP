@@ -16,15 +16,15 @@ class Fac extends Test{
         return true;
     }
 
-    public int ComputeFac(int num, int deux){
-        int num_aux ;
+    public int ComputeFac(int num){
+        int num_aux;
         
         num_aux = 1 * 2 + 3;
         
         if (num < 1)
             num_aux = 2 * 3 + 4;
         else
-            num_aux = num + (this.ComputeFac(num-1, num_aux));
+            num_aux = num + (this.ComputeFac(num-1));
         
         this.Quatre();
         return num_aux;

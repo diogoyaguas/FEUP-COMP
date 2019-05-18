@@ -108,7 +108,6 @@ public class CodeGenerator {
     }
 
     private void generateMethod(SimpleNode method) {
-        output.println();
 
         if (method.getId() == ProgramTreeConstants.JJTMAIN)
             generateMainMethodHeader(method);
@@ -123,12 +122,12 @@ public class CodeGenerator {
     }
 
     private void generateMainMethodHeader(SimpleNode function_node) {
-        output.println(".method public static main([Ljava/lang/String;)V");
+        output.println("\n.method public static main([Ljava/lang/String;)V");
 
     }
 
     private void generateMethodHeader(ASTMethod method) {
-        output.print(".method public static " + method.getName());
+        output.print("\n.method public static " + method.getName());
 
         if (method.jjtGetNumChildren() == 0)
             output.print("()");
@@ -192,46 +191,49 @@ public class CodeGenerator {
 
         output.println("\t" + return_type + "return");
         output.println(".end method");
-        output.println();
     }
 
     private void generateBodyStub(SimpleNode method) {
         for (int i = 0; i < method.jjtGetNumChildren(); i++) {
             SimpleNode method_child = (SimpleNode) method.jjtGetChild(i);
-
-            switch (method_child.getId()) {
-            case ProgramTreeConstants.JJTVAR:
-                break;
-            case ProgramTreeConstants.JJTASSIGN:
-                generateAssign(method_child);
-                break;
-            case ProgramTreeConstants.JJTIF:
-                generateIfStatement(method_child);
-                break;
-            case ProgramTreeConstants.JJTELSE:
-                generateElseStatement(method_child);
-                break;
-            case ProgramTreeConstants.JJTPERIOD:
-                generateCall(method_child);
-                break;
-            case ProgramTreeConstants.JJTWHILE:
-                break;
-            }
+            generateBody(method_child);
         }
 
+    }
+
+    private void generateBody(SimpleNode node) {
+
+        switch (node.getId()) {
+        case ProgramTreeConstants.JJTVAR:
+            break;
+        case ProgramTreeConstants.JJTASSIGN:
+            generateAssign(node);
+            break;
+        case ProgramTreeConstants.JJTIF:
+            generateIfStatement(node);
+            break;
+        case ProgramTreeConstants.JJTELSE:
+            generateElseStatement(node);
+            break;
+        case ProgramTreeConstants.JJTPERIOD:
+            generateCall(node);
+            break;
+        case ProgramTreeConstants.JJTWHILE:
+            break;
+        }
     }
 
     /*********************************************** */
 
     private void generateCall(SimpleNode function_child) {
-
-        if ((((SimpleNode) function_child.getChildren()[1]).getChildren() != null))
-            generateCallArguments((SimpleNode) function_child.getChildren()[1],
-                    ((SimpleNode) function_child.getChildren()[0]).getNodeValue());
-
-        generateCallInvoke((SimpleNode) function_child.getChildren()[1],
-                ((SimpleNode) function_child.getChildren()[0]).getNodeValue());
-
+        /*
+         * if ((((SimpleNode) function_child.getChildren()[1]).getChildren() != null))
+         * generateCallArguments((SimpleNode) function_child.getChildren()[1],
+         * ((SimpleNode) function_child.getChildren()[0]).getNodeValue());
+         * 
+         * generateCallInvoke((SimpleNode) function_child.getChildren()[1],
+         * ((SimpleNode) function_child.getChildren()[0]).getNodeValue());
+         */
     }
 
     private void generateCallArguments(SimpleNode method_node, String method_class) {
@@ -384,7 +386,10 @@ public class CodeGenerator {
         else
             code = "load ";
 
-        output.println("\t" + type + code + index);
+        output.print("\t" + type + code + index);
+        if(index == 0) {
+            output.println();
+        }
     }
 
     private void storeLocalVariable(SimpleNode node, String name) {
@@ -429,18 +434,18 @@ public class CodeGenerator {
         Symbol symbol = root.getSymbols().getSymbolWithName(name);
 
         switch (symbol.getType()) {
-            case INT:
-            case BOOLEAN:
-                type = " I";
-                break;
-            case INT_ARRAY:
-                type = "[I";
-                break;
-            default:
-                return;
-            }
-    
-            output.println("\tputstatic " + root.getName() + "/" + name + type);
+        case INT:
+        case BOOLEAN:
+            type = " I";
+            break;
+        case INT_ARRAY:
+            type = "[I";
+            break;
+        default:
+            return;
+        }
+
+        output.println("\tputstatic " + root.getName() + "/" + name + type);
     }
 
     private void generateAssign(SimpleNode node) {
@@ -483,8 +488,7 @@ public class CodeGenerator {
         if (rhs != null) {
             if (rhs.getChildren() != null) {
                 if (rhs.getType() == "new") {
-                    generated_code += "\tnewarray " + rhs.getType().replace("new", "int");
-                    generated_code += "\n";
+                    generated_code += "\tnewarray\t" + rhs.getType().replace("new", "int");
                 }
             } else if (rhs.getId() == ProgramTreeConstants.JJTTERM) {
                 if (rhs.getType() == "int") {
@@ -529,17 +533,31 @@ public class CodeGenerator {
                     }
 
                 }
-            } else if (rhs.getId() == ProgramTreeConstants.JJTTERM) {
+            } else if (rhs.getId() == ProgramTreeConstants.JJTTERM && rhs.getType() != "this") {
+
                 if (rhs.getType() == "int") {
-                    generated_code = loadIntString(rhs.getNodeValue());
+                    generated_code += loadIntString(rhs.getNodeValue());
                 } else {
-                    if (this.root.getSymbols().hasSymbolWithNameLocal(rhs.getName()))
+                    if (this.root.getSymbols().hasSymbolWithNameLocal(rhs.getName())) {
                         this.loadGlobalVariable(rhs.getNodeValue());
-                    else
+                    } else {
                         this.loadLocalVariable(rhs, rhs.getNodeValue());
+                    }
                 }
             }
-            output.println(generated_code);
+
+            if (rhs.getId() == ProgramTreeConstants.JJTPERIOD) {
+                generated_code += "\tinvokevirtual\t#" + 1;
+            }
+
+            if (generated_code != "")   
+                output.println(generated_code);
+
+            /*
+             * TODO: FAZER ARITMÉTRICA COM DIFERENTE COISAS PARA ALÉM DE INT POR EXEMPLO UMA
+             * FUNÇÃO, UM DOUBLE OU FLOAT
+             * 
+             */
         }
     }
 
@@ -550,13 +568,11 @@ public class CodeGenerator {
         SimpleNode exprNode = (SimpleNode) node.jjtGetChild(0);
 
         generated_code += generateExpr(exprNode);
-        generated_code += "\n";
-        output.print(generated_code);
+        output.println(generated_code);
 
-        SimpleNode assingNode = (SimpleNode) node.jjtGetChild(1);
+        SimpleNode bodyNode = (SimpleNode) node.jjtGetChild(1);
 
-        if (assingNode.getId() == ProgramTreeConstants.JJTASSIGN)
-            generateAssign(assingNode);
+        generateBody(bodyNode);
 
     }
 
@@ -588,7 +604,10 @@ public class CodeGenerator {
 
     private void generateElseStatement(SimpleNode node) {
 
-        output.print("\t");
+        for (Node child : node.getChildren()) {
+            SimpleNode child_simpleNode = (SimpleNode) child;
+            generateBody(child_simpleNode);
+        }
     }
 
 }
