@@ -26,6 +26,12 @@ public class CodeGenerator {
 
     private AtomicInteger count;
 
+    private int counter;
+
+    private int ifInstruction = 0;
+
+    private int elseInstruction = 0;
+
     public CodeGenerator(SimpleNode root, String file_name) throws IOException {
         this.root = (SimpleNode) root.getChildren()[0];
 
@@ -94,6 +100,8 @@ public class CodeGenerator {
     }
 
     private void generateMethods() {
+
+        counter = 0;
 
         for (int i = 0; i < root.jjtGetNumChildren(); i++) {
             SimpleNode child_root = (SimpleNode) root.jjtGetChild(i);
@@ -341,6 +349,8 @@ public class CodeGenerator {
 
     private void loadInt(String v) {
 
+        counter++;
+
         int value = Integer.parseInt(v);
 
         if ((value >= 0) && (value <= 5)) {
@@ -357,7 +367,10 @@ public class CodeGenerator {
     }
 
     private String loadIntString(String v) {
+
+        counter++;
         String generated_code = "";
+
         int value = Integer.parseInt(v);
         if ((value >= 0) && (value <= 5)) {
             generated_code += "\ticonst_" + value;
@@ -550,7 +563,7 @@ public class CodeGenerator {
             }
 
             if (rhs.getId() == ProgramTreeConstants.JJTPERIOD) {
-                generated_code += "\tinvokevirtual\t#" + 1;
+                generated_code += "\tinvokevirtual ComputeFac:(I)I";
             }
 
             if (generated_code != "")
@@ -573,9 +586,13 @@ public class CodeGenerator {
         generated_code += generateExpr(exprNode);
         output.println(generated_code);
 
+        ifInstruction = counter;
+
         SimpleNode bodyNode = (SimpleNode) node.jjtGetChild(1);
 
         generateBody(bodyNode);
+
+        output.println("\tgoto\t" + elseInstruction);
 
     }
 
@@ -590,12 +607,20 @@ public class CodeGenerator {
                 for (Node child : exprNode.getChildren()) {
                     SimpleNode child_simpleNode = (SimpleNode) child;
                     if (child_simpleNode.getId() == ProgramTreeConstants.JJTTERM) {
-                        generated_code += "\tiload_" + count.getAndIncrement();
-                        generated_code += "\n";
+                        if (child_simpleNode.getType() == "int") {
+                            generated_code += loadIntString(child_simpleNode.getNodeValue());
+                        } else {
+                            if (this.root.getSymbols().hasSymbolWithNameLocal(child_simpleNode.getName())) {
+                                this.loadGlobalVariable(child_simpleNode.getNodeValue());
+                            } else {
+                                this.loadLocalVariable(child_simpleNode, child_simpleNode.getNodeValue());
+                            }
+                        }
                     }
                 }
             }
-            generated_code += "\tif_icmplt " + count.getAndIncrement();
+            generated_code += "\n\tif_icmplt " + ifInstruction;
+            generated_code += "\n\tbipush\t" + 1; // TODO FAZER O VALOR CERTO
             break;
 
         case ProgramTreeConstants.JJTAND:
@@ -611,6 +636,8 @@ public class CodeGenerator {
             SimpleNode child_simpleNode = (SimpleNode) child;
             generateBody(child_simpleNode);
         }
+
+        elseInstruction = counter;
     }
 
 }
