@@ -2,45 +2,53 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-import src.semantic.*;
+import src.semantic.Symbol;
+import src.semantic.Symbol.Type;
 
-public
-class ASTSUB extends SimpleNode {
-  public ASTSUB(int id) {
-    super(id);
-  }
-
-  public ASTSUB(Program p, int id) {
-    super(p, id);
-  }
-
-  public Symbol.Type getReturnType() {
-    return Symbol.Type.INT;
-}
-
-public boolean checkSymbolTable() {
-
-    if (getChildren().length != 2) {
-        printSemanticError("Not valid SUB operands");
-        return false;
+public class ASTSUB extends SimpleNode {
+    public ASTSUB(int id) {
+        super(id);
     }
 
-    Symbol.Type lop_type = ((SimpleNode) getChildren()[0]).getReturnType();
-
-    if (!lop_type.equals(Symbol.Type.INT)) {
-        printSemanticError("Invalid type for left operand");
-        return false;
+    public ASTSUB(Program p, int id) {
+        super(p, id);
     }
 
-    Symbol.Type rop_type = ((SimpleNode) getChildren()[1]).getReturnType();
-
-    if (!rop_type.equals(Symbol.Type.INT)) {
-        printSemanticError("Invalid type for right operand");
-        return false;
+    public Symbol.Type getReturnType() {
+        return Symbol.Type.INT;
     }
 
-    return true;
-}
+    public boolean checkSymbolTable() {
+
+        if (getChildren().length != 2) {
+            printSemanticError("Not valid SUB operands");
+            return false;
+        }
+
+        Symbol.Type lop_type = ((SimpleNode) getChildren()[0]).getReturnType();
+        if (lop_type == Type.VOID)
+            lop_type = getVarType(((SimpleNode) getChildren()[0]).getNodeValue());
+
+        if (!lop_type.equals(Symbol.Type.INT)) {
+            printSemanticError("Invalid type for left operand");
+            return false;
+        }
+
+        Symbol.Type rop_type = ((SimpleNode) getChildren()[1]).getReturnType();
+
+        if (rop_type == Type.VOID)
+            rop_type = getVarType(((SimpleNode) getChildren()[0]).getNodeValue());
+
+        if (!rop_type.equals(Symbol.Type.INT)) {
+            printSemanticError("Invalid type for right operand");
+            return false;
+        }
+
+        return true;
+    }
 
 }
-/* JavaCC - OriginalChecksum=c5b7c4f489561ccfe04bd8afceed1759 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=c5b7c4f489561ccfe04bd8afceed1759 (do not edit this
+ * line)
+ */

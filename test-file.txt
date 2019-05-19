@@ -11,8 +11,6 @@ class Fac extends Test{
         num_aux = 1 * 2 + 3;
         array = new int[num_aux];
 
-        array = 1 * value;
-
         return true;
     }
 
@@ -26,11 +24,11 @@ class Fac extends Test{
         else
             num_aux = num + (this.ComputeFac(num-1));
         
-        this.Quatre();
+        this.Quatre(num_aux);
         return num_aux;
     }
     
     public static void main(String[] a){
-        io.println(new Fac().ComputeFac(10)); //assuming the existence of the classfile io.class
+        //io.println(new Fac().ComputeFac(10)); //assuming the existence of the classfile io.class
     }
 }

@@ -2,7 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-import src.semantic.*;
+import src.semantic.Symbol;
+import src.semantic.Symbol.Type;
 
 public class ASTLESS_THAN extends SimpleNode {
     public ASTLESS_THAN(int id) {
@@ -24,10 +25,12 @@ public class ASTLESS_THAN extends SimpleNode {
             return false;
         }
 
-        for(Node child : getChildren())
+        for (Node child : getChildren())
             ((SimpleNode) child).checkSymbolTable();
 
         Symbol.Type lop_type = ((SimpleNode) getChildren()[0]).getReturnType();
+        if (lop_type == Type.VOID)
+            lop_type = getVarType(((SimpleNode) getChildren()[0]).getNodeValue());
 
         if (!lop_type.equals(Symbol.Type.INT)) {
             printSemanticError("Invalid type for left operand");
@@ -35,6 +38,9 @@ public class ASTLESS_THAN extends SimpleNode {
         }
 
         Symbol.Type rop_type = ((SimpleNode) getChildren()[1]).getReturnType();
+
+        if (rop_type == Type.VOID)
+            rop_type = getVarType(((SimpleNode) getChildren()[0]).getNodeValue());
 
         if (!rop_type.equals(Symbol.Type.INT)) {
             printSemanticError("Invalid type for right operand");

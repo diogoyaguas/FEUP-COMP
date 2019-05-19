@@ -3,10 +3,16 @@ class Fac {
     int counter;
 
     public boolean Double(int value){
-        return value * value;
+        int a;
+        a = 2;
+        counter = 1;
+        return true;
     }
 
-    public static void main(String[] a){
-        io.println(new Fac().ComputeFac(10)); //assuming the existence of the classfile io.class
+    public int invoke(){
+        this.Double(1);
+        return 1;
     }
+
+
 }

@@ -223,42 +223,38 @@ public class CodeGenerator {
         }
     }
 
-    /*********************************************** */
-
     private void generateCall(SimpleNode function_child) {
-        /*
-         * if ((((SimpleNode) function_child.getChildren()[1]).getChildren() != null))
-         * generateCallArguments((SimpleNode) function_child.getChildren()[1],
-         * ((SimpleNode) function_child.getChildren()[0]).getNodeValue());
-         * 
-         * generateCallInvoke((SimpleNode) function_child.getChildren()[1],
-         * ((SimpleNode) function_child.getChildren()[0]).getNodeValue());
-         */
+
+        String method_class = ((SimpleNode) function_child.jjtGetChild(0)).getNodeValue();
+        SimpleNode call_node = (SimpleNode) function_child.jjtGetChild(1);
+
+        generateCallArguments(call_node);
+        generateCallInvoke(call_node, method_class);
+
     }
 
-    private void generateCallArguments(SimpleNode method_node, String method_class) {
-
-        if (method_class != "this")
-            return;
+    private void generateCallArguments(SimpleNode method_node) {
 
         for (Node arg : method_node.getChildren()) {
             SimpleNode argument = (SimpleNode) arg;
 
-            switch (argument.getType()) {
-            case "int":
+            switch (argument.getReturnType()) {
+            case INT:
                 this.loadInt(argument.getNodeValue());
                 break;
-            case "boolean":
+            case BOOLEAN:
                 this.loadBoolean(argument.getNodeValue());
                 break;
-            case "id":
+            case VOID:
                 String name = argument.getNodeValue();
                 if (root.getSymbols().hasSymbolWithNameLocal(name))
                     this.loadGlobalVariable(name);
                 else
                     this.loadLocalVariable((SimpleNode) arg, name);
                 break;
-            case "int[]":
+            case INT_ARRAY:
+                break;
+            default:
                 break;
             }
         }
@@ -267,6 +263,7 @@ public class CodeGenerator {
     private void generateCallInvoke(SimpleNode method, String method_class) {
         String method_name, method_ret, method_arg = "";
 
+        // Add the method path to the method name
         if (method_class == "this")
             method_name = this.root.getName() + "." + method.getName();
         else
@@ -274,41 +271,49 @@ public class CodeGenerator {
 
         method_name = method_name.replace(".", "/");
 
+        // Process arguments
         Vector<Symbol.Type> arg_types = new Vector<>();
 
         if (method.getChildren() != null) {
             for (Node arg : method.getChildren()) {
                 SimpleNode argument = (SimpleNode) arg;
-
-                switch (argument.getType()) {
-                case "int":
+                switch (argument.getReturnType()) {
+                case INT:
                     method_arg += "I";
                     arg_types.add(Symbol.Type.INT);
                     break;
-                case "boolean":
+                case BOOLEAN:
                     method_arg += "B";
                     arg_types.add(Symbol.Type.BOOLEAN);
                     break;
-                case "id":
-                    if (argument.getSymbols().getSymbolWithName(argument.getName()).getType() == Symbol.Type.INT) {
+                case VOID:
+                    // System.out.println(
+                    //         argument.getSymbols().getSymbolWithName(argument.getNodeValue()) + " | " + argument.getNodeValue());
+                    if (argument.getSymbols().getSymbolWithName(argument.getNodeValue()).getType() == Symbol.Type.INT) {
                         method_arg += "I";
                         arg_types.add(Symbol.Type.INT);
-                    } else if (argument.getSymbols().getSymbolWithName(argument.getName())
+                    } else if (argument.getSymbols().getSymbolWithName(argument.getNodeValue())
                             .getType() == Symbol.Type.INT_ARRAY) {
                         method_arg += "[I";
                         arg_types.add(Symbol.Type.INT_ARRAY);
-                    } else if (argument.getSymbols().getSymbolWithName(argument.getName())
+                    } else if (argument.getSymbols().getSymbolWithName(argument.getNodeValue())
                             .getType() == Symbol.Type.BOOLEAN) {
                         method_arg += "B";
                         arg_types.add(Symbol.Type.INT);
                     }
                     break;
-                case "int[]":
+                case INT_ARRAY:
+                    method_arg += "[I";
+                    arg_types.add(Symbol.Type.INT_ARRAY);
+                    break;
+                default:
                     break;
                 }
             }
         }
 
+        // TODO
+        // Does not work then method is from another class. How do we know the type of the method?
         Symbol.Type method_return = root.getMethods().obtainMethod(method.getName(), arg_types).getType();
 
         switch (method_return) {
@@ -329,8 +334,6 @@ public class CodeGenerator {
         output.println("\t" + "invokestatic " + method_name + "(" + method_arg + ")" + method_ret);
 
     }
-
-    /*********************** */
 
     private void loadBoolean(String bool) {
         this.loadInt(bool);
@@ -386,8 +389,8 @@ public class CodeGenerator {
         else
             code = "load ";
 
-        output.print("\t" + type + code + index);
-        if(index == 0) {
+        output.println("\t" + type + code + index);
+        if (index == 0) {
             output.println();
         }
     }
@@ -550,7 +553,7 @@ public class CodeGenerator {
                 generated_code += "\tinvokevirtual\t#" + 1;
             }
 
-            if (generated_code != "")   
+            if (generated_code != "")
                 output.println(generated_code);
 
             /*

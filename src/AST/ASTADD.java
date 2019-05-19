@@ -4,6 +4,7 @@
 package src.AST;
 
 import src.semantic.Symbol;
+import src.semantic.Symbol.Type;
 
 public class ASTADD extends SimpleNode {
     public ASTADD(int id) {
@@ -27,12 +28,18 @@ public class ASTADD extends SimpleNode {
 
         Symbol.Type lop_type = ((SimpleNode) getChildren()[0]).getReturnType();
 
+        if (lop_type == Type.VOID)
+            lop_type = getVarType(((SimpleNode) getChildren()[0]).getNodeValue());
+
         if (!lop_type.equals(Symbol.Type.INT)) {
             printSemanticError("Invalid type for left operand");
             return false;
         }
 
         Symbol.Type rop_type = ((SimpleNode) getChildren()[1]).getReturnType();
+
+        if (rop_type == Type.VOID)
+            rop_type = getVarType(((SimpleNode) getChildren()[0]).getNodeValue());
 
         if (!rop_type.equals(Symbol.Type.INT)) {
             printSemanticError("Invalid type for right operand");

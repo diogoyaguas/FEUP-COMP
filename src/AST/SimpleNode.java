@@ -4,6 +4,7 @@
 package src.AST;
 
 import src.semantic.*;
+import src.semantic.Symbol.Type;
 
 public class SimpleNode implements Node {
 
@@ -73,7 +74,7 @@ public class SimpleNode implements Node {
             return ((SimpleNode) this.parent).getMethods();
     }
 
-    public int getSymbolIndex(String name){
+    public int getSymbolIndex(String name) {
         return symbols.getSymbolIndex(name);
     }
 
@@ -104,12 +105,12 @@ public class SimpleNode implements Node {
 
     public int attributeIndexes(int last_index_attributed) {
         int current_index = last_index_attributed;
-        if(this.has_scope)
+        if (this.has_scope)
             current_index = this.symbols.attributeIndexes(current_index);
 
-        if(getChildren() != null) {
-            for(Node child : getChildren())
-            current_index = ((SimpleNode) child).attributeIndexes(current_index);
+        if (getChildren() != null) {
+            for (Node child : getChildren())
+                current_index = ((SimpleNode) child).attributeIndexes(current_index);
         }
 
         return current_index;
@@ -335,6 +336,16 @@ public class SimpleNode implements Node {
         default:
             return Symbol.Type.UNDEFINED;
         }
+    }
+
+    public Symbol.Type getVarType(String var_name) {
+
+        if (!this.symbols.hasSymbolWithName(var_name)) {
+            printSemanticError("Variable " + var_name + " undefined");
+            return Type.VOID;
+        }
+
+        return this.symbols.getSymbolWithName(var_name).getType();
     }
 
     public boolean isTypeValidForVar(Symbol.Type type) {

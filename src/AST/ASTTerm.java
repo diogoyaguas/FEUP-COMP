@@ -49,7 +49,7 @@ public class ASTTerm extends SimpleNode {
         case "int[]":
             return Symbol.Type.INT_ARRAY;
         case "id":
-            return var_type;
+            return Symbol.Type.VOID;
         default:
             return Symbol.Type.UNDEFINED;
         }
@@ -74,7 +74,7 @@ public class ASTTerm extends SimpleNode {
             return false;
         }
 
-        var_type = symbols.getSymbolWithName(this.getNodeValue()).getType();
+        //var_type = symbols.getSymbolWithName(this.getNodeValue()).getType();
         return true;
     }
 

@@ -127,7 +127,7 @@ public class SymbolTable {
 
         for (String symbol_name : this.symbols.keySet()) {
             symbol = this.symbols.get(symbol_name);
-            System.out.println("  " + symbol_name + " | " + symbol.getType());
+            System.out.println("  " + symbol_name + " | " + symbol.getType() + " | " + symbol.getIndex());
         }
     }
 
