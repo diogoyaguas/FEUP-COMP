@@ -28,9 +28,7 @@ public class CodeGenerator {
 
     private int counter;
 
-    private int ifInstruction = 0;
-
-    private int elseInstruction = 0;
+    private int ifLoop = 0;
 
     public CodeGenerator(SimpleNode root, String file_name) throws IOException {
         this.root = (SimpleNode) root.getChildren()[0];
@@ -100,8 +98,6 @@ public class CodeGenerator {
     }
 
     private void generateMethods() {
-
-        counter = 0;
 
         for (int i = 0; i < root.jjtGetNumChildren(); i++) {
             SimpleNode child_root = (SimpleNode) root.jjtGetChild(i);
@@ -296,7 +292,8 @@ public class CodeGenerator {
                     break;
                 case VOID:
                     // System.out.println(
-                    //         argument.getSymbols().getSymbolWithName(argument.getNodeValue()) + " | " + argument.getNodeValue());
+                    // argument.getSymbols().getSymbolWithName(argument.getNodeValue()) + " | " +
+                    // argument.getNodeValue());
                     if (argument.getSymbols().getSymbolWithName(argument.getNodeValue()).getType() == Symbol.Type.INT) {
                         method_arg += "I";
                         arg_types.add(Symbol.Type.INT);
@@ -321,7 +318,8 @@ public class CodeGenerator {
         }
 
         // TODO
-        // Does not work then method is from another class. How do we know the type of the method?
+        // Does not work then method is from another class. How do we know the type of
+        // the method?
         Symbol.Type method_return = root.getMethods().obtainMethod(method.getName(), arg_types).getType();
 
         switch (method_return) {
@@ -349,8 +347,6 @@ public class CodeGenerator {
 
     private void loadInt(String v) {
 
-        counter++;
-
         int value = Integer.parseInt(v);
 
         if ((value >= 0) && (value <= 5)) {
@@ -368,7 +364,6 @@ public class CodeGenerator {
 
     private String loadIntString(String v) {
 
-        counter++;
         String generated_code = "";
 
         int value = Integer.parseInt(v);
@@ -402,7 +397,7 @@ public class CodeGenerator {
         else
             code = "load ";
 
-        output.println("\t" + type + code + index);
+        output.print("\t" + type + code + index);
         if (index == 0) {
             output.println();
         }
@@ -563,7 +558,8 @@ public class CodeGenerator {
             }
 
             if (rhs.getId() == ProgramTreeConstants.JJTPERIOD) {
-                generated_code += "\tinvokevirtual ComputeFac:(I)I";
+                System.out.println(rhs.jjtGetChild(1));
+                generated_code += "\tinvokevirtual ComputeFac(I)I"; 
             }
 
             if (generated_code != "")
@@ -586,13 +582,13 @@ public class CodeGenerator {
         generated_code += generateExpr(exprNode);
         output.println(generated_code);
 
-        ifInstruction = counter;
+        ifLoop = counter++;
 
         SimpleNode bodyNode = (SimpleNode) node.jjtGetChild(1);
 
         generateBody(bodyNode);
 
-        output.println("\tgoto\t" + elseInstruction);
+        output.println("\tgoto begin_else_" + ifLoop);
 
     }
 
@@ -619,8 +615,11 @@ public class CodeGenerator {
                     }
                 }
             }
-            generated_code += "\n\tif_icmplt " + ifInstruction;
-            generated_code += "\n\tbipush\t" + 1; // TODO FAZER O VALOR CERTO
+            generated_code += "\n\tif_icmplt begin_ifElse_" + ifLoop;
+
+            SimpleNode conditionValue = (SimpleNode) exprNode.jjtGetChild(1);
+            generated_code += "\n\tbipush " + conditionValue.getNodeValue();
+
             break;
 
         case ProgramTreeConstants.JJTAND:
@@ -632,12 +631,15 @@ public class CodeGenerator {
 
     private void generateElseStatement(SimpleNode node) {
 
+        output.println("\tbegin_ifElse_" + ifLoop + ":");
+
         for (Node child : node.getChildren()) {
             SimpleNode child_simpleNode = (SimpleNode) child;
             generateBody(child_simpleNode);
         }
 
-        elseInstruction = counter;
+        output.println("\tbegin_else_" + ifLoop + ":");
+
     }
 
 }
