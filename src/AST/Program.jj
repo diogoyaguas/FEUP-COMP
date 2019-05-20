@@ -37,7 +37,7 @@ public
     if (createInputStream() == false)
       return;
 
-    ASTProgram root = myProg.Program(); // devolve referencia para o n\u00c3\u00b3 da raiz da \u00c3\u00a1rvore
+    ASTProgram root = myProg.Program(); // devolve referencia para o n\u00f3 da raiz da \u00e1rvore
     root.dump("");
 
     if(!root.analyse())
@@ -502,7 +502,7 @@ String Type()       : { Token t1; Boolean b1 = false;}
 
 void Statement()       : {} {
 
-  <L_CBRACKET>(Statement()) * <R_CBRACKET> | IfStatement() ElseStatement() |
+  <L_CBRACKET>(Statement()) * <R_CBRACKET> | IfStatement() |
       try {
     WhileStatement()
   } catch (ParseException e) {
@@ -510,6 +510,38 @@ void Statement()       : {} {
     skip_to(R_PARENTHESIS);
   }
   | LOOKAHEAD( <ID> (<L_BRACKET> | <EQUAL>)) StatementAuxiliar() | Expression()<SEMI_COLON>
+}
+
+void Condition()            : {/*@bgen(jjtree) CONDITION */
+  ASTCONDITION jjtn000 = new ASTCONDITION(JJTCONDITION);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+  jjtn000.jjtSetFirstToken(getToken(1));
+/*@egen*/} {/*@bgen(jjtree) CONDITION */
+    try {
+/*@egen*/
+    <L_PARENTHESIS> Expression() <R_PARENTHESIS>/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+        jjtn000.jjtSetLastToken(getToken(0));
+      }
+    }
+/*@egen*/
 }
 
 void IfStatement()     : {/*@bgen(jjtree) IF */
@@ -521,7 +553,36 @@ void IfStatement()     : {/*@bgen(jjtree) IF */
   try {
 /*@egen*/
 
-  <IF><L_PARENTHESIS> Expression()<R_PARENTHESIS> Statement()/*@bgen(jjtree)*/
+  <IF> Condition()/*@bgen(jjtree) #IF_BODY( 1) */
+                   {
+                     ASTIF_BODY jjtn001 = new ASTIF_BODY(JJTIF_BODY);
+                     boolean jjtc001 = true;
+                     jjtree.openNodeScope(jjtn001);
+                     jjtn001.jjtSetFirstToken(getToken(1));
+                   }
+                   try {
+/*@egen*/ Statement()/*@bgen(jjtree)*/
+                   } catch (Throwable jjte001) {
+                     if (jjtc001) {
+                       jjtree.clearNodeScope(jjtn001);
+                       jjtc001 = false;
+                     } else {
+                       jjtree.popNode();
+                     }
+                     if (jjte001 instanceof RuntimeException) {
+                       throw (RuntimeException)jjte001;
+                     }
+                     if (jjte001 instanceof ParseException) {
+                       throw (ParseException)jjte001;
+                     }
+                     throw (Error)jjte001;
+                   } finally {
+                     if (jjtc001) {
+                       jjtree.closeNodeScope(jjtn001,  1);
+                       jjtn001.jjtSetLastToken(getToken(0));
+                     }
+                   }
+/*@egen*/             ElseStatement()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -583,7 +644,7 @@ void WhileStatement()        : {/*@bgen(jjtree) WHILE */
 /*@egen*/} {/*@bgen(jjtree) WHILE */
   try {
 /*@egen*/
-  <WHILE><L_PARENTHESIS> Expression()<R_PARENTHESIS> Statement()/*@bgen(jjtree)*/
+  <WHILE> Condition() Statement()/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

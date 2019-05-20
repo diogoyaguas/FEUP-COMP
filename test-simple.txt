@@ -1,23 +1,26 @@
 class Fac {
 
-    public boolean Double(){
-        int var;
-        int[] list;
-        list = new int[2];
+    /*public boolean Double(){
+        boolean li;
+        boolean lo;
+        boolean la;
+        li = false;
+        if (li && false)
+            li = true;
+        else
+            li = false;
 
-        var = 1;
-        list[1] = 2;
-        this.returnTrue(var * 1);
-
-        while(var < 3)
-            var = var + 1;
-
-        return true;
+        while(li)
+            this.call(1);
+        return li;
     }
 
-    public int returnTrue(int value){
-        return 1;
-    }
+    public int call(int v){
+        return v;
+    }*/
 
+    public static void main(String[] args){
+
+    }
 
 }

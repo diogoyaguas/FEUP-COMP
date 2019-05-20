@@ -257,7 +257,7 @@ String Type() #void : { Token t1; Boolean b1 = false;}
 
 void Statement() #void : {} {
 
-  <L_CBRACKET>(Statement()) * <R_CBRACKET> | IfStatement() ElseStatement() |
+  <L_CBRACKET>(Statement()) * <R_CBRACKET> | IfStatement() |
       try {
     WhileStatement()
   } catch (ParseException e) {
@@ -267,15 +267,19 @@ void Statement() #void : {} {
   | LOOKAHEAD( <ID> (<L_BRACKET> | <EQUAL>)) StatementAuxiliar() | Expression()<SEMI_COLON>
 }
 
+void Condition() #CONDITION : {} {
+    <L_PARENTHESIS> Expression() <R_PARENTHESIS>
+}
+
 void IfStatement() #IF : {} {
 
-  <IF><L_PARENTHESIS> Expression()<R_PARENTHESIS> Statement()
+  <IF> Condition() Statement() #IF_BODY(1) ElseStatement()
 }
 
 void ElseStatement() #ELSE : {} { <ELSE> Statement() }
 
 void WhileStatement() #WHILE : {} {
-  <WHILE><L_PARENTHESIS> Expression()<R_PARENTHESIS> Statement()
+  <WHILE> Condition() Statement() #WHILE_BODY(1)
 }
 
 void StatementAuxiliar() #ASSIGN : { Token t1; }
