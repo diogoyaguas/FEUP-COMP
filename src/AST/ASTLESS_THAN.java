@@ -40,7 +40,7 @@ public class ASTLESS_THAN extends SimpleNode {
         Symbol.Type rop_type = ((SimpleNode) getChildren()[1]).getReturnType();
 
         if (rop_type == Type.VOID)
-            rop_type = getVarType(((SimpleNode) getChildren()[0]).getNodeValue());
+            rop_type = getVarType(((SimpleNode) getChildren()[1]).getNodeValue());
 
         if (!rop_type.equals(Symbol.Type.INT)) {
             printSemanticError("Invalid type for right operand");

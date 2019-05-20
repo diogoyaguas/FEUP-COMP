@@ -37,7 +37,7 @@ public
     if (createInputStream() == false)
       return;
 
-    ASTProgram root = myProg.Program(); // devolve referencia para o n\u00c3\u00b3 da raiz da \u00c3\u00a1rvore
+    ASTProgram root = myProg.Program(); // devolve referencia para o n\u00f3 da raiz da \u00e1rvore
     root.dump("");
 
     if(!root.analyse())
@@ -647,7 +647,7 @@ void Identifier()             : {/*@bgen(jjtree) Identifier */
 {/*@bgen(jjtree) Identifier */
     try {
 /*@egen*/
-    t1=<ID> { jjtn000.name = t1.image; } (ArrayIndex())?/*@bgen(jjtree)*/
+    t1=<ID> { jjtn000.name = t1.image; } (ArrayIndex() {jjtn000.isArrayAccess = true;} )?/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);

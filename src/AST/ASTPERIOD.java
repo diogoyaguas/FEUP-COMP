@@ -4,6 +4,7 @@ package src.AST;
 
 import java.util.Vector;
 import src.semantic.*;
+import src.semantic.Symbol.Type;
 
 public class ASTPERIOD extends SimpleNode {
 
@@ -63,6 +64,11 @@ public class ASTPERIOD extends SimpleNode {
         if (method_arguments != null)
             for (Node argument : method_arguments) {
                 Symbol.Type aux_type = ((SimpleNode) argument).getReturnType();
+                
+                if(aux_type == Type.VOID) {
+                    aux_type = getSymbols().getSymbolWithName(((SimpleNode) argument).getNodeValue()).getType();
+                }
+                
                 arg_types.add(aux_type);
             }
 

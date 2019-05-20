@@ -2,15 +2,24 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=true,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package src.AST;
 
-public
-class ASTIdentifier extends SimpleNode {
-  public ASTIdentifier(int id) {
-    super(id);
-  }
+public class ASTIdentifier extends SimpleNode {
 
-  public ASTIdentifier(Program p, int id) {
-    super(p, id);
-  }
+    protected boolean isArrayAccess = false;
+    
+    public ASTIdentifier(int id) {
+        super(id);
+    }
+
+    public ASTIdentifier(Program p, int id) {
+        super(p, id);
+    }
+
+    public boolean isArrayAccess() {
+        return this.isArrayAccess;
+    }
 
 }
-/* JavaCC - OriginalChecksum=b1126123a0fcee43aed39e2c12ff89a7 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=b1126123a0fcee43aed39e2c12ff89a7 (do not edit this
+ * line)
+ */

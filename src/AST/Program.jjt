@@ -283,7 +283,7 @@ void StatementAuxiliar() #ASSIGN : { Token t1; }
 
 void Identifier() #Identifier : { Token t1; }
 {
-    t1=<ID> { jjtThis.name = t1.image; } (ArrayIndex())?
+    t1=<ID> { jjtThis.name = t1.image; } (ArrayIndex() {jjtThis.isArrayAccess = true;} )?
 }
 
 void ArrayIndex() #void : {}

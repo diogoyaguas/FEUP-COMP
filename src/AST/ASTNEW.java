@@ -12,9 +12,5 @@ class ASTNEW extends SimpleNode {
     super(p, id);
   }
 
-  public String getType(){
-      return "new";
-  }
-
 }
 /* JavaCC - OriginalChecksum=233b22a74042f46f806eeffdd8b622c1 (do not edit this line) */

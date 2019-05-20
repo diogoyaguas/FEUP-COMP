@@ -20,8 +20,7 @@ public class ASTASSIGN extends SimpleNode {
         if (children.length == 1 && isArrayInitialization((SimpleNode) children[1])) {
             symbols.initializeSymbol(((SimpleNode) children[0]).name);
             return true;
-        } 
-        else if (getChildren().length != 2) {
+        } else if (getChildren().length != 2) {
             printSemanticError("Not valid ASSIGN operands");
             return false;
         }
@@ -34,7 +33,12 @@ public class ASTASSIGN extends SimpleNode {
             return false;
         }
 
-        Symbol.Type lhs_type = symbols.getSymbolWithName(lhs.name).getType();
+        Symbol.Type lhs_type;
+
+        if (lhs instanceof ASTIdentifier && ((ASTIdentifier) lhs).isArrayAccess())
+            lhs_type = Symbol.Type.INT;
+        else
+            lhs_type = symbols.getSymbolWithName(lhs.name).getType();
 
         // Right hand side
         SimpleNode rhs = (SimpleNode) getChildren()[1];
@@ -54,7 +58,7 @@ public class ASTASSIGN extends SimpleNode {
         return true;
     }
 
-    //TODO
+    // TODO
     // Array cases:
     // - left hand side == (array name | array access)
     // - right hand side == (new init | array element assign)
