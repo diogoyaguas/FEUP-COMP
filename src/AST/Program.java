@@ -32,7 +32,7 @@ public
     if(!root.analyse())
         System.out.println("We have sematic error(s) !! Be aware !!");
 
-    System.out.println(" *********** TABLES *********** ");
+    System.out.println("\n *********** TABLES *********** ");
     root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
 
 
