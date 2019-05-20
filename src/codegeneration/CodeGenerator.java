@@ -73,8 +73,12 @@ public class CodeGenerator {
     }
 
     private void generateStatic() {
+
+        output.println(
+                ".method public <init>()V\n\taload_0\n\tinvokespecial java/lang/Object/<init>()V\n\treturn\n.end method");
+
         // TODO
-        // limit stack....
+        // Not hardcode this
     }
 
     private void generateVar(ASTVar var) {
@@ -180,18 +184,16 @@ public class CodeGenerator {
     private void generateMethodFooter(SimpleNode method) {
         String return_type = "";
 
-        if (method.getId() != ProgramTreeConstants.JJTMAIN) {
-            switch (method.getType()) {
-            case "int":
-                return_type = "i";
-                break;
-            case "boolean":
-                return_type = "i"; // TODO: NOT CORRECT, DIFERENCIAR AQUI RETURNS BOOLEANOS
-                break;
-            case "int[]":
-                return_type = "a";
-                break;
-            }
+        switch (method.getType()) {
+        case "int":
+            return_type = "i";
+            break;
+        case "boolean":
+            return_type = "i"; // TODO: NOT CORRECT, DIFERENCIAR AQUI RETURNS BOOLEANOS
+            break;
+        case "int[]":
+            return_type = "a";
+            break;
         }
 
         output.println("\t" + return_type + "return");
@@ -214,9 +216,6 @@ public class CodeGenerator {
             break;
         case ProgramTreeConstants.JJTIF:
             generateIfStatement(node);
-            break;
-        case ProgramTreeConstants.JJTELSE:
-            generateElseStatement(node);
             break;
         case ProgramTreeConstants.JJTWHILE:
             generateWhile(node);
@@ -366,26 +365,6 @@ public class CodeGenerator {
         }
     }
 
-    private String loadIntString(String v) {
-
-        String generated_code = "";
-
-        int value = Integer.parseInt(v);
-        if ((value >= 0) && (value <= 5)) {
-            generated_code += "\ticonst_" + value;
-        } else if (value == -1) {
-            generated_code += "\ticonst_m1";
-        } else if (value > -129 && value < 128) {
-            generated_code += "\tbipush " + value;
-        } else if (value > -32769 && value < 32768) {
-            generated_code += "\tsipush " + value;
-        } else {
-            generated_code += "\tldc " + value;
-        }
-        return generated_code;
-
-    }
-
     private void loadLocalVariable(SimpleNode node, String name) {
         int index = node.getSymbolIndex(name);
         Symbol.Type var_t = node.getSymbols().getSymbolWithName(name).getType();
@@ -401,10 +380,10 @@ public class CodeGenerator {
         else
             code = "load ";
 
-        output.print("\t" + type + code + index);
-        if (index == 0) {
-            output.println();
-        }
+        output.println("\t" + type + code + index);
+        // if (index == 0) {
+        // output.println();
+        // }
     }
 
     private void storeLocalVariable(SimpleNode node, String name) {
@@ -596,7 +575,7 @@ public class CodeGenerator {
         int jump_number = loop_counter;
         loop_counter += 2;
 
-        output.println("\tif_eq " + "label" + jump_number);
+        output.println("\tifeq " + "label" + jump_number);
         loadInt("1");
         output.println("\tgoto " + "next_label" + (jump_number + 1));
 
@@ -608,7 +587,6 @@ public class CodeGenerator {
 
     private void generateOperation(SimpleNode operation_node) {
 
-        String generated_code = "";
         SimpleNode lhs = (SimpleNode) operation_node.jjtGetChild(0);
         SimpleNode rhs = (SimpleNode) operation_node.jjtGetChild(1);
 
@@ -664,99 +642,61 @@ public class CodeGenerator {
         }
     }
 
+    private void generateCondition(SimpleNode condition_node) {
+
+        SimpleNode child = (SimpleNode) condition_node.jjtGetChild(0);
+
+        if (child.jjtGetNumChildren() == 2 && child.getId() != ProgramTreeConstants.JJTPERIOD) {
+            generateOperation(child);
+        } else {
+            switch (child.getId()) {
+            case ProgramTreeConstants.JJTTERM:
+                generateTerm(child);
+                break;
+            case ProgramTreeConstants.JJTPERIOD:
+                generateCall(child);
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
     private void generateWhile(SimpleNode while_node) {
         int loop_number = loop_counter;
         loop_counter++;
-        String generated_code = "";
 
-        output.println("\tloop" + loop_number + ":");
+        SimpleNode condition_node = (SimpleNode) while_node.jjtGetChild(0);
+        SimpleNode body_node = (SimpleNode) while_node.jjtGetChild(1);
 
-        SimpleNode exprNode = (SimpleNode) while_node.jjtGetChild(0);
+        output.println("loop_" + loop_number + ":");
 
-        generated_code += generateExpr(exprNode, false);
-        output.println(generated_code);
+        generateCondition(condition_node);
+        output.println("\tifeq loop_end_" + loop_number);
 
-        SimpleNode bodyNode = (SimpleNode) while_node.jjtGetChild(1);
-
-        generateBody(bodyNode);
-
-        output.println("\tgoto loop" + loop_number);
-        output.println("\tloop" + loop_counter + "_end:");
-
+        generateBody(body_node);
+        output.println("\tgoto loop_" + loop_number);
+        output.println("loop_end_" + loop_number + ":");
     }
 
     private void generateIfStatement(SimpleNode node) {
+        int if_else_number = loop_counter;
+        loop_counter++;
 
-        String generated_code = "";
+        SimpleNode condition_node = (SimpleNode) node.jjtGetChild(0);
+        SimpleNode if_body_node = (SimpleNode) node.jjtGetChild(1);
+        SimpleNode else_body = (SimpleNode) node.jjtGetChild(2);
 
-        SimpleNode exprNode = (SimpleNode) node.jjtGetChild(0);
+        generateCondition(condition_node);
+        output.println("\tifeq else_begin_" + if_else_number);
 
-        generated_code += generateExpr(exprNode, true);
-        output.println(generated_code);
+        generateBody(if_body_node);
+        output.println("\tgoto ifelse_end_" + if_else_number);
 
-        ifLoop = counter++;
+        output.println("else_begin_" + if_else_number + ":");
+        generateBody(else_body);
 
-        SimpleNode bodyNode = (SimpleNode) node.jjtGetChild(1);
-
-        generateBody(bodyNode);
-
-        output.println("\tgoto begin_else_" + ifLoop);
-
-    }
-
-    private String generateExpr(SimpleNode exprNode, boolean ifStatement) {
-
-        String generated_code = "";
-
-        switch (exprNode.getId()) {
-
-        case ProgramTreeConstants.JJTLESS_THAN:
-            if (exprNode.getChildren() != null) {
-                for (Node child : exprNode.getChildren()) {
-                    SimpleNode child_simpleNode = (SimpleNode) child;
-                    if (child_simpleNode.getId() == ProgramTreeConstants.JJTTERM) {
-                        if (child_simpleNode.getType() == "int") {
-                            generated_code += loadIntString(child_simpleNode.getNodeValue());
-                        } else {
-                            if (this.root.getSymbols().hasSymbolWithNameLocal(child_simpleNode.getName())) {
-                                this.loadGlobalVariable(child_simpleNode.getNodeValue());
-                            } else {
-                                this.loadLocalVariable(child_simpleNode, child_simpleNode.getNodeValue());
-                            }
-                        }
-                    }
-                }
-            }
-
-            generated_code += "\n\tif_icmplt";
-
-            if (ifStatement) {
-                generated_code += " begin_ifElse_" + ifLoop;
-            } else
-                generated_code += " loop" + loop_counter + "_end";
-
-            SimpleNode conditionValue = (SimpleNode) exprNode.jjtGetChild(1);
-            generated_code += "\n\tbipush " + conditionValue.getNodeValue();
-
-            break;
-
-        case ProgramTreeConstants.JJTAND:
-            break;
-        }
-
-        return generated_code;
-    }
-
-    private void generateElseStatement(SimpleNode node) {
-
-        output.println("\tbegin_ifElse_" + ifLoop + ":");
-
-        for (Node child : node.getChildren()) {
-            SimpleNode child_simpleNode = (SimpleNode) child;
-            generateBody(child_simpleNode);
-        }
-
-        output.println("\tbegin_else_" + ifLoop + ":");
+        output.println("ifelse_end_" + if_else_number + ":");
 
     }
 
