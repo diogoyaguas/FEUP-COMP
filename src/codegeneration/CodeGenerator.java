@@ -213,15 +213,16 @@ public class CodeGenerator {
             generateAssign(node);
             break;
         case ProgramTreeConstants.JJTIF:
-            // generateIfStatement(node);
+            generateIfStatement(node);
             break;
         case ProgramTreeConstants.JJTELSE:
-            // generateElseStatement(node);
+            generateElseStatement(node);
+            break;
+        case ProgramTreeConstants.JJTWHILE:
+            generateWhile(node);
             break;
         case ProgramTreeConstants.JJTPERIOD:
             generateCall(node);
-            break;
-        case ProgramTreeConstants.JJTWHILE:
             break;
         }
     }
@@ -319,6 +320,8 @@ public class CodeGenerator {
 
         switch (method_return) {
         case INT:
+            method_ret = "I";
+            break;
         case BOOLEAN:
             method_ret = "B";
             break;
@@ -633,22 +636,19 @@ public class CodeGenerator {
         loop_counter++;
         String generated_code = "";
 
-        output.println("loop" + loop_number + ":");
+        output.println("\tloop" + loop_number + ":");
 
         SimpleNode exprNode = (SimpleNode) while_node.jjtGetChild(0);
 
-        generated_code += generateExpr(exprNode);
+        generated_code += generateExpr(exprNode, false);
         output.println(generated_code);
 
-        // TODO
-        // generateExpr must push a value of 0 or 1 to the stack
-        output.println("if_icmpne loop" + loop_counter + "_end");
+        SimpleNode bodyNode = (SimpleNode) while_node.jjtGetChild(1);
 
-        generateBody(while_node);
+        generateBody(bodyNode);
 
-        output.println("goto loop" + loop_number);
-        output.println("loop" + loop_counter + "_end:");
-
+        output.println("\tgoto loop" + loop_number);
+        output.println("\tloop" + loop_counter + "_end:");
 
     }
 
@@ -658,7 +658,7 @@ public class CodeGenerator {
 
         SimpleNode exprNode = (SimpleNode) node.jjtGetChild(0);
 
-        generated_code += generateExpr(exprNode);
+        generated_code += generateExpr(exprNode, true);
         output.println(generated_code);
 
         ifLoop = counter++;
@@ -671,7 +671,7 @@ public class CodeGenerator {
 
     }
 
-    private String generateExpr(SimpleNode exprNode) {
+    private String generateExpr(SimpleNode exprNode, boolean ifStatement) {
 
         String generated_code = "";
 
@@ -694,7 +694,13 @@ public class CodeGenerator {
                     }
                 }
             }
-            generated_code += "\n\tif_icmplt begin_ifElse_" + ifLoop;
+
+            generated_code += "\n\tif_icmplt";
+
+            if (ifStatement) {
+                generated_code += " begin_ifElse_" + ifLoop;
+            } else
+                generated_code += " loop" + loop_counter + "_end";
 
             SimpleNode conditionValue = (SimpleNode) exprNode.jjtGetChild(1);
             generated_code += "\n\tbipush " + conditionValue.getNodeValue();
