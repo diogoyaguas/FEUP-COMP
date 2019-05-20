@@ -343,7 +343,10 @@ public class CodeGenerator {
     }
 
     private void loadBoolean(String bool) {
-        this.loadInt(bool);
+        if (bool == "true")
+            this.loadInt("1");
+        else
+            this.loadInt("0");
     }
 
     private void loadInt(String v) {
@@ -575,6 +578,34 @@ public class CodeGenerator {
 
     }
 
+    private void generateLessThan() {
+        int jump_number = loop_counter;
+        loop_counter += 2;
+
+        output.println("\tif_icmpge " + "label" + jump_number);
+        loadInt("1");
+        output.println("\tgoto " + "next_label" + (jump_number + 1));
+
+        output.println("label" + jump_number + ":");
+        loadInt("0");
+        output.println("next_label" + (jump_number + 1) + ":");
+
+    }
+
+    private void generateAnd() {
+        int jump_number = loop_counter;
+        loop_counter += 2;
+
+        output.println("\tif_eq " + "label" + jump_number);
+        loadInt("1");
+        output.println("\tgoto " + "next_label" + (jump_number + 1));
+
+        output.println("label" + jump_number + ":");
+        loadInt("0");
+        output.println("next_label" + (jump_number + 1) + ":");
+
+    }
+
     private void generateOperation(SimpleNode operation_node) {
 
         String generated_code = "";
@@ -613,22 +644,24 @@ public class CodeGenerator {
 
         switch (operation_node.getId()) {
         case ProgramTreeConstants.JJTADD:
-            generated_code += "\tiadd";
+            output.println("\tiadd");
             break;
         case ProgramTreeConstants.JJTSUB:
-            generated_code += "\tisub";
+            output.println("\tisub");
             break;
         case ProgramTreeConstants.JJTMUL:
-            generated_code += "\timul";
+            output.println("\timul");
             break;
         case ProgramTreeConstants.JJTDIV:
-            generated_code += "\tidiv";
+            output.println("\tidiv");
             break;
-        // TODO
-        // LESS_THAN and AND operations missing
+        case ProgramTreeConstants.JJTLESS_THAN:
+            generateLessThan();
+            break;
+        case ProgramTreeConstants.JJTAND:
+            generateAnd();
+            break;
         }
-        output.println(generated_code);
-
     }
 
     private void generateWhile(SimpleNode while_node) {
