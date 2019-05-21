@@ -13,11 +13,20 @@ class Fac {
         while(li)
             this.call(1);
         return li;
+    }*/
+
+    public int returns(){
+        return 1;
     }
 
     public int call(int v){
-        return v;
-    }*/
+        int[] list;
+        int var;
+        var = 1;
+
+        //return var;
+        return this.returns();
+    }
 
     public static void main(String[] args){
 

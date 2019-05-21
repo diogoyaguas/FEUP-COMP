@@ -9,7 +9,7 @@ import src.utils.*;
 
 public class ASTMethod extends SimpleNode {
 
-    protected int index_counter = -1;
+    protected int index_counter = 0;
 
     public ASTMethod(int id) {
         super(id, true, false);
@@ -17,6 +17,10 @@ public class ASTMethod extends SimpleNode {
 
     public ASTMethod(Program p, int id) {
         super(p, id, true, false);
+    }
+
+    public int getIndexCounter() {
+        return this.index_counter;
     }
 
     public boolean addNewMethod() {

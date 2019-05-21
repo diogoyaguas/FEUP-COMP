@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import src.AST.SimpleNode;
 import src.AST.ASTArgument;
 import src.AST.ASTMethod;
+import src.AST.ASTMain;
 import src.AST.ASTVar;
 import src.AST.Node;
 import src.AST.ProgramTreeConstants;
@@ -24,12 +25,9 @@ public class CodeGenerator {
 
     private PrintWriter output;
 
-    private AtomicInteger count;
     private int loop_counter = 0;
 
-    private int counter;
-
-    private int ifLoop = 0;
+    private int stack_limit = 99;
 
     public CodeGenerator(SimpleNode root, String file_name) throws IOException {
         this.root = (SimpleNode) root.getChildren()[0];
@@ -40,7 +38,6 @@ public class CodeGenerator {
         BufferedWriter bufferedwriter = new BufferedWriter(filewriter);
 
         this.output = new PrintWriter(bufferedwriter);
-        this.count = new AtomicInteger(0);
 
     }
 
@@ -118,10 +115,15 @@ public class CodeGenerator {
 
     private void generateMethod(SimpleNode method) {
 
-        if (method.getId() == ProgramTreeConstants.JJTMAIN)
+        if (method.getId() == ProgramTreeConstants.JJTMAIN) {
             generateMainMethodHeader(method);
-        else {
+            output.println("\t.limit locals " + (((ASTMain) method).getIndexCounter() + 1));
+            output.println("\t.limit stack " + this.stack_limit);
+
+        } else {
             generateMethodHeader((ASTMethod) method);
+            output.println("\t.limit locals " + (((ASTMethod) method).getIndexCounter() + 1));
+            output.println("\t.limit stack " + this.stack_limit);
         }
 
         generateBodyStub(method);
@@ -223,6 +225,9 @@ public class CodeGenerator {
         case ProgramTreeConstants.JJTPERIOD:
             generateCall(node);
             break;
+        case ProgramTreeConstants.JJTRETURN:
+            generateReturn(node);
+            break;
         }
     }
 
@@ -230,6 +235,8 @@ public class CodeGenerator {
 
         String method_class = ((SimpleNode) function_child.jjtGetChild(0)).getNodeValue();
         SimpleNode call_node = (SimpleNode) function_child.jjtGetChild(1);
+
+        output.println("\taload_0");
 
         generateCallArguments(call_node);
         generateCallInvoke(call_node, method_class);
@@ -381,9 +388,6 @@ public class CodeGenerator {
             code = "load ";
 
         output.println("\t" + type + code + index);
-        // if (index == 0) {
-        //     output.println();
-        // }
     }
 
     private void storeLocalVariable(SimpleNode node, String name) {
@@ -697,6 +701,27 @@ public class CodeGenerator {
         generateBody(else_body);
 
         output.println("ifelse_end_" + if_else_number + ":");
+
+    }
+
+    private void generateReturn(SimpleNode return_node) {
+
+        SimpleNode child = (SimpleNode) return_node.jjtGetChild(0);
+
+        if (child.jjtGetNumChildren() == 2 && child.getId() != ProgramTreeConstants.JJTPERIOD) {
+            generateOperation(child);
+        } else {
+            switch (child.getId()) {
+            case ProgramTreeConstants.JJTTERM:
+                generateTerm(child);
+                break;
+            case ProgramTreeConstants.JJTPERIOD:
+                generateCall(child);
+                break;
+            default:
+                break;
+            }
+        }
 
     }
 

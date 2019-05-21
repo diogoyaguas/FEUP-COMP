@@ -17,6 +17,10 @@ class ASTMain extends SimpleNode {
     super(p, id, true, false);
   }
 
+  public int getIndexCounter() {
+    return 1;
+}
+
   public boolean addMain() {
 
     this.symbols = getNodeSymbolTable();
