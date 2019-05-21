@@ -382,7 +382,7 @@ public class CodeGenerator {
 
         output.println("\t" + type + code + index);
         // if (index == 0) {
-        // output.println();
+        //     output.println();
         // }
     }
 
