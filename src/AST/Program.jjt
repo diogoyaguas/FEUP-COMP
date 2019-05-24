@@ -300,19 +300,19 @@ void Expression() #void : {} { Expression_AddSub() Expression_Aux() }
 void Expression_AddSub() #void : {} {
   Expression_MulDiv()(LOOKAHEAD(2)(<ADD> Expression_MulDiv() #ADD(2) |
                                    <SUB> Expression_MulDiv() #SUB(2)))
-      ?
+      *
 }
 
 void Expression_MulDiv() #void : {} {
   Expression_BinOps()(LOOKAHEAD(2)(<MUL> Expression_BinOps() #MUL(2) |
                                    <DIV> Expression_BinOps() #DIV(2)))
-      ?
+      *
 }
 
 void Expression_BinOps() #void : {} {
   Expression_Aux()(LOOKAHEAD(2)(<AND> Expression_Aux() #AND(2) |
                                 <LESS_THAN> Expression_Aux() #LESS_THAN(2)))
-      ?
+      *
 }
 
 void Expression_Aux() #void : { Token t1; }

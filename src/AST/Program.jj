@@ -644,7 +644,36 @@ void WhileStatement()        : {/*@bgen(jjtree) WHILE */
 /*@egen*/} {/*@bgen(jjtree) WHILE */
   try {
 /*@egen*/
-  <WHILE> Condition() Statement()/*@bgen(jjtree)*/
+  <WHILE> Condition()/*@bgen(jjtree) #WHILE_BODY( 1) */
+                      {
+                        ASTWHILE_BODY jjtn001 = new ASTWHILE_BODY(JJTWHILE_BODY);
+                        boolean jjtc001 = true;
+                        jjtree.openNodeScope(jjtn001);
+                        jjtn001.jjtSetFirstToken(getToken(1));
+                      }
+                      try {
+/*@egen*/ Statement()/*@bgen(jjtree)*/
+                      } catch (Throwable jjte001) {
+                        if (jjtc001) {
+                          jjtree.clearNodeScope(jjtn001);
+                          jjtc001 = false;
+                        } else {
+                          jjtree.popNode();
+                        }
+                        if (jjte001 instanceof RuntimeException) {
+                          throw (RuntimeException)jjte001;
+                        }
+                        if (jjte001 instanceof ParseException) {
+                          throw (ParseException)jjte001;
+                        }
+                        throw (Error)jjte001;
+                      } finally {
+                        if (jjtc001) {
+                          jjtree.closeNodeScope(jjtn001,  1);
+                          jjtn001.jjtSetLastToken(getToken(0));
+                        }
+                      }
+/*@egen*/               /*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -800,7 +829,7 @@ void Expression_AddSub()       : {} {
                                            }
                                          }
 /*@egen*/        ))
-      ?
+      *
 }
 
 void Expression_MulDiv()       : {} {
@@ -864,7 +893,7 @@ void Expression_MulDiv()       : {} {
                                            }
                                          }
 /*@egen*/        ))
-      ?
+      *
 }
 
 void Expression_BinOps()       : {} {
@@ -928,7 +957,7 @@ void Expression_BinOps()       : {} {
                                               }
                                             }
 /*@egen*/              ))
-      ?
+      *
 }
 
 void Expression_Aux()       : { Token t1; }

@@ -18,19 +18,20 @@ public interface ProgramTreeConstants
   public int JJTIF_BODY = 12;
   public int JJTELSE = 13;
   public int JJTWHILE = 14;
-  public int JJTASSIGN = 15;
-  public int JJTIDENTIFIER = 16;
-  public int JJTADD = 17;
-  public int JJTSUB = 18;
-  public int JJTMUL = 19;
-  public int JJTDIV = 20;
-  public int JJTAND = 21;
-  public int JJTLESS_THAN = 22;
-  public int JJTEXCLAMATION_MARK = 23;
-  public int JJTPERIOD = 24;
-  public int JJTTERM = 25;
-  public int JJTPERIODAUX = 26;
-  public int JJTNEW = 27;
+  public int JJTWHILE_BODY = 15;
+  public int JJTASSIGN = 16;
+  public int JJTIDENTIFIER = 17;
+  public int JJTADD = 18;
+  public int JJTSUB = 19;
+  public int JJTMUL = 20;
+  public int JJTDIV = 21;
+  public int JJTAND = 22;
+  public int JJTLESS_THAN = 23;
+  public int JJTEXCLAMATION_MARK = 24;
+  public int JJTPERIOD = 25;
+  public int JJTTERM = 26;
+  public int JJTPERIODAUX = 27;
+  public int JJTNEW = 28;
 
 
   public String[] jjtNodeName = {
@@ -49,6 +50,7 @@ public interface ProgramTreeConstants
     "IF_BODY",
     "ELSE",
     "WHILE",
+    "WHILE_BODY",
     "ASSIGN",
     "Identifier",
     "ADD",
@@ -64,4 +66,4 @@ public interface ProgramTreeConstants
     "NEW",
   };
 }
-/* JavaCC - OriginalChecksum=34c1be464756c11442432065ae69bc54 (do not edit this line) */
+/* JavaCC - OriginalChecksum=82bbaa6c9fa73794e463b92ff6ca1d64 (do not edit this line) */
