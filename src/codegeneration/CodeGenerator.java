@@ -235,12 +235,17 @@ public class CodeGenerator {
     private void generateCall(SimpleNode function_child) {
 
         String method_class = ((SimpleNode) function_child.jjtGetChild(0)).getNodeValue();
+        SimpleNode method_node = (SimpleNode) function_child.jjtGetChild(0);
         SimpleNode call_node = (SimpleNode) function_child.jjtGetChild(1);
 
         output.println("\taload_0");
 
+        if(call_node.getName() == "length"){
+            output.println("\tarraylength");
+        } else{
         generateCallArguments(call_node);
         generateCallInvoke(call_node, method_class);
+        }
 
     }
 
@@ -450,12 +455,13 @@ public class CodeGenerator {
 
         switch (symbol.getType()) {
         case INT:
-        case BOOLEAN:
             type = " I";
+        case BOOLEAN:
+            type = " B";
             break;
         case INT_ARRAY:
             type = "[I";
-            break;
+
         default:
             return;
         }
@@ -501,7 +507,9 @@ public class CodeGenerator {
         } else if (rhs.jjtGetNumChildren() == 2) {
             generateOperation(rhs);
             generateAssignLhs(lhs);
-        } else {
+        } else if(rhs.getId() == ProgramTreeConstants.JJTNEW)
+                output.println("\tnew " + rhs.getName());
+        else{
             switch (rhs.getId()) {
             case ProgramTreeConstants.JJTTERM:
                 generateTerm(rhs);
