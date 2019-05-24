@@ -14,8 +14,9 @@ import src.AST.ASTMain;
 import src.AST.ASTVar;
 import src.AST.Node;
 import src.AST.ProgramTreeConstants;
-
+import src.semantic.MethodSymbol;
 import src.semantic.Symbol;
+import src.semantic.Symbol.Type;
 
 public class CodeGenerator {
 
@@ -322,7 +323,23 @@ public class CodeGenerator {
         // TODO
         // Does not work then method is from another class. How do we know the type of
         // the method?
-        Symbol.Type method_return = root.getMethods().obtainMethod(method.getName(), arg_types).getType();
+
+        MethodSymbol m_symbol = root.getMethods().obtainMethod(method.getName(), arg_types);
+        Symbol.Type method_return;
+
+        if (m_symbol == null) {
+
+            SimpleNode grand_parent = ((SimpleNode) method.jjtGetParent().jjtGetParent());
+            switch (grand_parent.getId()) {
+            case ProgramTreeConstants.JJTASSIGN:
+                method_return = ((SimpleNode)grand_parent.jjtGetChild(0)).getReturnType();
+            default:
+                method_return = Type.VOID;
+
+            }
+        } else {
+            method_return = root.getMethods().obtainMethod(method.getName(), arg_types).getType();
+        }
 
         switch (method_return) {
         case INT:
@@ -344,7 +361,7 @@ public class CodeGenerator {
         if (method_class == "this")
             output.println("\t" + "invokevirtual " + method_name + "(" + method_arg + ")" + method_ret);
         else
-            output.println("\t" + "invokespecial " + method_name + "(" + method_arg + ")" + method_ret);
+            output.println("\t" + "invokestatic " + method_name + "(" + method_arg + ")" + method_ret);
 
     }
 
@@ -579,7 +596,7 @@ public class CodeGenerator {
         int jump_number = loop_counter;
         loop_counter += 2;
 
-        output.println("\tifeq " + "label" + jump_number);
+        output.println("\tif_icmpeq " + "label" + jump_number);
         loadInt("1");
         output.println("\tgoto " + "next_label" + (jump_number + 1));
 
