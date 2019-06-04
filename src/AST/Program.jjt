@@ -36,19 +36,19 @@ public
     ASTProgram root = myProg.Program(); // devolve referencia para o nó da raiz da árvore
     root.dump("");
 
-    if(!root.analyse())
-        System.out.println("We have sematic error(s) !! Be aware !!");
+    // if(!root.analyse())
+    //     System.out.println("We have sematic error(s) !! Be aware !!");
 
-    System.out.println(" *********** TABLES *********** ");
-    root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
+    // System.out.println(" *********** TABLES *********** ");
+    // root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
     
 
-    try {
-      CodeGenerator generator = new CodeGenerator(root, "test-file.j");
-	    generator.generateCode();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    // try {
+    //   CodeGenerator generator = new CodeGenerator(root, "test-file.j");
+	//     generator.generateCode();
+    // } catch (IOException e) {
+    //   e.printStackTrace();
+    // }
   }
 
 public
@@ -201,7 +201,7 @@ void MainDecl() #Main : { Token n2; }
     skip_to(L_CBRACKET);
   }
   try {
-    (VarDecl()) * (Statement()) * <R_CBRACKET>
+    (LOOKAHEAD(2) (VarDecl())) * (Statement()) * <R_CBRACKET>
   } catch (ParseException e) {
     System.out.println("CAUGHT MAIN BLOCK DECLARATION");
     skip_to(R_CBRACKET);
@@ -223,7 +223,7 @@ void MethodDecl() #Method : {
   }
   try {
     <L_CBRACKET> 
-            (VarDecl())* (Statement())* MethodReturn()
+            (LOOKAHEAD(2)(VarDecl()))* (Statement())* MethodReturn()
         <R_CBRACKET>
   } catch (ParseException e) {
     System.out.println("CAUGHT METHOD BLOCK DECLARATION");
@@ -253,6 +253,7 @@ String Type() #void : { Token t1; Boolean b1 = false;}
 
   t1 = <BOOLEAN> { return t1.image; } 
   | (t1=<INT>(<L_BRACKET> <R_BRACKET> {b1 = true;})? {if(b1) return t1.image + "[]"; return t1.image;})
+  | t1=<ID> {return t1.image;}
 }
 
 void Statement() #void : {} {
@@ -271,23 +272,27 @@ void Condition() #CONDITION : {} {
     <L_PARENTHESIS> Expression() <R_PARENTHESIS>
 }
 
-void IfStatement() #IF : {} {
-
-  <IF> Condition() Statement() #IF_BODY(1) ElseStatement()
+void StatementBody() #BODY : {} {
+    Statement()
 }
 
-void ElseStatement() #ELSE : {} { <ELSE> Statement() }
+void IfStatement() #IF : {} {
+
+  <IF> Condition() StatementBody() ElseStatement()
+}
+
+void ElseStatement() #ELSE : {} { <ELSE> StatementBody() }
 
 void WhileStatement() #WHILE : {} {
-  <WHILE> Condition() Statement() #WHILE_BODY(1)
+  <WHILE> Condition() StatementBody()
 }
 
 void StatementAuxiliar() #ASSIGN : { Token t1; }
-{ Identifier() <EQUAL> Expression()<SEMI_COLON> }
+{ Identifier() <EQUAL> Expression() <SEMI_COLON> }
 
 void Identifier() #Identifier : { Token t1; }
 {
-    t1=<ID> { jjtThis.name = t1.image; } (ArrayIndex() {jjtThis.isArrayAccess = true;} )?
+    t1=<ID> { jjtThis.name = t1.image; } (ArrayIndex())?
 }
 
 void ArrayIndex() #void : {}
@@ -295,7 +300,7 @@ void ArrayIndex() #void : {}
   <L_BRACKET> Expression() <R_BRACKET>
 }
 
-void Expression() #void : {} { Expression_AddSub() Expression_Aux() }
+void Expression() #void : {} { Expression_AddSub() }
 
 void Expression_AddSub() #void : {} {
   Expression_MulDiv()(LOOKAHEAD(2)(<ADD> Expression_MulDiv() #ADD(2) |
@@ -315,19 +320,19 @@ void Expression_BinOps() #void : {} {
       *
 }
 
+void Exclamation() #EXCLAMATION: {} {
+    <EXCLM_MARK> Expression() 
+ }
+
 void Expression_Aux() #void : { Token t1; }
 {
 
-  (LOOKAHEAD(2)(ExpressionTerminal() |
-                <EXCLM_MARK> Expression() #EXCLAMATION_MARK(1) |
-                <L_PARENTHESIS> Expression() < R_PARENTHESIS > |
-                <L_BRACKET> Expression() < R_BRACKET > |
-                <PERIOD> Period_Aux() #PERIOD(2) | <NEW> New_Aux())
-       Expression_Aux())
-      ?
+    (TerminalSymbol() | (<L_PARENTHESIS> Expression() <R_PARENTHESIS>) | Exclamation() | (<NEW> New_Aux()))
+
+    (LOOKAHEAD(2)(<PERIOD> Period_Aux() #PERIOD(2)))*
 }
 
-void ExpressionTerminal() #Term : {
+void TerminalSymbol() #Term : {
   Token t1;
   String s1;
 }
@@ -336,7 +341,7 @@ void ExpressionTerminal() #Term : {
   s1 = IntegerLiteral() { jjtThis.node_value = s1; jjtThis.type = "int"; }
   | t1 = <TRUE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
   | t1 = <FALSE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
-  | t1 = <ID> { jjtThis.node_value = t1.image; jjtThis.type = "id"; }
+  | t1 = <ID> { jjtThis.node_value = t1.image; jjtThis.type = "id"; } (ArrayIndex())?
   | t1 = <THIS> { jjtThis.node_value = t1.image; jjtThis.type = "this"; }
 }
 
@@ -344,8 +349,7 @@ void Period_Aux() #PeriodAux : { Token t1; }
 {
 
   <LENGTH> { jjtThis.name = "length"; }
-  | t1 = <ID> { jjtThis.name = t1.image; }
-  <L_PARENTHESIS> Expression() (<COMMA> Expression())* <R_PARENTHESIS>
+  | (t1 = <ID> { jjtThis.name = t1.image; } <L_PARENTHESIS> (Expression() (<COMMA> Expression())*)? <R_PARENTHESIS>)
 }
 
 void New_Aux() #NEW : { Token t1; }
