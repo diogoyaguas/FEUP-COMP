@@ -34,8 +34,13 @@ public class ASTASSIGN extends SimpleNode {
         }
 
         Symbol.Type lhs_type = lhs.getReturnType();
-        if (lhs_type.equals(Symbol.Type.VOID))
+
+        if (lhs_type.equals(Symbol.Type.VOID)){
             lhs_type = getVarType(lhs.getName());
+
+            if(isAccessingArray(lhs, lhs_type))
+            lhs_type = Symbol.Type.INT;
+        }
 
         // DEBUG
         // System.out.println("type: " + lhs_type);
