@@ -1023,28 +1023,28 @@ void TerminalSymbol()       : {/*@bgen(jjtree) Term */
                           jjtc000 = false;
                           jjtn000.jjtSetLastToken(getToken(0));
                         }
-/*@egen*/ { jjtn000.name = s1; jjtn000.type = "int"; }
+/*@egen*/ { jjtn000.node_value = s1; jjtn000.type = "int"; }
   | t1 = <TRUE>/*@bgen(jjtree)*/
                 {
                   jjtree.closeNodeScope(jjtn000, true);
                   jjtc000 = false;
                   jjtn000.jjtSetLastToken(getToken(0));
                 }
-/*@egen*/ { jjtn000.name = t1.image; jjtn000.type = "boolean"; }
+/*@egen*/ { jjtn000.node_value = t1.image; jjtn000.type = "boolean"; }
   | t1 = <FALSE>/*@bgen(jjtree)*/
                  {
                    jjtree.closeNodeScope(jjtn000, true);
                    jjtc000 = false;
                    jjtn000.jjtSetLastToken(getToken(0));
                  }
-/*@egen*/ { jjtn000.name = t1.image; jjtn000.type = "boolean"; }
+/*@egen*/ { jjtn000.node_value = t1.image; jjtn000.type = "boolean"; }
   | t1 = <THIS>/*@bgen(jjtree)*/
                 {
                   jjtree.closeNodeScope(jjtn000, true);
                   jjtc000 = false;
                   jjtn000.jjtSetLastToken(getToken(0));
                 }
-/*@egen*/ { jjtn000.name = t1.image; jjtn000.type = "this"; }/*@bgen(jjtree)*/
+/*@egen*/ { jjtn000.node_value = t1.image; jjtn000.type = "this"; }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

@@ -338,10 +338,10 @@ void TerminalSymbol() #Term : {
 }
 {
 
-  s1 = IntegerLiteral() { jjtThis.name = s1; jjtThis.type = "int"; }
-  | t1 = <TRUE> { jjtThis.name = t1.image; jjtThis.type = "boolean"; }
-  | t1 = <FALSE> { jjtThis.name = t1.image; jjtThis.type = "boolean"; }
-  | t1 = <THIS> { jjtThis.name = t1.image; jjtThis.type = "this"; }
+  s1 = IntegerLiteral() { jjtThis.node_value = s1; jjtThis.type = "int"; }
+  | t1 = <TRUE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
+  | t1 = <FALSE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
+  | t1 = <THIS> { jjtThis.node_value = t1.image; jjtThis.type = "this"; }
 }
 
 void Period_Aux() #PeriodAux : { Token t1; }
