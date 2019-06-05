@@ -37,24 +37,24 @@ public class ASTMethod extends SimpleNode {
         String method_name = this.getName();
 
         return_type = this.getReturnType();
-        if(return_type.equals(Symbol.Type.UNDEFINED)){
+        if (return_type.equals(Symbol.Type.UNDEFINED)) {
             printSemanticError("Method " + method_name + "has invalid return type");
             return false;
         }
 
-        while(((SimpleNode) children[i]).getNodeString().equals("Argument")){
-            
+        while (((SimpleNode) children[i]).getNodeString().equals("Argument")) {
+
             ASTArgument arg = (ASTArgument) children[i];
             String arg_name = arg.getName();
             Symbol.Type aux_type = arg.getArgumentType();
 
-            if(aux_type.equals(Symbol.Type.VOID) && aux_type.equals(Symbol.Type.UNDEFINED)){
+            if (aux_type.equals(Symbol.Type.VOID) && aux_type.equals(Symbol.Type.UNDEFINED)) {
                 printSemanticError("Argument " + arg_name + " has invalid type");
                 return false;
             }
 
             Pair param_pair = new Pair(arg_name, aux_type);
-            
+
             argument_types.add(aux_type);
             parameters.add(param_pair);
 
@@ -65,7 +65,7 @@ public class ASTMethod extends SimpleNode {
 
         MethodSignature signature = new MethodSignature(method_name, argument_types);
 
-        if(this.methods.hasMethod(signature)){
+        if (this.methods.hasMethod(signature)) {
             printSemanticError("Method " + method_name + " is already defined with the same arguments");
             return false;
         }
@@ -80,11 +80,11 @@ public class ASTMethod extends SimpleNode {
         Node[] children = getChildren();
 
         boolean success = true;
-        
+
         if (children == null)
             return false;
 
-        for(Node child : children){
+        for (Node child : children) {
             success = ((SimpleNode) child).analyse();
         }
 

@@ -199,11 +199,13 @@ public class SimpleNode implements Node {
         case "Extends":
         case "Statement":
         case "Aux":
-        case "Identifier":
+
             if (this.name != null)
                 return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + ")";
             else
                 return ProgramTreeConstants.jjtNodeName[id];
+                case "Identifier":
+                return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Type: " + this.type + ")";
         case "NEW":
             if (this.name != null)
                 return ProgramTreeConstants.jjtNodeName[id] + " (Name: " + this.name + " | Type: " + this.type + ")";
@@ -333,8 +335,10 @@ public class SimpleNode implements Node {
             return Symbol.Type.INT_ARRAY;
         case "id":
             return Symbol.Type.VOID;
-        default:
+        case "":
             return Symbol.Type.UNDEFINED;
+        default:
+            return Symbol.Type.OBJECT;
         }
     }
 

@@ -54,10 +54,16 @@ public class ASTASSIGN extends SimpleNode {
         Symbol.Type rhs_type = rhs.getReturnType();
 
         if (rhs_type.equals(Symbol.Type.VOID)){
+            if(rhs instanceof ASTPERIOD)
+                rhs_type = lhs_type;
+            else {
+            
             rhs_type = getVarType(rhs.getName());
 
             if(isAccessingArray(rhs, rhs_type))
                 rhs_type = Symbol.Type.INT;
+            }
+
         }
 
         // DEBUG

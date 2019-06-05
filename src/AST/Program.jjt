@@ -39,8 +39,8 @@ public
     if(!root.analyse())
         System.out.println("We have sematic error(s) !! Be aware !!");
 
-    // System.out.println(" *********** TABLES *********** ");
-    // root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
+    System.out.println(" *********** TABLES *********** ");
+    root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
     
 
     // try {
@@ -338,10 +338,10 @@ void TerminalSymbol() #Term : {
 }
 {
 
-  s1 = IntegerLiteral() { jjtThis.node_value = s1; jjtThis.type = "int"; }
-  | t1 = <TRUE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
-  | t1 = <FALSE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
-  | t1 = <THIS> { jjtThis.node_value = t1.image; jjtThis.type = "this"; }
+  s1 = IntegerLiteral() { jjtThis.name = s1; jjtThis.type = "int"; }
+  | t1 = <TRUE> { jjtThis.name = t1.image; jjtThis.type = "boolean"; }
+  | t1 = <FALSE> { jjtThis.name = t1.image; jjtThis.type = "boolean"; }
+  | t1 = <THIS> { jjtThis.name = t1.image; jjtThis.type = "this"; }
 }
 
 void Period_Aux() #PeriodAux : { Token t1; }
@@ -355,7 +355,7 @@ void New_Aux() #NEW : { Token t1; }
 {
 
   t1 = <INT> { jjtThis.type = "int[]"; }
-  <L_BRACKET> Expression()<R_BRACKET> | t1 = <ID> { jjtThis.type = "id"; jjtThis.name = t1.image; }
+  <L_BRACKET> Expression()<R_BRACKET> | t1 = <ID> { jjtThis.type = t1.image; }
   <L_PARENTHESIS> <R_PARENTHESIS>
 }
 

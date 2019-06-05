@@ -7,45 +7,67 @@ import java.util.Vector;
 import src.utils.*;
 import src.semantic.*;
 
-public
-class ASTMain extends SimpleNode {
-  public ASTMain(int id) {
-    super(id, true, false);
-  }
+public class ASTMain extends SimpleNode {
 
-  public ASTMain(Program p, int id) {
-    super(p, id, true, false);
-  }
+    protected int index_counter = 0;
 
-  public int getIndexCounter() {
-    return 1;
-}
-
-  public boolean addMain() {
-
-    this.symbols = getNodeSymbolTable();
-    this.methods = getNodeMethodTable();
-
-    Symbol.Type return_type = Symbol.Type.VOID;
-
-    Vector<Symbol.Type> argument_types = new Vector<>();
-    Vector<Pair> parameters = new Vector<>();
-
-    Pair pair = new Pair(Symbol.Type.STRING_ARRAY, this.getName());
-    parameters.add(pair);
-
-    MethodSignature signature = new MethodSignature("main", argument_types);
-
-    if(this.methods.hasMethod(signature)){
-        printSemanticError("Method main is already defined ");
-        return false;
+    public ASTMain(int id) {
+        super(id, true, false);
     }
 
-    symbols.addSymbol(this.getName(), Symbol.Type.STRING_ARRAY, true);
-    this.methods.addMethod("main", argument_types, return_type, parameters);
+    public ASTMain(Program p, int id) {
+        super(p, id, true, false);
+    }
 
-    return true;
-}
+    public int getIndexCounter() {
+        return this.index_counter;
+    }
 
+    public boolean addMain() {
+
+        this.symbols = getNodeSymbolTable();
+        this.methods = getNodeMethodTable();
+
+        Symbol.Type return_type = Symbol.Type.VOID;
+
+        Vector<Symbol.Type> argument_types = new Vector<>();
+        Vector<Pair> parameters = new Vector<>();
+
+        Pair pair = new Pair(Symbol.Type.STRING_ARRAY, this.getName());
+        parameters.add(pair);
+
+        MethodSignature signature = new MethodSignature("main", argument_types);
+
+        if (this.methods.hasMethod(signature)) {
+            printSemanticError("Method main is already defined ");
+            return false;
+        }
+
+        symbols.addSymbol(this.getName(), Symbol.Type.STRING_ARRAY, true);
+        this.methods.addMethod("main", argument_types, return_type, parameters);
+
+        return true;
+    }
+
+    public boolean analyse() {
+
+        Node[] children = getChildren();
+
+        boolean success = true;
+
+        if (children == null)
+            return false;
+
+        for (Node child : children) {
+            success = ((SimpleNode) child).analyse();
+        }
+
+        index_counter = attributeIndexes(index_counter);
+
+        return success;
+    }
 }
-/* JavaCC - OriginalChecksum=310eca1807b3405c5ba7a03532e03070 (do not edit this line) */
+/*
+ * JavaCC - OriginalChecksum=310eca1807b3405c5ba7a03532e03070 (do not edit this
+ * line)
+ */

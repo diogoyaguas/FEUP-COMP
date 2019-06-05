@@ -31,8 +31,8 @@ public
     if(!root.analyse())
         System.out.println("We have sematic error(s) !! Be aware !!");
 
-    // System.out.println(" *********** TABLES *********** ");
-    // root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
+    System.out.println(" *********** TABLES *********** ");
+    root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
 
 
     // try {
@@ -1242,28 +1242,28 @@ try {ParseException exception = generateParseException();
                           jjtree.closeNodeScope(jjtn000, true);
                           jjtc000 = false;
                           jjtn000.jjtSetLastToken(getToken(0));
-                          jjtn000.node_value = s1; jjtn000.type = "int";
+                          jjtn000.name = s1; jjtn000.type = "int";
         break;
       case TRUE:
         t1 = jj_consume_token(TRUE);
                   jjtree.closeNodeScope(jjtn000, true);
                   jjtc000 = false;
                   jjtn000.jjtSetLastToken(getToken(0));
-                  jjtn000.node_value = t1.image; jjtn000.type = "boolean";
+                  jjtn000.name = t1.image; jjtn000.type = "boolean";
         break;
       case FALSE:
         t1 = jj_consume_token(FALSE);
                    jjtree.closeNodeScope(jjtn000, true);
                    jjtc000 = false;
                    jjtn000.jjtSetLastToken(getToken(0));
-                   jjtn000.node_value = t1.image; jjtn000.type = "boolean";
+                   jjtn000.name = t1.image; jjtn000.type = "boolean";
         break;
       case THIS:
         t1 = jj_consume_token(THIS);
                   jjtree.closeNodeScope(jjtn000, true);
                   jjtc000 = false;
                   jjtn000.jjtSetLastToken(getToken(0));
-                  jjtn000.node_value = t1.image; jjtn000.type = "this";
+                  jjtn000.name = t1.image; jjtn000.type = "this";
         break;
       default:
         jj_la1[19] = jj_gen;
@@ -1388,7 +1388,7 @@ try {ParseException exception = generateParseException();
         break;
       case ID:
         t1 = jj_consume_token(ID);
-                                                    jjtn000.type = "id"; jjtn000.name = t1.image;
+                                                    jjtn000.type = t1.image;
         jj_consume_token(L_PARENTHESIS);
         jj_consume_token(R_PARENTHESIS);
         break;

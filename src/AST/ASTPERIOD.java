@@ -35,26 +35,30 @@ public class ASTPERIOD extends SimpleNode {
 
         // TODO
         // Verify if the first node is a new node
+        
+        // DEBUG
+        // System.out.println("lhs value " + left_node.getNodeValue() + " | " + left_node.getName());
 
         // Verify if second node is a "length" node
         if (right_node.getName().equals("length")) {
 
             // DEBUG
-            // System.out.println("value " + right_node.getNodeValue());
-            
+            // System.out.println("value " + right_node.getNodeValue() + " | " +
+            // right_node.getName());
+
             if (!left_node.getVarType(left_node.getName()).equals(Symbol.Type.INT_ARRAY)) {
                 printSemanticError("Length can only be applied to int[]. Given: " + left_node.getReturnType());
                 return false;
             }
             this.return_type = Symbol.Type.INT;
-            //Verify if left is initialized
+            // Verify if left is initialized
 
             return true;
         }
 
         // Don't verify what is ahead if it isn't from the current class, assuming it is
         // valid
-        if (!(left_node.getType().equals("this"))){
+        if (!(left_node.getType().equals("this"))) {
             this.return_type = Symbol.Type.VOID;
             return true;
         }
@@ -68,11 +72,11 @@ public class ASTPERIOD extends SimpleNode {
         if (method_arguments != null)
             for (Node argument : method_arguments) {
                 Symbol.Type aux_type = ((SimpleNode) argument).getReturnType();
-                
-                if(aux_type == Type.VOID) {
+
+                if (aux_type == Type.VOID) {
                     aux_type = getSymbols().getSymbolWithName(((SimpleNode) argument).getNodeValue()).getType();
                 }
-                
+
                 arg_types.add(aux_type);
             }
 
