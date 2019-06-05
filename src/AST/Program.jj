@@ -40,8 +40,8 @@ public
     ASTProgram root = myProg.Program(); // devolve referencia para o n\u00f3 da raiz da \u00e1rvore
     root.dump("");
 
-    // if(!root.analyse())
-    //     System.out.println("We have sematic error(s) !! Be aware !!");
+    if(!root.analyse())
+        System.out.println("We have sematic error(s) !! Be aware !!");
 
     // System.out.println(" *********** TABLES *********** ");
     // root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
@@ -712,7 +712,7 @@ void Identifier()             : {/*@bgen(jjtree) Identifier */
 {/*@bgen(jjtree) Identifier */
     try {
 /*@egen*/
-    t1=<ID> { jjtn000.name = t1.image; } (ArrayIndex())?/*@bgen(jjtree)*/
+    t1=<ID> { jjtn000.name = t1.image; jjtn000.type = "id"; } (ArrayIndex())?/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
         jjtree.clearNodeScope(jjtn000);
@@ -970,7 +970,7 @@ void Exclamation()             : {/*@bgen(jjtree) EXCLAMATION */
 void Expression_Aux()       : { Token t1; }
 {
 
-    (TerminalSymbol() | (<L_PARENTHESIS> Expression() <R_PARENTHESIS>) | Exclamation() | (<NEW> New_Aux()))
+    ( (TerminalSymbol() | Identifier()) | (<L_PARENTHESIS> Expression() <R_PARENTHESIS>) | Exclamation() | (<NEW> New_Aux()))
 
     (LOOKAHEAD(2)(<PERIOD>/*@bgen(jjtree) #PERIOD( 2) */
                            {
@@ -1038,7 +1038,6 @@ void TerminalSymbol()       : {/*@bgen(jjtree) Term */
                    jjtn000.jjtSetLastToken(getToken(0));
                  }
 /*@egen*/ { jjtn000.node_value = t1.image; jjtn000.type = "boolean"; }
-  | t1 = <ID> { jjtn000.node_value = t1.image; jjtn000.type = "id"; } (ArrayIndex())?
   | t1 = <THIS>/*@bgen(jjtree)*/
                 {
                   jjtree.closeNodeScope(jjtn000, true);

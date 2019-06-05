@@ -36,8 +36,8 @@ public
     ASTProgram root = myProg.Program(); // devolve referencia para o nó da raiz da árvore
     root.dump("");
 
-    // if(!root.analyse())
-    //     System.out.println("We have sematic error(s) !! Be aware !!");
+    if(!root.analyse())
+        System.out.println("We have sematic error(s) !! Be aware !!");
 
     // System.out.println(" *********** TABLES *********** ");
     // root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
@@ -292,7 +292,7 @@ void StatementAuxiliar() #ASSIGN : { Token t1; }
 
 void Identifier() #Identifier : { Token t1; }
 {
-    t1=<ID> { jjtThis.name = t1.image; } (ArrayIndex())?
+    t1=<ID> { jjtThis.name = t1.image; jjtThis.type = "id"; } (ArrayIndex())?
 }
 
 void ArrayIndex() #void : {}
@@ -327,7 +327,7 @@ void Exclamation() #EXCLAMATION: {} {
 void Expression_Aux() #void : { Token t1; }
 {
 
-    (TerminalSymbol() | (<L_PARENTHESIS> Expression() <R_PARENTHESIS>) | Exclamation() | (<NEW> New_Aux()))
+    ( (TerminalSymbol() | Identifier()) | (<L_PARENTHESIS> Expression() <R_PARENTHESIS>) | Exclamation() | (<NEW> New_Aux()))
 
     (LOOKAHEAD(2)(<PERIOD> Period_Aux() #PERIOD(2)))*
 }
@@ -341,7 +341,6 @@ void TerminalSymbol() #Term : {
   s1 = IntegerLiteral() { jjtThis.node_value = s1; jjtThis.type = "int"; }
   | t1 = <TRUE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
   | t1 = <FALSE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
-  | t1 = <ID> { jjtThis.node_value = t1.image; jjtThis.type = "id"; } (ArrayIndex())?
   | t1 = <THIS> { jjtThis.node_value = t1.image; jjtThis.type = "this"; }
 }
 

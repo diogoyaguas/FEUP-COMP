@@ -33,12 +33,12 @@ public class ASTASSIGN extends SimpleNode {
             return false;
         }
 
-        Symbol.Type lhs_type;
+        Symbol.Type lhs_type = lhs.getReturnType();
+        if (lhs_type.equals(Symbol.Type.VOID))
+            lhs_type = getVarType(lhs.getName());
 
-        if (lhs instanceof ASTIdentifier && ((ASTIdentifier) lhs).isArrayAccess())
-            lhs_type = Symbol.Type.INT;
-        else
-            lhs_type = symbols.getSymbolWithName(lhs.name).getType();
+        // DEBUG
+        // System.out.println("type: " + lhs_type);
 
         // Right hand side
         SimpleNode rhs = (SimpleNode) getChildren()[1];
@@ -48,8 +48,20 @@ public class ASTASSIGN extends SimpleNode {
 
         Symbol.Type rhs_type = rhs.getReturnType();
 
+        if (rhs_type.equals(Symbol.Type.VOID)){
+            rhs_type = getVarType(rhs.getName());
+
+            if(isAccessingArray(rhs, rhs_type))
+                rhs_type = Symbol.Type.INT;
+        }
+
+        // DEBUG
+        // System.out.println("type: " + rhs_type);
+
         if (!lhs_type.equals(rhs_type)) {
             printSemanticError("Assign has different types on members");
+            printSemanticError("lhs: " + lhs.name + " | " + lhs_type + " | " + lhs.getNodeString());
+            printSemanticError("rhs: " + rhs.name + " | " + rhs_type + " | " + rhs.getNodeString());
             return false;
         }
 
@@ -82,6 +94,11 @@ public class ASTASSIGN extends SimpleNode {
         }
 
         return true;
+    }
+
+    private boolean isAccessingArray(SimpleNode node, Symbol.Type type) {
+        return type.equals(Symbol.Type.INT_ARRAY) && (node instanceof ASTIdentifier) && (((ASTIdentifier) node).isArrayAccess());
+
     }
 
 }

@@ -3,8 +3,6 @@
 package src.AST;
 
 public class ASTIdentifier extends SimpleNode {
-
-    protected boolean isArrayAccess = false;
     
     public ASTIdentifier(int id) {
         super(id);
@@ -15,7 +13,7 @@ public class ASTIdentifier extends SimpleNode {
     }
 
     public boolean isArrayAccess() {
-        return this.isArrayAccess;
+        return this.jjtGetNumChildren() != 0;
     }
 
 }

@@ -39,22 +39,6 @@ public class ASTTerm extends SimpleNode {
     // return true;
     // }
 
-    public Symbol.Type getReturnType() {
-
-        switch (this.type) {
-        case "int":
-            return Symbol.Type.INT;
-        case "boolean":
-            return Symbol.Type.BOOLEAN;
-        case "int[]":
-            return Symbol.Type.INT_ARRAY;
-        case "id":
-            return Symbol.Type.VOID;
-        default:
-            return Symbol.Type.UNDEFINED;
-        }
-    }
-
     public boolean checkSymbolTable() {
 
         if (!getReturnType().equals(Symbol.Type.VOID))

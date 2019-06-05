@@ -39,12 +39,14 @@ public class ASTPERIOD extends SimpleNode {
         // Verify if second node is a "length" node
         if (right_node.getName().equals("length")) {
 
-            System.out.println("value " + right_node.getNodeValue());
-            if (!left_node.getReturnType().equals(Symbol.Type.INT_ARRAY)) {
+            // DEBUG
+            // System.out.println("value " + right_node.getNodeValue());
+            
+            if (!left_node.getVarType(left_node.getName()).equals(Symbol.Type.INT_ARRAY)) {
                 printSemanticError("Length can only be applied to int[]. Given: " + left_node.getReturnType());
                 return false;
             }
-
+            this.return_type = Symbol.Type.INT;
             //Verify if left is initialized
 
             return true;
@@ -52,8 +54,10 @@ public class ASTPERIOD extends SimpleNode {
 
         // Don't verify what is ahead if it isn't from the current class, assuming it is
         // valid
-        if (!(left_node.getType().equals("this")))
+        if (!(left_node.getType().equals("this"))){
+            this.return_type = Symbol.Type.VOID;
             return true;
+        }
 
         SimpleNode method_call = (SimpleNode) children[1];
         String method_name = method_call.getName();

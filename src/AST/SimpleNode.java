@@ -331,7 +331,7 @@ public class SimpleNode implements Node {
             return Symbol.Type.BOOLEAN;
         case "int[]":
             return Symbol.Type.INT_ARRAY;
-        case "":
+        case "id":
             return Symbol.Type.VOID;
         default:
             return Symbol.Type.UNDEFINED;

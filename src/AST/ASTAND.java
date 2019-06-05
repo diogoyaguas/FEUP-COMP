@@ -25,20 +25,28 @@ public class ASTAND extends SimpleNode {
             return false;
         }
 
-        Symbol.Type lop_type = ((SimpleNode) getChildren()[0]).getReturnType();
+        SimpleNode left_child = (SimpleNode) this.jjtGetChild(0);
+        SimpleNode right_child = (SimpleNode) this.jjtGetChild(1);
 
-        if (lop_type == Type.VOID)
-            lop_type = getVarType(((SimpleNode) getChildren()[0]).getNodeValue());
+        Symbol.Type lop_type = left_child.getReturnType();
+
+        if (lop_type.equals(Symbol.Type.VOID))
+            lop_type = getVarType(left_child.getName());
 
         if (!lop_type.equals(Symbol.Type.BOOLEAN)) {
             printSemanticError("Invalid type for left operand");
             return false;
         }
 
-        Symbol.Type rop_type = ((SimpleNode) getChildren()[1]).getReturnType();
+        Symbol.Type rop_type = right_child.getReturnType();
 
-        if (rop_type == Type.VOID)
-            rop_type = getVarType(((SimpleNode) getChildren()[1]).getNodeValue());
+        if (rop_type.equals(Symbol.Type.VOID)) {
+
+            if ((right_child.getId()) == (ProgramTreeConstants.JJTPERIOD))
+                rop_type = lop_type;
+            else
+                rop_type = getVarType(right_child.getName());
+        }
 
         if (!rop_type.equals(Symbol.Type.BOOLEAN)) {
             printSemanticError("Invalid type for right operand");
