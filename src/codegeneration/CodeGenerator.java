@@ -240,6 +240,8 @@ public class CodeGenerator {
             break;
         case ProgramTreeConstants.JJTPERIOD:
             generatePeriod(node);
+            //Since there is no assign, and all methods return a value, then we have to pop the value returned
+            output.println("\tpop");
             break;
         case ProgramTreeConstants.JJTRETURN:
             generateReturn(node);
@@ -268,9 +270,7 @@ public class CodeGenerator {
         Symbol left_node_symbol = function_child.getSymbols().getSymbolWithName(method_class);
 
         if (left_node_symbol != null) {
-            System.out.println("method_class " + method_class);
             method_class = left_node_symbol.getObjectClass();
-            System.out.println("test " + method_class);
         }
 
         SimpleNode method_node = (SimpleNode) function_child.jjtGetChild(0);
@@ -284,9 +284,9 @@ public class CodeGenerator {
     private void generatePeriodArguments(SimpleNode method_node) {
 
         for (int i = 0; i < method_node.jjtGetNumChildren(); i++) {
-            SimpleNode argument = (SimpleNode) method_node.getChildren()[i];
+            SimpleNode argument = (SimpleNode) method_node.jjtGetChild(i);
 
-            if (argument.jjtGetNumChildren() == 2) {
+            if (argument.jjtGetNumChildren() == 2 && argument.getId() != ProgramTreeConstants.JJTPERIOD) {
                 generateOperation(argument);
             } else {
                 switch (argument.getId()) {
@@ -308,10 +308,10 @@ public class CodeGenerator {
 
     private void generatePeriodInvoke(SimpleNode method, String method_class) {
         String method_name, method_ret, method_arg = "";
+        Boolean isFromThisClass = (method_class.equals("this") || method_class.equals(this.root.getName()));
 
         // Add the method path to the method name
-        System.out.println("class: " + method_class + " | " + this.root.getName());
-        if (method_class == "this" || method_class == this.root.getName())
+        if (isFromThisClass)
             method_name = this.root.getName() + "." + method.getName();
         else
             method_name = method_class + "." + method.getName();
@@ -366,8 +366,6 @@ public class CodeGenerator {
         // the method?
 
         MethodSymbol m_symbol = root.getMethods().obtainMethod(method.getName(), arg_types);
-        // System.out.println("method " + method.getName() + " | " + arg_types + " | " +
-        // m_symbol.getType());
         Symbol.Type method_return;
 
         if (m_symbol == null) {
@@ -401,7 +399,7 @@ public class CodeGenerator {
             return;
         }
 
-        if (method_class == "this")
+        if (isFromThisClass)
             output.println("\t" + "invokevirtual " + method_name + "(" + method_arg + ")" + method_ret);
         else
             output.println("\t" + "invokestatic " + method_name + "(" + method_arg + ")" + method_ret);
