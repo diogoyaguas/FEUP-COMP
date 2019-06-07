@@ -56,14 +56,14 @@ public class CodeGenerator {
         output.println(".source " + this.file_name);
         output.println(".class public " + root.getName());
 
-            SimpleNode child = (SimpleNode) root.jjtGetChild(0);
+        SimpleNode child = (SimpleNode) root.jjtGetChild(0);
 
-            if (child.getId() == ProgramTreeConstants.JJTEXTENDS) {
-               
-        output.println(".super " + child.getName() + "\n");
-            }else{
-        output.println(".super java/lang/Object" + "\n");
-            }
+        if (child.getId() == ProgramTreeConstants.JJTEXTENDS) {
+
+            output.println(".super " + child.getName() + "\n");
+        } else {
+            output.println(".super java/lang/Object" + "\n");
+        }
 
     }
 
@@ -82,11 +82,13 @@ public class CodeGenerator {
         SimpleNode child = (SimpleNode) root.jjtGetChild(0);
 
         if (child.getId() == ProgramTreeConstants.JJTEXTENDS) {
-            output.println(".method public <init>()V\n\taload_0\n\tinvokespecial " + child.getName() +"/<init>()V\n\treturn\n.end method");
+            output.println(".method public <init>()V\n\taload_0\n\tinvokespecial " + child.getName()
+                    + "/<init>()V\n\treturn\n.end method");
 
-     }else{
-        output.println(".method public <init>()V\n\taload_0\n\tinvokespecial java/lang/Object/<init>()V\n\treturn\n.end method");
-   
+        } else {
+            output.println(
+                    ".method public <init>()V\n\taload_0\n\tinvokespecial java/lang/Object/<init>()V\n\treturn\n.end method");
+
         }
 
         // TODO
@@ -253,11 +255,11 @@ public class CodeGenerator {
 
         output.println("\taload_0");
 
-        if(call_node.getName() == "length"){
+        if (call_node.getName() == "length") {
             output.println("\tarraylength");
-        } else{
-        generateCallArguments(call_node);
-        generateCallInvoke(call_node, method_class);
+        } else {
+            generateCallArguments(call_node);
+            generateCallInvoke(call_node, method_class);
         }
 
     }
@@ -350,7 +352,7 @@ public class CodeGenerator {
             SimpleNode grand_parent = ((SimpleNode) method.jjtGetParent().jjtGetParent());
             switch (grand_parent.getId()) {
             case ProgramTreeConstants.JJTASSIGN:
-                method_return = ((SimpleNode)grand_parent.jjtGetChild(0)).getReturnType();
+                method_return = ((SimpleNode) grand_parent.jjtGetChild(0)).getReturnType();
             default:
                 method_return = Type.VOID;
 
@@ -520,9 +522,13 @@ public class CodeGenerator {
         } else if (rhs.jjtGetNumChildren() == 2) {
             generateOperation(rhs);
             generateAssignLhs(lhs);
-        } else if(rhs.getId() == ProgramTreeConstants.JJTNEW)
-                output.println("\tnew " + rhs.getName());
-        else{
+        } else if (rhs.getId() == ProgramTreeConstants.JJTNEW){
+            output.println("\tnew " + rhs.getType());
+            output.println("\tdup");
+            output.println("\tinvokespecial " + rhs.getType() + "/<init>()V");
+            generateAssignLhs(lhs);
+        }
+        else {
             switch (rhs.getId()) {
             case ProgramTreeConstants.JJTTERM:
                 generateTerm(rhs);
@@ -716,7 +722,7 @@ public class CodeGenerator {
         generateCondition(condition_node);
         output.println("\tifeq loop_end_" + loop_number);
 
-        generateBody(body_node);
+        generateBodyStub(body_node);
         output.println("\tgoto loop_" + loop_number);
         output.println("loop_end_" + loop_number + ":");
     }
@@ -727,16 +733,16 @@ public class CodeGenerator {
 
         SimpleNode condition_node = (SimpleNode) node.jjtGetChild(0);
         SimpleNode if_body_node = (SimpleNode) node.jjtGetChild(1);
-        SimpleNode else_body = (SimpleNode) node.jjtGetChild(2);
+        SimpleNode else_body = (SimpleNode) node.jjtGetChild(2).jjtGetChild(0);
 
         generateCondition(condition_node);
         output.println("\tifeq else_begin_" + if_else_number);
 
-        generateBody(if_body_node);
+        generateBodyStub(if_body_node);
         output.println("\tgoto ifelse_end_" + if_else_number);
 
         output.println("else_begin_" + if_else_number + ":");
-        generateBody(else_body);
+        generateBodyStub(else_body);
 
         output.println("ifelse_end_" + if_else_number + ":");
 
@@ -752,6 +758,13 @@ public class CodeGenerator {
             switch (child.getId()) {
             case ProgramTreeConstants.JJTTERM:
                 generateTerm(child);
+                break;
+            case ProgramTreeConstants.JJTIDENTIFIER:
+                String var_name = child.getName();
+                if (root.getSymbols().hasSymbolWithNameLocal(var_name))
+                    loadGlobalVariable(child.getName());
+                else
+                    loadLocalVariable(child, child.getName());
                 break;
             case ProgramTreeConstants.JJTPERIOD:
                 generateCall(child);
