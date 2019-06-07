@@ -111,7 +111,7 @@ public class CodeGenerator {
             break;
         }
 
-        output.println(".field public static " + var_name + " " + output_type);
+        output.println(".field public " + var_name + " " + output_type);
 
     }
 
@@ -269,16 +269,15 @@ public class CodeGenerator {
         for (int i = 0; i < method_node.jjtGetNumChildren(); i++) {
             SimpleNode argument = (SimpleNode) method_node.getChildren()[i];
 
-            if (isArrayAccess(argument)) {
-                generateArrayAccess();
-                // TODO
-                // Method above
-            } else if (argument.jjtGetNumChildren() == 2) {
+            if (argument.jjtGetNumChildren() == 2) {
                 generateOperation(argument);
             } else {
                 switch (argument.getId()) {
                 case ProgramTreeConstants.JJTTERM:
                     generateTerm(argument);
+                    break;
+                case ProgramTreeConstants.JJTIDENTIFIER:
+                    generateLoadVariable(argument);
                     break;
                 case ProgramTreeConstants.JJTPERIOD:
                     generateCall(argument);
@@ -427,7 +426,16 @@ public class CodeGenerator {
         output.println("\t" + type + code + index);
     }
 
-    private void storeLocalVariable(SimpleNode node, String name) {
+    private void generateStoreVariable(SimpleNode node) {
+        if (this.root.getSymbols().hasSymbolWithNameLocal(node.getName())) {
+            this.storeGlobalVariable(node.getName());
+        } else {
+            this.storeLocalVariable(node);
+        }
+    }
+
+    private void storeLocalVariable(SimpleNode node) {
+        String name = node.getName();
         int index = node.getSymbolIndex(name);
         Symbol.Type var_t = node.getSymbols().getSymbolWithName(name).getType();
         String type, code;
@@ -461,7 +469,7 @@ public class CodeGenerator {
             return;
         }
 
-        output.println("\tgetstatic " + root.getName() + "/" + name + type);
+        output.println("\tgetfield " + root.getName() + "/" + name + " " + type);
     }
 
     private void storeGlobalVariable(String name) {
@@ -476,26 +484,11 @@ public class CodeGenerator {
             break;
         case INT_ARRAY:
             type = "[I";
-
+            break;
         default:
             return;
         }
-
-        output.println("\tputstatic " + root.getName() + "/" + name + type);
-    }
-
-    private boolean isArrayAccess(SimpleNode node) {
-        if (node.jjtGetNumChildren() == 1 && node.getType() == "int[]")
-            return true;
-        return false;
-    }
-
-    private boolean isArrayInitialization(SimpleNode lhs_node, SimpleNode rhs_node) {
-        return lhs_node.jjtGetNumChildren() == 0 && rhs_node.getType() == "int[]";
-    }
-
-    private void generateArrayAccess() {
-        // TODO
+        output.println("\tputfield " + root.getName() + "/" + name + " " + type);
     }
 
     private void generateAssign(SimpleNode node) {
@@ -511,52 +504,80 @@ public class CodeGenerator {
         SimpleNode lhs = (SimpleNode) node.jjtGetChild(0);
         SimpleNode rhs = (SimpleNode) node.jjtGetChild(1);
 
-        if (isArrayAccess(lhs)) {
-            generateArrayAccess();
-            // TODO
-            // Generate right side that returns an integer
-            // Store integer in array
-
-        } else if (isArrayInitialization(lhs, rhs)) {
-            generateArrayInitilization(rhs);
-        } else if (rhs.jjtGetNumChildren() == 2) {
-            generateOperation(rhs);
-            generateAssignLhs(lhs);
-        } else if (rhs.getId() == ProgramTreeConstants.JJTNEW){
-            output.println("\tnew " + rhs.getType());
-            output.println("\tdup");
-            output.println("\tinvokespecial " + rhs.getType() + "/<init>()V");
+        if (lhs.jjtGetNumChildren() == 1) {
+            generateArrayAccess(lhs);
+            generateRhs(rhs);
+            output.println("\tiastore");
+        } else {
+            generateRhs(rhs);
             generateAssignLhs(lhs);
         }
-        else {
+    }
+
+    private void generateRhs(SimpleNode rhs) {
+        if (rhs.jjtGetNumChildren() == 2) {
+            generateOperation(rhs);
+        } else {
             switch (rhs.getId()) {
             case ProgramTreeConstants.JJTTERM:
                 generateTerm(rhs);
                 break;
+            case ProgramTreeConstants.JJTIDENTIFIER:
+                generateLoadVariable(rhs);
+                break;
             case ProgramTreeConstants.JJTPERIOD:
                 generateCall(rhs);
+                break;
+            case ProgramTreeConstants.JJTNEW:
+                generateNewNode(rhs);
                 break;
             default:
                 break;
             }
-            generateAssignLhs(lhs);
         }
     }
 
     private void generateAssignLhs(SimpleNode lhs) {
-        String var_name = lhs.getName();
-
-        if (root.getSymbols().hasSymbolWithNameLocal(var_name))
-            storeGlobalVariable(var_name);
-        else
-            storeLocalVariable(lhs, var_name);
+        generateStoreVariable(lhs);
     }
 
-    private void loadVariable(SimpleNode node) {
-        if (this.root.getSymbols().hasSymbolWithNameLocal(node.getName())) {
-            this.loadGlobalVariable(node.getNodeValue());
+    private void generateArrayAccess(SimpleNode access_node) {
+        String var_name = access_node.getName();
+
+        if (root.getSymbols().hasSymbolWithNameLocal(var_name))
+            loadGlobalVariable(var_name);
+        else
+            loadLocalVariable(access_node, var_name);
+
+        SimpleNode child = (SimpleNode) access_node.jjtGetChild(0);
+
+        switch (child.getId()) {
+        case ProgramTreeConstants.JJTTERM:
+            generateTerm(child);
+            break;
+        case ProgramTreeConstants.JJTIDENTIFIER:
+            generateLoadVariable(child);
+            break;
+        case ProgramTreeConstants.JJTPERIOD:
+            generateCall(child);
+            break;
+        default:
+            break;
+
+        }
+    }
+
+    private void generateLoadVariable(SimpleNode node) {
+        String var_name = node.getName();
+
+        if (node.jjtGetNumChildren() != 0) {
+            generateArrayAccess(node);
+            output.println("\tiaload");
         } else {
-            this.loadLocalVariable(node, node.getNodeValue());
+            if (root.getSymbols().hasSymbolWithNameLocal(var_name))
+                loadGlobalVariable(var_name);
+            else
+                loadLocalVariable(node, var_name);
         }
     }
 
@@ -572,7 +593,7 @@ public class CodeGenerator {
                 loadBoolean(term_node.getNodeValue());
                 break;
             case VOID:
-                loadVariable(term_node);
+                generateLoadVariable(term_node);
                 break;
             case INT_ARRAY:
                 break;
@@ -593,6 +614,9 @@ public class CodeGenerator {
             case ProgramTreeConstants.JJTTERM:
                 generateTerm(child);
                 break;
+            case ProgramTreeConstants.JJTIDENTIFIER:
+                generateLoadVariable(child);
+                break;
             case ProgramTreeConstants.JJTPERIOD:
                 generateCall(child);
                 break;
@@ -602,7 +626,19 @@ public class CodeGenerator {
         }
 
         output.println("\tnewarray int");
+    }
 
+    private void generateNewNode(SimpleNode new_node) {
+
+        String new_type = new_node.getType();
+
+        if (new_type == "int[]") {
+            generateArrayInitilization(new_node);
+        } else {
+            output.println("\tnew " + new_node.getType());
+            output.println("\tdup");
+            output.println("\tinvokespecial " + new_node.getType() + "/<init>()V");
+        }
     }
 
     private void generateLessThan() {
@@ -645,6 +681,9 @@ public class CodeGenerator {
             case ProgramTreeConstants.JJTTERM:
                 generateTerm(lhs);
                 break;
+            case ProgramTreeConstants.JJTIDENTIFIER:
+                generateLoadVariable(lhs);
+                break;
             case ProgramTreeConstants.JJTPERIOD:
                 generateCall(lhs);
                 break;
@@ -659,6 +698,9 @@ public class CodeGenerator {
             switch (rhs.getId()) {
             case ProgramTreeConstants.JJTTERM:
                 generateTerm(rhs);
+                break;
+            case ProgramTreeConstants.JJTIDENTIFIER:
+                generateLoadVariable(rhs);
                 break;
             case ProgramTreeConstants.JJTPERIOD:
                 generateCall(rhs);
@@ -700,6 +742,9 @@ public class CodeGenerator {
             switch (child.getId()) {
             case ProgramTreeConstants.JJTTERM:
                 generateTerm(child);
+                break;
+            case ProgramTreeConstants.JJTIDENTIFIER:
+                generateLoadVariable(child);
                 break;
             case ProgramTreeConstants.JJTPERIOD:
                 generateCall(child);
@@ -760,11 +805,7 @@ public class CodeGenerator {
                 generateTerm(child);
                 break;
             case ProgramTreeConstants.JJTIDENTIFIER:
-                String var_name = child.getName();
-                if (root.getSymbols().hasSymbolWithNameLocal(var_name))
-                    loadGlobalVariable(child.getName());
-                else
-                    loadLocalVariable(child, child.getName());
+                generateLoadVariable(child);
                 break;
             case ProgramTreeConstants.JJTPERIOD:
                 generateCall(child);
