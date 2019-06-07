@@ -47,12 +47,12 @@ public
     root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
     
 
-     try {
-     CodeGenerator generator = new CodeGenerator(root, "test-file.j");
-	     generator.generateCode();
-     } catch (IOException e) {
-       e.printStackTrace();
-     }
+    try {
+      CodeGenerator generator = new CodeGenerator(root, "test-file.j");
+	    generator.generateCode();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
 public
