@@ -6,9 +6,11 @@ import src.utils.*;
 
 public class MethodTable {
 
+    protected String class_name;
     protected HashMap<MethodSignature, MethodSymbol> methods;
 
-    public MethodTable() {
+    public MethodTable(String class_name) {
+        this.class_name = class_name;
         this.methods = new HashMap<>();
     }
 
@@ -54,6 +56,10 @@ public class MethodTable {
 
     public HashMap<MethodSignature, MethodSymbol> getMethods() {
         return this.methods;
+    }
+
+    public String getClassName() {
+        return this.class_name;
     }
 
 }

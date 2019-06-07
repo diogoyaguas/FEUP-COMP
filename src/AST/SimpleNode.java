@@ -68,8 +68,9 @@ public class SimpleNode implements Node {
         if (parent == null)
             return null;
 
-        else if (this.has_method_scope)
-            return new MethodTable();
+        else if (this.has_method_scope){
+            return new MethodTable(this.name);
+        }
         else
             return ((SimpleNode) this.parent).getMethods();
     }

@@ -35,9 +35,10 @@ public class ASTPERIOD extends SimpleNode {
 
         // TODO
         // Verify if the first node is a new node
-        
+
         // DEBUG
-        // System.out.println("lhs value " + left_node.getNodeValue() + " | " + left_node.getName());
+        // System.out.println("lhs value " + left_node.getNodeValue() + " | " +
+        // left_node.getName());
 
         // Verify if second node is a "length" node
         if (right_node.getName().equals("length")) {
@@ -58,8 +59,15 @@ public class ASTPERIOD extends SimpleNode {
 
         // Don't verify what is ahead if it isn't from the current class, assuming it is
         // valid
-        if (!(left_node.getType().equals("this"))) {
-            this.return_type = Symbol.Type.VOID;
+
+        Symbol left_node_symbol = getSymbols().getSymbolWithName(left_node.getName());
+        // System.out.println("symbol type " + left_node.getName() + " " + left_node_symbol);
+
+        if (left_node_symbol == null && !(left_node.getType().equals("this"))) {
+            if ((right_node.getName()).equals("printResult"))
+                this.return_type = Type.STRING_ARRAY;
+            else
+                this.return_type = Type.VOID;
             return true;
         }
 

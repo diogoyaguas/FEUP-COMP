@@ -239,7 +239,7 @@ public class CodeGenerator {
             generateWhile(node);
             break;
         case ProgramTreeConstants.JJTPERIOD:
-            generateCall(node);
+            generatePeriod(node);
             break;
         case ProgramTreeConstants.JJTRETURN:
             generateReturn(node);
@@ -247,24 +247,41 @@ public class CodeGenerator {
         }
     }
 
-    private void generateCall(SimpleNode function_child) {
+    private void generatePeriod(SimpleNode period_node) {
 
-        String method_class = ((SimpleNode) function_child.jjtGetChild(0)).getNodeValue();
-        SimpleNode method_node = (SimpleNode) function_child.jjtGetChild(0);
-        SimpleNode call_node = (SimpleNode) function_child.jjtGetChild(1);
+        String right_node_name = ((SimpleNode) period_node.jjtGetChild(1)).getName();
+        SimpleNode left_node = (SimpleNode) period_node.jjtGetChild(0);
 
-        output.println("\taload_0");
-
-        if (call_node.getName() == "length") {
+        if (right_node_name == "length") {
+            generateLoadVariable(left_node);
             output.println("\tarraylength");
         } else {
-            generateCallArguments(call_node);
-            generateCallInvoke(call_node, method_class);
+            generateCall(period_node);
         }
 
     }
 
-    private void generateCallArguments(SimpleNode method_node) {
+    private void generateCall(SimpleNode function_child) {
+
+        String method_class = ((SimpleNode) function_child.jjtGetChild(0)).getName();
+
+        Symbol left_node_symbol = function_child.getSymbols().getSymbolWithName(method_class);
+
+        if (left_node_symbol != null) {
+            System.out.println("method_class " + method_class);
+            method_class = left_node_symbol.getObjectClass();
+            System.out.println("test " + method_class);
+        }
+
+        SimpleNode method_node = (SimpleNode) function_child.jjtGetChild(0);
+        SimpleNode call_node = (SimpleNode) function_child.jjtGetChild(1);
+
+        generatePeriodArguments(call_node);
+        generatePeriodInvoke(call_node, method_class);
+
+    }
+
+    private void generatePeriodArguments(SimpleNode method_node) {
 
         for (int i = 0; i < method_node.jjtGetNumChildren(); i++) {
             SimpleNode argument = (SimpleNode) method_node.getChildren()[i];
@@ -280,7 +297,7 @@ public class CodeGenerator {
                     generateLoadVariable(argument);
                     break;
                 case ProgramTreeConstants.JJTPERIOD:
-                    generateCall(argument);
+                    generatePeriod(argument);
                     break;
                 default:
                     break;
@@ -289,11 +306,12 @@ public class CodeGenerator {
         }
     }
 
-    private void generateCallInvoke(SimpleNode method, String method_class) {
+    private void generatePeriodInvoke(SimpleNode method, String method_class) {
         String method_name, method_ret, method_arg = "";
 
         // Add the method path to the method name
-        if (method_class == "this")
+        System.out.println("class: " + method_class + " | " + this.root.getName());
+        if (method_class == "this" || method_class == this.root.getName())
             method_name = this.root.getName() + "." + method.getName();
         else
             method_name = method_class + "." + method.getName();
@@ -333,6 +351,10 @@ public class CodeGenerator {
                     method_arg += "[I";
                     arg_types.add(Symbol.Type.INT_ARRAY);
                     break;
+                case STRING_ARRAY:
+                    method_arg += "[Ljava/lang/String;";
+                    arg_types.add(Symbol.Type.STRING_ARRAY);
+                    break;
                 default:
                     break;
                 }
@@ -344,6 +366,8 @@ public class CodeGenerator {
         // the method?
 
         MethodSymbol m_symbol = root.getMethods().obtainMethod(method.getName(), arg_types);
+        // System.out.println("method " + method.getName() + " | " + arg_types + " | " +
+        // m_symbol.getType());
         Symbol.Type method_return;
 
         if (m_symbol == null) {
@@ -526,7 +550,7 @@ public class CodeGenerator {
                 generateLoadVariable(rhs);
                 break;
             case ProgramTreeConstants.JJTPERIOD:
-                generateCall(rhs);
+                generatePeriod(rhs);
                 break;
             case ProgramTreeConstants.JJTNEW:
                 generateNewNode(rhs);
@@ -559,7 +583,7 @@ public class CodeGenerator {
             generateLoadVariable(child);
             break;
         case ProgramTreeConstants.JJTPERIOD:
-            generateCall(child);
+            generatePeriod(child);
             break;
         default:
             break;
@@ -618,7 +642,7 @@ public class CodeGenerator {
                 generateLoadVariable(child);
                 break;
             case ProgramTreeConstants.JJTPERIOD:
-                generateCall(child);
+                generatePeriod(child);
                 break;
             default:
                 break;
@@ -685,7 +709,7 @@ public class CodeGenerator {
                 generateLoadVariable(lhs);
                 break;
             case ProgramTreeConstants.JJTPERIOD:
-                generateCall(lhs);
+                generatePeriod(lhs);
                 break;
             default:
                 break;
@@ -703,7 +727,7 @@ public class CodeGenerator {
                 generateLoadVariable(rhs);
                 break;
             case ProgramTreeConstants.JJTPERIOD:
-                generateCall(rhs);
+                generatePeriod(rhs);
                 break;
             default:
                 break;
@@ -747,7 +771,7 @@ public class CodeGenerator {
                 generateLoadVariable(child);
                 break;
             case ProgramTreeConstants.JJTPERIOD:
-                generateCall(child);
+                generatePeriod(child);
                 break;
             default:
                 break;
@@ -808,7 +832,7 @@ public class CodeGenerator {
                 generateLoadVariable(child);
                 break;
             case ProgramTreeConstants.JJTPERIOD:
-                generateCall(child);
+                generatePeriod(child);
                 break;
             default:
                 break;

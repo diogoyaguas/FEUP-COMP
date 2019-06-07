@@ -19,22 +19,25 @@ public class ASTVar extends SimpleNode {
 
         symbols = getNodeSymbolTable();
 
-        //TODO
+        // TODO
         // - Verify if variable with same name already exists (both local and globaly)
         // - Verify if type is valid isTypeValidForVar()
         // - Store new variable in symbol table
 
-        if(symbols.hasSymbolWithName(this.getName())){
+        if (symbols.hasSymbolWithName(this.getName())) {
             printSemanticError("Variable with the same name already declared");
             return false;
         }
 
-        if(!this.isTypeValidForVar(var_type)){
+        if (!this.isTypeValidForVar(var_type)) {
             printSemanticError("Variable declared with an invalid type");
             return false;
         }
 
-        symbols.addSymbol(this.getName(), var_type, false);
+        if (var_type.equals(Symbol.Type.OBJECT))
+            symbols.addSymbol(this.getName(), var_type, false, this.type);
+        else
+            symbols.addSymbol(this.getName(), var_type, false);
 
         return true;
     }

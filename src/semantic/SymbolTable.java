@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import src.semantic.Symbol.Type;
+
 public class SymbolTable {
 
     private SymbolTable parent_table;
@@ -23,6 +25,18 @@ public class SymbolTable {
         }
         return false;
     }
+
+    public boolean addSymbol(String name, Type type, boolean init, String object_type) {
+
+        Symbol new_s = new Symbol(type, init, object_type);
+
+        if (!this.symbols.containsKey(name)) {
+            this.symbols.put(name, new_s);
+            return true;
+        }
+        return false;
+
+	}
 
     public boolean addSymbol(String name, Symbol.Type type, boolean init, int index) {
         Symbol new_s = new Symbol(type, init, index);
