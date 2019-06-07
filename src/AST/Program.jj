@@ -37,7 +37,7 @@ public
     if (createInputStream() == false)
       return;
 
-    ASTProgram root = myProg.Program(); // devolve referencia para o n\u00f3 da raiz da \u00e1rvore
+    ASTProgram root = myProg.Program(); // devolve referencia para o n\u00c3\u00b3 da raiz da \u00c3\u00a1rvore
     root.dump("");
 
     if(!root.analyse())
@@ -47,12 +47,12 @@ public
     root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
     
 
-    // try {
-    //   CodeGenerator generator = new CodeGenerator(root, "test-file.j");
-	//     generator.generateCode();
-    // } catch (IOException e) {
-    //   e.printStackTrace();
-    // }
+     try {
+     CodeGenerator generator = new CodeGenerator(root, "test-file.j");
+	     generator.generateCode();
+     } catch (IOException e) {
+       e.printStackTrace();
+     }
   }
 
 public

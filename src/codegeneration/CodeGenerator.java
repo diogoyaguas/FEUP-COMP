@@ -44,7 +44,7 @@ public class CodeGenerator {
 
     public void generateCode() {
 
-        generateClassHeader();
+        generateClassHeader(root);
         generateGlobals(root);
         generateStatic();
         generateMethods();
@@ -52,10 +52,18 @@ public class CodeGenerator {
 
     }
 
-    private void generateClassHeader() {
+    private void generateClassHeader(SimpleNode root) {
         output.println(".source " + this.file_name);
         output.println(".class public " + root.getName());
+
+            SimpleNode child = (SimpleNode) root.jjtGetChild(0);
+
+            if (child.getId() == ProgramTreeConstants.JJTEXTENDS) {
+               
+        output.println(".super " + child.getName() + "\n");
+            }else{
         output.println(".super java/lang/Object" + "\n");
+            }
 
     }
 
@@ -71,12 +79,17 @@ public class CodeGenerator {
     }
 
     private void generateStatic() {
+        SimpleNode child = (SimpleNode) root.jjtGetChild(0);
 
-        output.println(
-                ".method public <init>()V\n\taload_0\n\tinvokespecial java/lang/Object/<init>()V\n\treturn\n.end method");
+        if (child.getId() == ProgramTreeConstants.JJTEXTENDS) {
+            output.println(".method public <init>()V\n\taload_0\n\tinvokespecial " + child.getName() +"/<init>()V\n\treturn\n.end method");
+
+     }else{
+        output.println(".method public <init>()V\n\taload_0\n\tinvokespecial java/lang/Object/<init>()V\n\treturn\n.end method");
+   
+        }
 
         // TODO
-        // Not hardcode this
     }
 
     private void generateVar(ASTVar var) {

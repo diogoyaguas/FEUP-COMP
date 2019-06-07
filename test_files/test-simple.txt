@@ -1,4 +1,10 @@
-class Fac {
+
+
+
+
+
+
+class Fac extends Boiling{
 
     public boolean Double(){
 
@@ -18,3 +24,5 @@ class Fac {
     }
 
 }
+
+
