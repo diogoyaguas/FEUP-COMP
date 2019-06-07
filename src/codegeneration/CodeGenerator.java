@@ -241,7 +241,7 @@ public class CodeGenerator {
         case ProgramTreeConstants.JJTPERIOD:
             generatePeriod(node);
             //Since there is no assign, and all methods return a value, then we have to pop the value returned
-            output.println("\tpop");
+            //output.println("\tpop");
             break;
         case ProgramTreeConstants.JJTRETURN:
             generateReturn(node);

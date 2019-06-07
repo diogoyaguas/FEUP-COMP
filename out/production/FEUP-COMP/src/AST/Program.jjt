@@ -1,0 +1,368 @@
+options {
+
+  LOOKAHEAD = 1;
+  MULTI = true;
+  TRACK_TOKENS = true;
+}
+
+PARSER_BEGIN(Program)
+
+package src.AST;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import src.codegeneration.CodeGenerator;
+
+public
+class Program {
+private static Program myProg;
+private static String FILENAME;
+
+public
+  static void main(String args[]) throws ParseException {
+
+    if (args.length != 1) {
+      System.out.println("Error: Bad command or filename. Syntax: java Program [filename.tpl]");
+      System.exit(0);
+    }
+    FILENAME = args[0];
+
+    if (createInputStream() == false)
+      return;
+
+    ASTProgram root = myProg.Program(); // devolve referencia para o nó da raiz da árvore
+    root.dump("");
+
+    if(!root.analyse())
+        System.out.println("We have sematic error(s) !! Be aware !!");
+
+    System.out.println(" *********** TABLES *********** ");
+    root.printTables("SYMBOL TABLE: ", "METHODS TABLE: ");
+    
+
+    try {
+      CodeGenerator generator = new CodeGenerator(root, "test-file.j");
+	    generator.generateCode();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+public
+  static boolean createInputStream() {
+    File file = new File(FILENAME);
+
+    FileInputStream stream;
+
+    try {
+      stream = new FileInputStream(file);
+      myProg = new Program(stream);
+    } catch (FileNotFoundException e) {
+      System.out.println("Error in stream constructor: ");
+      System.out.println("Usage: java Yal filePath [-r=<n>] [-o]");
+      e.printStackTrace();
+      return false;
+    }
+
+    return true;
+  }
+}
+
+PARSER_END(Program)
+
+    JAVACODE void skip_to(int token_kind) {
+  ParseException exception = generateParseException();
+  System.out.println(exception.toString());
+
+  Token t;
+  do {
+    t = getNextToken();
+  } while (t.kind != token_kind);
+}
+
+SKIP : {
+  " " | "\r" | "\t" | "\n" | <"//"(~[ "\n", "\r" ]) * ("\n" | "\r" | "\r\n")> |
+      <"/*"(~["*"]) * "*"("*" | ~[ "*", "/" ](~["*"]) * "*") * "/">
+}
+
+TOKEN : {
+  <SEMI_COLON: ";" >
+|   <COMMA: "," >
+|   <PERIOD: "." >
+|   <L_PARENTHESIS: "(" >
+|   <R_PARENTHESIS: ")" >
+|   <L_CBRACKET: "{" >
+|   <R_CBRACKET: "}" >
+|   <L_BRACKET: "[" >
+|   <R_BRACKET: "]" >
+|   <EXCLM_MARK: "!" >
+
+|   <NEW: "new" >
+|   <THIS: "this" >
+|   <TRUE: "true" >
+|   <FALSE: "false" >
+|   <LENGTH: "length" >
+
+|   <ADD: "+" >
+|   <SUB: "-" >
+|   <AND: "&&" >
+|   <LESS_THAN: "<" >
+|   <MUL: "*" >
+|   <DIV:  "/" >
+
+|   <EQUAL: "=" >
+|   <IF: "if" >
+|   <ELSE: "else" >
+|   <WHILE: "while" >
+
+|   <INT: "int" >
+|   <STRING: "String" >
+|   <BOOLEAN: "boolean" >
+
+|   <RETURN: "return" >
+|   <PUBLIC: "public" >
+|   <STATIC: "static" >
+|   <VOID: "void" >
+|   <MAIN: "main" >
+|   <EXTENDS: "extends" >
+|   <CLASS: "class" >
+}
+
+TOKEN : {
+  <ID: <LETTER> (<LETTER> | <DIGIT>)* > 
+|   <#DIGIT: (["0"-"9"]) >
+|   <INTEGER: ((<DIGIT>)+) >
+|   <#LETTER: (["a"-"z","A"-"Z", "_"])+ >
+|   <OCTAL : "0"(["0"-"7"])+ >
+|   <HEXA : "0"["x","X"](["0"-"9","a"-"f","A"-"F"])+ >
+|   <BINARY : "0"["b","B"](["0"-"1"])+ >
+}
+
+ASTProgram Program() : {} {
+  ClassDecl()<EOF> { return jjtThis; }
+}
+
+void ClassDecl() #Class : {
+  Token n;
+  String s1;
+}
+{
+
+  try {
+    <CLASS> n = <ID> { jjtThis.name = n.image; }
+    (ExtendClass()) ? <L_CBRACKET>
+  } catch (ParseException e) {
+    System.out.println("CAUGHT CLASS INITIALIZATION DECLARATION");
+    skip_to(L_CBRACKET);
+  }
+  try {
+    (VarDecl()) * (<PUBLIC>(MainDecl() | MethodDecl())) * <R_CBRACKET>
+
+  } catch (ParseException e) {
+    System.out.println("CAUGHT CLASS BLOCK DECLARATION");
+    skip_to(R_CBRACKET);
+  }
+}
+
+void ExtendClass() #Extends : { Token n; }
+{
+
+  <EXTENDS> n = <ID> { jjtThis.name = n.image; }
+}
+
+void VarDecl() #Var : {
+  Token n1;
+  String s1;
+}
+{
+  try {
+    s1 = Type() { jjtThis.type = s1; }
+    n1 = <ID> { jjtThis.name = n1.image; }
+    <SEMI_COLON>
+  } catch (ParseException e) {
+    System.out.println("CAUGHT VAR DECLARATION");
+    skip_to(SEMI_COLON);
+  }
+}
+
+void MainDecl() #Main : { Token n2; }
+{
+  try {
+    <STATIC><VOID><MAIN><L_PARENTHESIS><STRING><L_BRACKET><R_BRACKET> n2 =
+        <ID> {
+      jjtThis.name = n2.image; jjtThis.type = "";
+    }
+    <R_PARENTHESIS> <L_CBRACKET>
+  } catch (ParseException e) {
+    System.out.println("CAUGHT MAIN INITIALIZATION DECLARATION");
+    skip_to(L_CBRACKET);
+  }
+  try {
+    (LOOKAHEAD(2) (VarDecl())) * (Statement()) * <R_CBRACKET>
+  } catch (ParseException e) {
+    System.out.println("CAUGHT MAIN BLOCK DECLARATION");
+    skip_to(R_CBRACKET);
+  }
+}
+
+void MethodDecl() #Method : {
+  Token n3, n4;
+  String s1;
+}
+{
+  try {
+    s1 = Type() { jjtThis.type = s1; }
+    n3 = <ID> { jjtThis.name = n3.image; }
+    <L_PARENTHESIS> MethodArgs() <R_PARENTHESIS>
+  } catch (ParseException e) {
+    System.out.println("CAUGHT METHOD DECLARATION");
+    skip_to(R_PARENTHESIS);
+  }
+  try {
+    <L_CBRACKET> 
+            (LOOKAHEAD(2)(VarDecl()))* (Statement())* MethodReturn()
+        <R_CBRACKET>
+  } catch (ParseException e) {
+    System.out.println("CAUGHT METHOD BLOCK DECLARATION");
+    skip_to(R_CBRACKET);
+  }
+}
+
+void MethodArgs() #void : {} { (Argument()(<COMMA> Argument()) *) ? }
+
+void Argument() #Argument : {
+  Token t1;
+  String s1;
+}
+{
+  s1 = Type() { jjtThis.type = s1; }
+  t1 = <ID> { jjtThis.name = t1.image; }
+}
+
+void MethodReturn() #RETURN : { Token t1; }
+{
+  t1 = <RETURN> { jjtThis.value = t1.image; }
+  Expression()<SEMI_COLON>
+}
+
+String Type() #void : { Token t1; Boolean b1 = false;}
+{
+
+  t1 = <BOOLEAN> { return t1.image; } 
+  | (t1=<INT>(<L_BRACKET> <R_BRACKET> {b1 = true;})? {if(b1) return t1.image + "[]"; return t1.image;})
+  | t1=<ID> {return t1.image;}
+}
+
+void Statement() #void : {} {
+
+  <L_CBRACKET>(Statement()) * <R_CBRACKET> | IfStatement() |
+      try {
+    WhileStatement()
+  } catch (ParseException e) {
+    System.out.println("CAUGHT WHILE DECLARATION");
+    skip_to(R_PARENTHESIS);
+  }
+  | LOOKAHEAD( <ID> (<L_BRACKET> | <EQUAL>)) StatementAuxiliar() | Expression()<SEMI_COLON>
+}
+
+void Condition() #CONDITION : {} {
+    <L_PARENTHESIS> Expression() <R_PARENTHESIS>
+}
+
+void StatementBody() #BODY : {} {
+    Statement()
+}
+
+void IfStatement() #IF : {} {
+
+  <IF> Condition() StatementBody() ElseStatement()
+}
+
+void ElseStatement() #ELSE : {} { <ELSE> StatementBody() }
+
+void WhileStatement() #WHILE : {} {
+  <WHILE> Condition() StatementBody()
+}
+
+void StatementAuxiliar() #ASSIGN : { Token t1; }
+{ Identifier() <EQUAL> Expression() <SEMI_COLON> }
+
+void Identifier() #Identifier : { Token t1; }
+{
+    t1=<ID> { jjtThis.name = t1.image; jjtThis.type = "id"; } (ArrayIndex())?
+}
+
+void ArrayIndex() #void : {}
+{
+  <L_BRACKET> Expression() <R_BRACKET>
+}
+
+void Expression() #void : {} { Expression_AddSub() }
+
+void Expression_AddSub() #void : {} {
+  Expression_MulDiv()(LOOKAHEAD(2)(<ADD> Expression_MulDiv() #ADD(2) |
+                                   <SUB> Expression_MulDiv() #SUB(2)))
+      *
+}
+
+void Expression_MulDiv() #void : {} {
+  Expression_BinOps()(LOOKAHEAD(2)(<MUL> Expression_BinOps() #MUL(2) |
+                                   <DIV> Expression_BinOps() #DIV(2)))
+      *
+}
+
+void Expression_BinOps() #void : {} {
+  Expression_Aux()(LOOKAHEAD(2)(<AND> Expression_Aux() #AND(2) |
+                                <LESS_THAN> Expression_Aux() #LESS_THAN(2)))
+      *
+}
+
+void Exclamation() #EXCLAMATION: {} {
+    <EXCLM_MARK> Expression() 
+ }
+
+void Expression_Aux() #void : { Token t1; }
+{
+
+    ( (TerminalSymbol() | Identifier()) | (<L_PARENTHESIS> Expression() <R_PARENTHESIS>) | Exclamation() | (<NEW> New_Aux()))
+
+    (LOOKAHEAD(2)(<PERIOD> Period_Aux() #PERIOD(2)))*
+}
+
+void TerminalSymbol() #Term : {
+  Token t1;
+  String s1;
+}
+{
+
+  s1 = IntegerLiteral() { jjtThis.node_value = s1; jjtThis.type = "int"; }
+  | t1 = <TRUE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
+  | t1 = <FALSE> { jjtThis.node_value = t1.image; jjtThis.type = "boolean"; }
+  | t1 = <THIS> { jjtThis.node_value = t1.image; jjtThis.type = "this"; }
+}
+
+void Period_Aux() #PeriodAux : { Token t1; }
+{
+
+  <LENGTH> { jjtThis.name = "length"; }
+  | (t1 = <ID> { jjtThis.name = t1.image; } <L_PARENTHESIS> (Expression() (<COMMA> Expression())*)? <R_PARENTHESIS>)
+}
+
+void New_Aux() #NEW : { Token t1; }
+{
+
+  t1 = <INT> { jjtThis.type = "int[]"; }
+  <L_BRACKET> Expression()<R_BRACKET> | t1 = <ID> { jjtThis.type = t1.image; }
+  <L_PARENTHESIS> <R_PARENTHESIS>
+}
+
+String IntegerLiteral() #void : { Token t1; }
+{
+
+  (t1 = <OCTAL> { return t1.image; } | t1 = <INTEGER> {
+    return t1.image;
+  } | t1 = <HEXA> { return t1.image; } | t1 = <BINARY> { return t1.image; })
+}

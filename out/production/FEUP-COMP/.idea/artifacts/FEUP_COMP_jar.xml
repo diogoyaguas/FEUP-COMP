@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="FEUP-COMP:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/FEUP_COMP_jar</output-path>
+    <root id="archive" name="FEUP-COMP.jar">
+      <element id="module-output" name="FEUP-COMP" />
+    </root>
+  </artifact>
+</component>

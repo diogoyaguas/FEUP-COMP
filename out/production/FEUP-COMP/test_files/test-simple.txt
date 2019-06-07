@@ -1,0 +1,28 @@
+
+
+
+
+
+
+class Fac extends Boiling{
+
+    public boolean Double(){
+
+        int[] list;
+        int a;
+        boolean b;
+        b = true;
+        list = new int[3];
+        while(b)
+            b = false;
+        a = 1 + 1 + 1;
+        return true;
+    }
+
+    public static void main(String[] args){
+        this.Double();
+    }
+
+}
+
+
