@@ -324,6 +324,7 @@ public class CodeGenerator {
         if (method.getChildren() != null) {
             for (Node arg : method.getChildren()) {
                 SimpleNode argument = (SimpleNode) arg;
+                // System.out.println("arg " + argument.getReturnType());
                 switch (argument.getReturnType()) {
                 case INT:
                     method_arg += "I";
@@ -334,14 +335,14 @@ public class CodeGenerator {
                     arg_types.add(Symbol.Type.BOOLEAN);
                     break;
                 case VOID:
-                    if (argument.getSymbols().getSymbolWithName(argument.getNodeValue()).getType() == Symbol.Type.INT) {
+                    if (argument.getSymbols().getSymbolWithName(argument.getName()).getType() == Symbol.Type.INT) {
                         method_arg += "I";
                         arg_types.add(Symbol.Type.INT);
-                    } else if (argument.getSymbols().getSymbolWithName(argument.getNodeValue())
+                    } else if (argument.getSymbols().getSymbolWithName(argument.getName())
                             .getType() == Symbol.Type.INT_ARRAY) {
                         method_arg += "[I";
                         arg_types.add(Symbol.Type.INT_ARRAY);
-                    } else if (argument.getSymbols().getSymbolWithName(argument.getNodeValue())
+                    } else if (argument.getSymbols().getSymbolWithName(argument.getName())
                             .getType() == Symbol.Type.BOOLEAN) {
                         method_arg += "B";
                         arg_types.add(Symbol.Type.INT);
