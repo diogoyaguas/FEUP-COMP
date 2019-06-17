@@ -3,3 +3,7 @@ bin/*
 Fac\.class
 
 Fac\.java
+
+*.xml
+
+FEUP-COMP\.iml
