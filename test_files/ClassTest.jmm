@@ -7,13 +7,18 @@ class ClassTest {
         int c;
         boolean cond;
 
-        a = 10;
+        a = 2;
         b = 3;
         cond = a < b;
         if(cond)
             c = 4;
         else
-            c = 5;
+            c = 5 + b * a / 2;
+
+        while(c < 30){
+            c = c + b;
+            ioPlus.printResult(c);
+        }
         
         ioPlus.printResult(c);
 	}
