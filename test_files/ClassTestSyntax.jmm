@@ -14,6 +14,8 @@ class ClassTest {
         a = 10;
         b = 3;
         cond = a < b;
+//      cond = a b;
+        
         if(cond)
             c = 4;
         else
@@ -22,7 +24,6 @@ class ClassTest {
         while (c < 30){
 //        while c < 30){
             c = c + b;
-//          c = c  b;
             ioPlus.printResult(c);
         }
         
