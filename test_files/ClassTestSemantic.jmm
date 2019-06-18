@@ -1,0 +1,22 @@
+class ClassTest {
+
+	public static boolean main(String[] args) {
+		
+        int a;
+        int b;
+        int c;
+        boolean cond;
+
+        a = 10;
+        b = 3;
+        cond = a + b;
+        if(cond)
+            c = 4;
+        else
+            c = 5;
+
+        c = d + cond;
+        
+        return c;
+	}
+}

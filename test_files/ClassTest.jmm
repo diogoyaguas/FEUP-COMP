@@ -13,7 +13,7 @@ class ClassTest {
         if(cond)
             c = 4;
         else
-            c = 5 + b * a / 2;
+            c = 5;
 
         while(c < 30){
             c = c + b;
