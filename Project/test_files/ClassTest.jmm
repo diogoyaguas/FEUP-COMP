@@ -1,0 +1,27 @@
+class ClassTest {
+
+	public static void main(String[] args) {
+		
+        int a;
+        int b;
+        int c;
+        boolean cond;
+
+        a = 10;
+        b = 3;
+        cond = a < b;
+        if(cond)
+            c = 4;
+        else
+            c = 5;
+
+        while(c < 50){
+            c = c + b;
+            ioPlus.printResult(c);
+        }
+
+        ioPlus.printResult(1-1-1)
+        
+        ioPlus.printResult(c);
+	}
+}

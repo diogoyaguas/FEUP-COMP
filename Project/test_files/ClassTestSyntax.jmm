@@ -1,25 +1,33 @@
 class ClassTest {
+//clas ClassTest{
 
-	public static void main(String[] args) {
+//	public static void main(String[] args) {
+//	public static main(String[] args) {
+  public static void main(String[ args) {
 		
         int a;
         int b;
         int c;
+//      int c
         boolean cond;
 
         a = 10;
         b = 3;
         cond = a < b;
+//      cond = a b;
+        
         if(cond)
             c = 4;
         else
             c = 5;
 
-        while(c < 30){
+        while (c < 30){
+//        while c < 30){
             c = c + b;
             ioPlus.printResult(c);
         }
         
         ioPlus.printResult(c);
+//      ioPlus printResult(c);
 	}
 }
